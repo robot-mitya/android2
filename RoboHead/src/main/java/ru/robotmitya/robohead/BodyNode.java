@@ -1,5 +1,5 @@
 /**
- * This node implements connection with robo_body via Bluetooth.
+ * This node implements connection and communication functions with robo_body via Bluetooth.
  */
 package ru.robotmitya.robohead;
 
@@ -26,7 +26,7 @@ public class BodyNode implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("topicMitya", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/command", std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<String>() {
             @Override
             public void onNewMessage(final std_msgs.String message) {
