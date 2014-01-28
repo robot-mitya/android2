@@ -1,7 +1,11 @@
 package ru.robotmitya.robohead;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -27,6 +31,26 @@ public class MainActivity extends RosActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+        Settings.initialize(this);
+
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(final Message msg) {
+                String message = (String) msg.obj;
+                String command = MessageHelper.getMessageIdentifier(message);
+                String value = MessageHelper.getMessageValue(message);
+                Log.i("Message: " + message);
+                Log.i("Command: " + command + ", value: " + value);
+            }
+        };
+
+        BluetoothHelper.initialize(this);
+        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
+            return;
+        }
+        BluetoothHelper.start(handler);
+
         rosCameraPreviewView = (RosCameraPreviewView) findViewById(R.id.ros_camera_preview_view);
     }
 
@@ -39,6 +63,13 @@ public class MainActivity extends RosActivity {
             cameraId = 0;
         }
         rosCameraPreviewView.setCamera(Camera.open(cameraId));
+        rosCameraPreviewView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                startActivity(new Intent(MainActivity.this, Settings.class));
+                return true;
+            }
+        });
         NodeConfiguration nodeConfiguration =
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
