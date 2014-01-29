@@ -20,6 +20,7 @@ import org.ros.node.NodeMainExecutor;
 public class MainActivity extends RosActivity {
 
     private RosCameraPreviewView rosCameraPreviewView;
+    private Handler mHandler;
 
     public MainActivity() {
         super("Robot Mitya\'s ticker", "Robot Mitya");
@@ -34,7 +35,7 @@ public class MainActivity extends RosActivity {
 
         Settings.initialize(this);
 
-        Handler handler = new Handler() {
+        mHandler = new Handler() {
             @Override
             public void handleMessage(final Message msg) {
                 String message = (String) msg.obj;
@@ -45,13 +46,26 @@ public class MainActivity extends RosActivity {
             }
         };
 
-        BluetoothHelper.initialize(this);
-        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
-            return;
-        }
-        BluetoothHelper.start(handler);
-
         rosCameraPreviewView = (RosCameraPreviewView) findViewById(R.id.ros_camera_preview_view);
+    }
+
+    @Override
+    protected void onResume() {
+        BluetoothHelper.initialize(this);
+//        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
+//            return;
+//        }
+
+        BluetoothHelper.start(mHandler);
+        BluetoothHelper.send("I0001");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        BluetoothHelper.send("I0000");
+        BluetoothHelper.stop();
+        super.onPause();
     }
 
     @Override
@@ -68,6 +82,12 @@ public class MainActivity extends RosActivity {
             public boolean onLongClick(View v) {
                 startActivity(new Intent(MainActivity.this, Settings.class));
                 return true;
+            }
+        });
+        rosCameraPreviewView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                BluetoothHelper.send("I0001");
             }
         });
         NodeConfiguration nodeConfiguration =
