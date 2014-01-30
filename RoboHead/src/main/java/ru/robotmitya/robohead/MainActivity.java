@@ -1,26 +1,26 @@
 package ru.robotmitya.robohead;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
-import org.ros.android.view.camera.RosCameraPreviewView;
-import org.ros.node.Node;
 import org.ros.node.NodeConfiguration;
-import org.ros.node.NodeMain;
 import org.ros.node.NodeMainExecutor;
 
 public class MainActivity extends RosActivity {
 
-    private RosCameraPreviewView rosCameraPreviewView;
-    private Handler mHandler;
+    private EyePreviewView mEyePreviewView;
+    private Handler mBluetoothHandler;
 
     public MainActivity() {
         super("Robot Mitya\'s ticker", "Robot Mitya");
@@ -35,7 +35,7 @@ public class MainActivity extends RosActivity {
 
         Settings.initialize(this);
 
-        mHandler = new Handler() {
+        mBluetoothHandler = new Handler() {
             @Override
             public void handleMessage(final Message msg) {
                 String message = (String) msg.obj;
@@ -46,57 +46,73 @@ public class MainActivity extends RosActivity {
             }
         };
 
-        rosCameraPreviewView = (RosCameraPreviewView) findViewById(R.id.ros_camera_preview_view);
-    }
-
-    @Override
-    protected void onResume() {
-        BluetoothHelper.initialize(this);
-//        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
-//            return;
-//        }
-
-        BluetoothHelper.start(mHandler);
-        BluetoothHelper.send("I0001");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        BluetoothHelper.send("I0000");
-        BluetoothHelper.stop();
-        super.onPause();
-    }
-
-    @Override
-    protected void init(NodeMainExecutor nodeMainExecutor) {
-        int cameraId;
-        if (Camera.getNumberOfCameras() > 1) {
-            cameraId = 1;
-        } else {
-            cameraId = 0;
-        }
-        rosCameraPreviewView.setCamera(Camera.open(cameraId));
-        rosCameraPreviewView.setOnLongClickListener(new View.OnLongClickListener() {
+        mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
+        mEyePreviewView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 startActivity(new Intent(MainActivity.this, Settings.class));
                 return true;
             }
         });
-        rosCameraPreviewView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                BluetoothHelper.send("I0001");
-            }
-        });
+    }
+
+    @Override
+    public void startMasterChooser() {
+        Intent data = new Intent();
+        data.putExtra("ROS_MASTER_URI", Settings.getMasterUri());
+        data.putExtra("NEW_MASTER", true);
+        data.putExtra("ROS_MASTER_PRIVATE", false);
+        onActivityResult(0, RESULT_OK, data);
+    }
+
+    @Override
+    protected void init(NodeMainExecutor nodeMainExecutor) {
         NodeConfiguration nodeConfiguration =
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
-        nodeMainExecutor.execute(rosCameraPreviewView, nodeConfiguration);
+        nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
         BodyNode bodyNode = new BodyNode();
         nodeMainExecutor.execute(bodyNode, nodeConfiguration);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+////////////
+        BluetoothHelper.initialize(this);
+//        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
+//            return;
+//        }
+        BluetoothHelper.start(mBluetoothHandler);
+
+        startVideoStreaming();
+    }
+
+    @Override
+    protected void onStop() {
+///////////
+        BluetoothHelper.stop();
+
+        stopVideoStreaming();
+
+        super.onStop();
+    }
+
+    private void startVideoStreaming() {
+        // Start of video streaming is delayed.
+        Handler h = new Handler(Looper.getMainLooper());
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                int cameraId = Camera.getNumberOfCameras() > 1 ? 1 : 0;
+                mEyePreviewView.setCamera(Camera.open(cameraId));
+            }
+        };
+        h.postDelayed(r, 1000);
+    }
+
+    private void stopVideoStreaming() {
+        mEyePreviewView.releaseCamera();
+    }
 }

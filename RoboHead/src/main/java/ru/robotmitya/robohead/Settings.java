@@ -17,15 +17,23 @@ import android.preference.PreferenceManager;
  */
 public final class Settings extends PreferenceActivity implements OnPreferenceChangeListener {
 
+    private static String mMasterUri;
+
     /**
      * Robot's Bluetooth adapter MAC-address.
      */
     private static String mRoboBodyMac; // "00:12:03:31:01:22"
 
+    private EditTextPreference mEditTextPreferenceMasterUri;
+
     /**
      * EditText for mRoboBodyMac option.
      */
     private EditTextPreference mEditTextPreferenceRoboBodyMac;
+
+    public static String getMasterUri() {
+        return mMasterUri;
+    }
 
     /**
      * Аксессор поля mRoboBodyMac.
@@ -58,6 +66,12 @@ public final class Settings extends PreferenceActivity implements OnPreferenceCh
         String key;
         String title;
 
+        key = getString(R.string.option_master_uri_key);
+        mEditTextPreferenceMasterUri = (EditTextPreference) this.findPreference(key);
+        title = getString(R.string.option_master_uri_title) + ": " + mMasterUri;
+        mEditTextPreferenceMasterUri.setTitle(title);
+        mEditTextPreferenceMasterUri.setOnPreferenceChangeListener(this);
+
         key = getString(R.string.option_robobody_mac_key);
         mEditTextPreferenceRoboBodyMac = (EditTextPreference) this.findPreference(key);
         title = getString(R.string.option_robobody_mac_title) + ": " + mRoboBodyMac;
@@ -79,6 +93,10 @@ public final class Settings extends PreferenceActivity implements OnPreferenceCh
         String key;
         String defaultValue;
 
+        key = context.getString(R.string.option_master_uri_key);
+        defaultValue = context.getString(R.string.option_master_uri_default_value);
+        mMasterUri = settings.getString(key, defaultValue);
+
         key = context.getString(R.string.option_robobody_mac_key);
         defaultValue = context.getString(R.string.option_robobody_mac_default_value);
         mRoboBodyMac = settings.getString(key, defaultValue);
@@ -93,6 +111,13 @@ public final class Settings extends PreferenceActivity implements OnPreferenceCh
     public boolean onPreferenceChange(final Preference preference, final Object newValue) {
         if (preference == null) {
             return false;
+        }
+
+        if (preference == mEditTextPreferenceMasterUri) {
+            mMasterUri = (String) newValue;
+            mEditTextPreferenceMasterUri.setTitle(R.string.option_master_uri_title);
+            mEditTextPreferenceMasterUri.setTitle(mEditTextPreferenceMasterUri.getTitle() + ": " + newValue);
+            return true;
         }
 
         if (preference == mEditTextPreferenceRoboBodyMac) {
