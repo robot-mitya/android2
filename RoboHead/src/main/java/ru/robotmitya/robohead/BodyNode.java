@@ -3,6 +3,10 @@
  */
 package ru.robotmitya.robohead;
 
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import org.ros.message.MessageListener;
@@ -17,6 +21,20 @@ import org.ros.node.topic.Subscriber;
  *
  */
 public class BodyNode implements NodeMain {
+    private Context mContext;
+    private BluetoothAdapter mBluetoothAdapter;
+    private Handler mBluetoothHandler;
+
+    public BodyNode(
+            final Context context,
+            final BluetoothAdapter bluetoothAdapter,
+            final Handler bluetoothHandler) {
+        super();
+        mContext = context;
+        mBluetoothAdapter = bluetoothAdapter;
+        mBluetoothHandler = bluetoothHandler;
+    }
+
     @Override
     public GraphName getDefaultNodeName() {
         return GraphName.of("robot_mitya/body_node");
@@ -24,6 +42,8 @@ public class BodyNode implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+        BluetoothHelper.start(mContext, mBluetoothAdapter, mBluetoothHandler);
+
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/command", std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -37,7 +57,7 @@ public class BodyNode implements NodeMain {
 
     @Override
     public void onShutdown(Node node) {
-
+        BluetoothHelper.stop();
     }
 
     @Override

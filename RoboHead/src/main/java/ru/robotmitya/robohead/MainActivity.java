@@ -1,16 +1,16 @@
 package ru.robotmitya.robohead;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.ros.address.InetAddressFactory;
 import org.ros.android.RosActivity;
@@ -20,6 +20,7 @@ import org.ros.node.NodeMainExecutor;
 public class MainActivity extends RosActivity {
 
     private EyePreviewView mEyePreviewView;
+    private BluetoothAdapter mBluetoothAdapter;
     private Handler mBluetoothHandler;
 
     public MainActivity() {
@@ -35,6 +36,7 @@ public class MainActivity extends RosActivity {
 
         Settings.initialize(this);
 
+        //todo Избавиться от mBluetoothHandler. Надо сразу публиковать пришедшие от Мити сообщения.
         mBluetoothHandler = new Handler() {
             @Override
             public void handleMessage(final Message msg) {
@@ -54,6 +56,8 @@ public class MainActivity extends RosActivity {
                 return true;
             }
         });
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     @Override
@@ -72,30 +76,43 @@ public class MainActivity extends RosActivity {
         nodeConfiguration.setMasterUri(getMasterUri());
         nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
-        BodyNode bodyNode = new BodyNode();
-        nodeMainExecutor.execute(bodyNode, nodeConfiguration);
+        if (mBluetoothAdapter == null) {
+            Log.e(getString(R.string.error_no_bluetooth_adapter));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(
+                            MainActivity.this,
+                            MainActivity.this.getString(R.string.error_no_bluetooth_adapter),
+                            Toast.LENGTH_LONG)
+                    .show();
+                }
+            });
+        } else if (!mBluetoothAdapter.isEnabled()) {
+            Log.e(getString(R.string.error_bluetooth_adapter_is_not_activated));
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(
+                            MainActivity.this,
+                            MainActivity.this.getString(R.string.error_bluetooth_adapter_is_not_activated),
+                            Toast.LENGTH_LONG)
+                    .show();
+                }
+            });
+        } else {
+            BodyNode bodyNode = new BodyNode(this, mBluetoothAdapter, mBluetoothHandler);
+            nodeMainExecutor.execute(bodyNode, nodeConfiguration);
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-////////////
-        BluetoothHelper.initialize(this);
-//        if (!BluetoothHelper.getBluetoothAdapterIsEnabled()) {
-//            return;
-//        }
-        BluetoothHelper.start(mBluetoothHandler);
-
         startVideoStreaming();
     }
 
     @Override
     protected void onStop() {
-///////////
-        BluetoothHelper.stop();
-
         stopVideoStreaming();
-
         super.onStop();
     }
 

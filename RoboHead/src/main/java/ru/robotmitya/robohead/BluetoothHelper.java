@@ -8,14 +8,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-//import android.widget.Toast;
 
 /**
  * Created by dmitrydzz on 1/28/14.
@@ -26,19 +24,9 @@ import android.os.Message;
  */
 public final class BluetoothHelper {
     /**
-     * Константа для обработчика интента включения Bluetooth.
-     */
-    public static final int REQUEST_ENABLE_BT = 1;
-
-    /**
-     * MAC-адрес bluetooth-модуля, подключаемого к контроллеру робота.
-     */
-    // private static final String ROBOBODY_MAC = "00:12:03:31:01:22";
-
-    /**
      * Activity that create and use BluetoothHelper.
      */
-    private static Activity mParentActivity;
+    private static Context mContext;
 
     /**
      * Handler обрабатывающий все сообщения в Android-приложении робота.
@@ -50,11 +38,6 @@ public final class BluetoothHelper {
      * Bluetooth-адаптер телефона.
      */
     private static BluetoothAdapter mBluetoothAdapter = null;
-
-    /**
-     * Bluetooth-модуль, подключенный к контроллеру.
-     */
-    private static BluetoothDevice mBluetoothDevice = null;
 
     /**
      * Сокет.
@@ -70,11 +53,6 @@ public final class BluetoothHelper {
      * Выходной поток сообщений. В него помещаются сообщения для контроллера робота.
      */
     private static OutputStream mOutputStream = null;
-
-    /**
-     * Признак активности Bluetooth-адаптера.
-     */
-    private static boolean mBluetoothAdapterIsEnabled = false;
 
     /**
      * Признак установления соединения с Bluetooth-модулем контроллера робота.
@@ -108,46 +86,28 @@ public final class BluetoothHelper {
     }
 
     /**
-     * Начальная инициализация bluetooth-адаптера телефона.
-     * Должно вызываться только один раз, например, в onCreate главной активити.
-     * @param parentActivity родительское активити.
-     */
-    public static void initialize(final Activity parentActivity) {
-        mParentActivity = parentActivity;
-        mBluetoothAdapterIsEnabled = false;
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            String errorText = mParentActivity.getResources().getString(R.string.error_no_bluetooth_adapter);
-            Log.e(errorText);
-//            Toast.makeText(parentActivity, errorText, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (mBluetoothAdapter.isEnabled()) {
-            mBluetoothAdapterIsEnabled = true;
-        } else {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            parentActivity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-    }
-
-    /**
      * Соединение с bluetooth-модулем робота. Приём от контроллера робота и
      * передача на обработку сообщений.
      * @param messageHandler handler, обрабатывающий все сообщения робота.
      * @return true, если соединение выполнено.
      */
-    public static boolean start(final Handler messageHandler) {
+    public static boolean start(
+            final Context context,
+            final BluetoothAdapter bluetoothAdapter,
+            final Handler messageHandler) {
+
+        mContext = context;
+        mBluetoothAdapter = bluetoothAdapter;
         mMessageHandler = messageHandler;
 
         if (mBluetoothAdapter == null) {
-            String errorText = mParentActivity.getResources().getString(R.string.error_no_bluetooth_adapter);
+            String errorText = mContext.getResources().getString(R.string.error_no_bluetooth_adapter);
             Log.e(errorText);
             return false;
         }
 
-        if (!mBluetoothAdapterIsEnabled) {
-            String errorText = mParentActivity.getResources().getString(R.string.error_bluetooth_adapter_is_not_activated);
+        if (!mBluetoothAdapter.isEnabled()) {
+            String errorText = mContext.getResources().getString(R.string.error_bluetooth_adapter_is_not_activated);
             Log.e(errorText);
             return false;
         }
@@ -192,9 +152,7 @@ public final class BluetoothHelper {
 
                             if ((messageList != null) && (mMessageHandler != null)) {
                                 // Выполнить каждую принятую команду:
-                                for (int i = 0; i < messageList.size(); i++) {
-                                    String messageText = messageList.get(i);
-
+                                for (String messageText : messageList) {
                                     // Команды передаются в RoboHeadActivity:
                                     Message message = new Message();
                                     message.obj = messageText;
@@ -219,8 +177,10 @@ public final class BluetoothHelper {
      * Разрыв bluetooth-соединения.
      */
     public static void stop() {
-        mReceiveThread.interrupt();
-        mReceiveThread = null;
+        if (mReceiveThread != null) {
+            mReceiveThread.interrupt();
+            mReceiveThread = null;
+        }
     }
 
     /**
@@ -228,9 +188,9 @@ public final class BluetoothHelper {
      * @throws Exception on Bluetooth connection error.
      */
     private static void connect() throws Exception {
-        mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(Settings.getRoboBodyMac());
-        Method m = mBluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
-        mBluetoothSocket = (BluetoothSocket) m.invoke(mBluetoothDevice, Integer.valueOf(1));
+        BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(Settings.getRoboBodyMac());
+        Method m = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+        mBluetoothSocket = (BluetoothSocket) m.invoke(bluetoothDevice, Integer.valueOf(1));
 
         // Если контроллер робота недоступен, connect() вызывает исключение и тормозит работу
         // приложения, несмотря на отдельный поток!
@@ -269,7 +229,7 @@ public final class BluetoothHelper {
                     mOutputStream.write(message.getBytes());
                 } catch (IOException e) {
                     String errorText = String.format(
-                            mParentActivity.getResources().getString(R.string.error_sending_message_through_bluetooth),
+                            mContext.getResources().getString(R.string.error_sending_message_through_bluetooth),
                             message);
                     Log.e(errorText);
                 }
@@ -316,13 +276,5 @@ public final class BluetoothHelper {
         mPreviousMessagesRest = messages;
 
         return result;
-    }
-
-    /**
-     * Gets bluetooth adapter's state.
-     * @return true if bluetooth adapter is active.
-     */
-    public static boolean getBluetoothAdapterIsEnabled() {
-        return mBluetoothAdapterIsEnabled;
     }
 }
