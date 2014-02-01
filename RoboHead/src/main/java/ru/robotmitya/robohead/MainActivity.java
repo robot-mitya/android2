@@ -6,7 +6,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,7 +20,6 @@ public class MainActivity extends RosActivity {
 
     private EyePreviewView mEyePreviewView;
     private BluetoothAdapter mBluetoothAdapter;
-    private Handler mBluetoothHandler;
 
     public MainActivity() {
         super("Robot Mitya\'s ticker", "Robot Mitya");
@@ -35,18 +33,6 @@ public class MainActivity extends RosActivity {
         setContentView(R.layout.activity_main);
 
         Settings.initialize(this);
-
-        //todo Избавиться от mBluetoothHandler. Надо сразу публиковать пришедшие от Мити сообщения.
-        mBluetoothHandler = new Handler() {
-            @Override
-            public void handleMessage(final Message msg) {
-                String message = (String) msg.obj;
-                String command = MessageHelper.getMessageIdentifier(message);
-                String value = MessageHelper.getMessageValue(message);
-                Log.i("Message: " + message);
-                Log.i("Command: " + command + ", value: " + value);
-            }
-        };
 
         mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
         mEyePreviewView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -99,8 +85,8 @@ public class MainActivity extends RosActivity {
                 }
             });
         } else {
-            BodyNode bodyNode = new BodyNode(this, mBluetoothAdapter, mBluetoothHandler);
-            nodeMainExecutor.execute(bodyNode, nodeConfiguration);
+            BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter);
+            nodeMainExecutor.execute(bluetoothBodyNode, nodeConfiguration);
         }
     }
 
