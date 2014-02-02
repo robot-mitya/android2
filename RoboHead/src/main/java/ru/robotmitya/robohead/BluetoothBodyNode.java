@@ -130,7 +130,7 @@ public class BluetoothBodyNode implements NodeMain {
             }
         });
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/command", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/body", std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(final std_msgs.String message) {
