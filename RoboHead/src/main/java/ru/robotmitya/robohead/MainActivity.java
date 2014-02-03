@@ -2,10 +2,9 @@ package ru.robotmitya.robohead;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
-import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,9 +16,24 @@ import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
 public class MainActivity extends RosActivity {
-
     private EyePreviewView mEyePreviewView;
     private BluetoothAdapter mBluetoothAdapter;
+
+    private Handler mEyeNodeHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (mEyePreviewView == null) {
+                return true;
+            }
+            if (msg.arg1 == EyePreviewView.VIDEO_STARTED) {
+                mEyePreviewView.setVisibility(View.VISIBLE);
+            } else if (msg.arg1 == EyePreviewView.VIDEO_STOPPED) {
+                mEyePreviewView.setVisibility(View.GONE);
+            }
+
+            return true;
+        }
+    });
 
     public MainActivity() {
         super("Robot Mitya\'s ticker", "Robot Mitya");
@@ -35,6 +49,7 @@ public class MainActivity extends RosActivity {
         Settings.initialize(this);
 
         mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
+        mEyePreviewView.setHandler(mEyeNodeHandler);
         mEyePreviewView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -44,6 +59,18 @@ public class MainActivity extends RosActivity {
         });
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mEyePreviewView.startVideoStreaming();
+    }
+
+    @Override
+    protected void onStop() {
+        mEyePreviewView.stopVideoStreaming();
+        super.onStop();
     }
 
     @Override
@@ -62,6 +89,11 @@ public class MainActivity extends RosActivity {
         nodeConfiguration.setMasterUri(getMasterUri());
         nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
+        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration);
+    }
+
+    private void initBluetoothBodyNode(final NodeMainExecutor nodeMainExecutor,
+                                       final NodeConfiguration nodeConfiguration) {
         if (mBluetoothAdapter == null) {
             Log.e(getString(R.string.error_no_bluetooth_adapter));
             runOnUiThread(new Runnable() {
@@ -70,7 +102,7 @@ public class MainActivity extends RosActivity {
                             MainActivity.this,
                             MainActivity.this.getString(R.string.error_no_bluetooth_adapter),
                             Toast.LENGTH_LONG)
-                    .show();
+                            .show();
                 }
             });
         } else if (!mBluetoothAdapter.isEnabled()) {
@@ -81,41 +113,12 @@ public class MainActivity extends RosActivity {
                             MainActivity.this,
                             MainActivity.this.getString(R.string.error_bluetooth_adapter_is_not_activated),
                             Toast.LENGTH_LONG)
-                    .show();
+                            .show();
                 }
             });
         } else {
             BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter);
             nodeMainExecutor.execute(bluetoothBodyNode, nodeConfiguration);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        startVideoStreaming();
-    }
-
-    @Override
-    protected void onStop() {
-        stopVideoStreaming();
-        super.onStop();
-    }
-
-    private void startVideoStreaming() {
-        // Start of video streaming is delayed.
-        Handler h = new Handler(Looper.getMainLooper());
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                int cameraId = Camera.getNumberOfCameras() > 1 ? 1 : 0;
-                mEyePreviewView.setCamera(Camera.open(cameraId));
-            }
-        };
-        h.postDelayed(r, 1000);
-    }
-
-    private void stopVideoStreaming() {
-        mEyePreviewView.releaseCamera();
     }
 }
