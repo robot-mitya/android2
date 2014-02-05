@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.ros.address.InetAddressFactory;
@@ -48,15 +49,20 @@ public class MainActivity extends RosActivity {
 
         Settings.initialize(this);
 
-        mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
-        mEyePreviewView.setHandler(mEyeNodeHandler);
-        mEyePreviewView.setOnLongClickListener(new View.OnLongClickListener() {
+        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 startActivity(new Intent(MainActivity.this, Settings.class));
                 return true;
             }
-        });
+        };
+
+        mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
+        mEyePreviewView.setHandler(mEyeNodeHandler);
+        mEyePreviewView.setOnLongClickListener(onLongClickListener);
+
+        LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.root_linear_layout);
+        rootLinearLayout.setOnLongClickListener(onLongClickListener);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -64,7 +70,7 @@ public class MainActivity extends RosActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mEyePreviewView.startVideoStreaming();
+        mEyePreviewView.startVideoStreaming(Settings.getCameraIndex());
     }
 
     @Override

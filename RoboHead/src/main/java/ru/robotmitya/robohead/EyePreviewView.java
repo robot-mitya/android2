@@ -22,7 +22,6 @@ public class EyePreviewView extends RosCameraPreviewView {
     public static int VIDEO_STOPPED = 2;
 
     private Handler mHandler;
-    private int mCameraIndex = 1;
 
     public EyePreviewView(Context context) {
         super(context);
@@ -49,8 +48,6 @@ public class EyePreviewView extends RosCameraPreviewView {
     public void onStart(ConnectedNode connectedNode) {
         super.onStart(connectedNode);
 
-        mCameraIndex = 1;
-
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/eye", std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -62,14 +59,17 @@ public class EyePreviewView extends RosCameraPreviewView {
                     if (value.contentEquals("0010")) {
                         Log.d("Video off");
                         stopVideoStreaming();
+                        Settings.setCameraIndex(EyePreviewView.this.getContext(), -1);
                     } else if (value.contentEquals("0011")) {
-                        Log.d("Front camera on");
-                        mCameraIndex = 1;
-                        startVideoStreaming();
+                        Log.d("Camera 0 is turned on");
+                        int cameraIndex = 0;
+                        startVideoStreaming(cameraIndex);
+                        Settings.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
                     } else if (value.contentEquals("0012")) {
-                        Log.d("Back camera on");
-                        mCameraIndex = 0;
-                        startVideoStreaming();
+                        Log.d("Camera 1 is turned on");
+                        int cameraIndex = 1;
+                        startVideoStreaming(cameraIndex);
+                        Settings.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
                     }
                 }
             }
@@ -82,10 +82,11 @@ public class EyePreviewView extends RosCameraPreviewView {
         stopVideoStreaming();
     }
 
-    public void startVideoStreaming() {
+    public void startVideoStreaming(final int cameraIndex) {
         stopVideoStreaming();
+        final int index = cameraIndex;
         final int numberOfCameras = Camera.getNumberOfCameras();
-        if (numberOfCameras == 0) {
+        if ((index < 0) || (index >= numberOfCameras)) {
             return;
         }
 
@@ -94,8 +95,8 @@ public class EyePreviewView extends RosCameraPreviewView {
         final Runnable r = new Runnable() {
             @Override
             public void run() {
-                if ((mCameraIndex >= 0) && (mCameraIndex < numberOfCameras)) {
-                    setCamera(Camera.open(mCameraIndex));
+                if ((index >= 0) && (index < numberOfCameras)) {
+                    setCamera(Camera.open(index));
                 }
             }
         };
@@ -103,6 +104,7 @@ public class EyePreviewView extends RosCameraPreviewView {
 
         Message message = new Message();
         message.arg1 = VIDEO_STARTED;
+        message.arg2 = cameraIndex;
         mHandler.sendMessage(message);
     }
 
@@ -111,6 +113,7 @@ public class EyePreviewView extends RosCameraPreviewView {
 
         Message message = new Message();
         message.arg1 = VIDEO_STOPPED;
+        message.arg2 = -1;
         mHandler.sendMessage(message);
     }
 }
