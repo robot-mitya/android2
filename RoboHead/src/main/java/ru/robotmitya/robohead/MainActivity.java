@@ -97,6 +97,9 @@ public class MainActivity extends RosActivity {
 
         initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration);
 
+        FaceNode faceNode = new FaceNode();
+        nodeMainExecutor.execute(faceNode, nodeConfiguration);
+
         startActivity(new Intent(this, FaceActivity.class));
     }
 
