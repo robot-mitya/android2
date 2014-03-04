@@ -1,7 +1,9 @@
 package ru.robotmitya.robohead;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.ros.message.MessageListener;
@@ -16,10 +18,17 @@ import org.ros.node.topic.Subscriber;
  *
  */
 public class FaceNode implements NodeMain {
-    public static String BROADCAST_NAME = "ru.robot-mitya.FACE-CHANGE";
-    public static String BROADCAST_EXTRA_NAME = "message";
+    public static String BROADCAST_FACE_CHANGE_NAME = "ru.robot-mitya.FACE-CHANGE";
+    public static String BROADCAST_FACE_CHANGE_EXTRA_NAME = "message";
+
+    public static String BROADCAST_FACE_PATTING = "ru.robot-mitya.FACE-PAT";
+    public static String BROADCAST_FACE_PUSH_EYE = "ru.robot-mitya.FACE-EYE-DIG";
+    public static String BROADCAST_FACE_PUSH_NOSE = "ru.robot-mitya.FACE-NOSE-DIG";
 
     private Context mContext;
+    private BroadcastReceiver mBroadcastReceiverPatting;
+    private BroadcastReceiver mBroadcastReceiverPushEye;
+    private BroadcastReceiver mBroadcastReceiverPushNose;
 
     public FaceNode(final Context context) {
         mContext = context;
@@ -40,15 +49,48 @@ public class FaceNode implements NodeMain {
 
                 Log.d("Message received in FaceNode: " + messageBody);
 
-                Intent intent = new Intent(BROADCAST_NAME);
-                intent.putExtra(BROADCAST_EXTRA_NAME, messageBody);
+                Intent intent = new Intent(BROADCAST_FACE_CHANGE_NAME);
+                intent.putExtra(BROADCAST_FACE_CHANGE_EXTRA_NAME, messageBody);
                 LocalBroadcastManager.getInstance(FaceNode.this.mContext).sendBroadcast(intent);
             }
         });
+
+        mBroadcastReceiverPatting = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("Message received in FaceNode: hair patting");
+
+            }
+        };
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverPatting, new IntentFilter(FaceNode.BROADCAST_FACE_PATTING));
+
+        mBroadcastReceiverPushEye = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("Message received in FaceNode: eye push");
+
+            }
+        };
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverPushEye, new IntentFilter(FaceNode.BROADCAST_FACE_PUSH_EYE));
+
+        mBroadcastReceiverPushNose = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("Message received in FaceNode: nose push");
+
+            }
+        };
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverPushNose, new IntentFilter(FaceNode.BROADCAST_FACE_PUSH_NOSE));
     }
 
     @Override
     public void onShutdown(Node node) {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverPatting);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverPushEye);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverPushNose);
     }
 
     @Override

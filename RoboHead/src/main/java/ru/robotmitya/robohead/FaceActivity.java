@@ -20,7 +20,7 @@ public class FaceActivity extends Activity {
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra(FaceNode.BROADCAST_EXTRA_NAME);
+                String message = intent.getStringExtra(FaceNode.BROADCAST_FACE_CHANGE_EXTRA_NAME);
                 Log.d("Message received in FaceActivity: " + message);
                 FaceType faceType = FaceHelper.messageToFaceType(message);
                 if ((mFaceHelper != null) && (faceType != FaceType.ftUnknown)) {
@@ -40,13 +40,15 @@ public class FaceActivity extends Activity {
         ImageView faceImageView = (ImageView) this.findViewById(R.id.imageViewFace);
         mFaceHelper = new FaceHelper(faceImageView);
         mFaceHelper.setFace(FaceType.ftOk);
+
+        new FaceTouchHelper(this, faceImageView, mFaceHelper);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver, new IntentFilter(FaceNode.BROADCAST_NAME));
+                mMessageReceiver, new IntentFilter(FaceNode.BROADCAST_FACE_CHANGE_NAME));
     }
 
     @Override
