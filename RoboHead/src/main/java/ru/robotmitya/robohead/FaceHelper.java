@@ -10,7 +10,7 @@ import android.widget.ImageView;
  * @author Дмитрий Дзахов
  *
  */
-enum FaceType { ftOk, ftHappy, ftBlue, ftAngry, ftIll, ftReadyToPlay }; 
+enum FaceType { ftUnknown, ftOk, ftHappy, ftBlue, ftAngry, ftIll, ftReadyToPlay };
 
 /**
  * Класс для управления лицом робота.
@@ -258,4 +258,35 @@ public final class FaceHelper {
 		mAnimation = (AnimationDrawable) mImageView.getBackground();
 		mAnimation.start();
 	}
+
+    public static FaceType messageToFaceType(final String message) {
+        if (message.contentEquals("M0001")) {
+            return FaceType.ftOk;
+        }
+        if (message.contentEquals("M0002")) {
+            return FaceType.ftHappy;
+        }
+        if (message.contentEquals("M0003")) {
+            return FaceType.ftBlue;
+        }
+        if (message.contentEquals("M0004")) {
+            return FaceType.ftAngry;
+        }
+        if (message.contentEquals("M0005")) {
+            return FaceType.ftIll;
+        }
+        if (message.contentEquals("M0102")) {
+            return FaceType.ftReadyToPlay;
+        }
+        if (message.contentEquals("M0103")) {
+            return FaceType.ftBlue;
+        }
+        if (message.contentEquals("M0104")) {
+            return FaceType.ftAngry;
+        }
+        if (message.contentEquals("M0105")) {
+            return FaceType.ftHappy;
+        }
+        return FaceType.ftUnknown;
+    }
 }
