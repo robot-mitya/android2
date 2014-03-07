@@ -64,7 +64,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: hair patting");
-
+                publish("M0101");
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -84,7 +84,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: nose push");
-
+                publish("M0106");
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
