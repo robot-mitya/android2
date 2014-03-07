@@ -49,20 +49,20 @@ public class MainActivity extends RosActivity {
 
         Settings.initialize(this);
 
-        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                startActivity(new Intent(MainActivity.this, Settings.class));
-                return true;
-            }
-        };
+//        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                startActivity(new Intent(MainActivity.this, Settings.class));
+//                return true;
+//            }
+//        };
 
         mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
         mEyePreviewView.setHandler(mEyeNodeHandler);
-        mEyePreviewView.setOnLongClickListener(onLongClickListener);
+//        mEyePreviewView.setOnLongClickListener(onLongClickListener);
 
         LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.root_linear_layout);
-        rootLinearLayout.setOnLongClickListener(onLongClickListener);
+//        rootLinearLayout.setOnLongClickListener(onLongClickListener);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -99,6 +99,9 @@ public class MainActivity extends RosActivity {
 
         FaceNode faceNode = new FaceNode(this);
         nodeMainExecutor.execute(faceNode, nodeConfiguration);
+
+        ReflexNode reflexNode = new ReflexNode();
+        nodeMainExecutor.execute(reflexNode, nodeConfiguration);
 
         startActivity(new Intent(this, FaceActivity.class));
     }

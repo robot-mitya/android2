@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.view.WindowManager.LayoutParams;
 
@@ -37,11 +39,19 @@ public class FaceActivity extends Activity {
         getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
         getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-        ImageView faceImageView = (ImageView) this.findViewById(R.id.imageViewFace);
+        ImageView faceImageView = (ImageView) findViewById(R.id.imageViewFace);
         mFaceHelper = new FaceHelper(faceImageView);
         mFaceHelper.setFace(FaceType.ftOk);
 
         new FaceTouchHelper(this, faceImageView, mFaceHelper);
+
+        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FaceActivity.this, Settings.class));
+            }
+        });
     }
 
     @Override

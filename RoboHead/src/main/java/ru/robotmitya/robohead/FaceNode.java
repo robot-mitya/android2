@@ -11,6 +11,7 @@ import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
+import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 /**
@@ -30,6 +31,8 @@ public class FaceNode implements NodeMain {
     private BroadcastReceiver mBroadcastReceiverPushEye;
     private BroadcastReceiver mBroadcastReceiverPushNose;
 
+    private Publisher<std_msgs.String> mPublisher;
+
     public FaceNode(final Context context) {
         mContext = context;
     }
@@ -41,6 +44,8 @@ public class FaceNode implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
+        mPublisher = connectedNode.newPublisher("robot_mitya/reflex", std_msgs.String._TYPE);
+
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/face", std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -69,7 +74,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: eye push");
-
+                publish("M0104");
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -99,5 +104,13 @@ public class FaceNode implements NodeMain {
 
     @Override
     public void onError(Node node, Throwable throwable) {
+    }
+
+    private void publish(String command) {
+        if (mPublisher != null) {
+            std_msgs.String message = mPublisher.newMessage();
+            message.setData(command);
+            mPublisher.publish(message);
+        }
     }
 }

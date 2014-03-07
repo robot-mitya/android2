@@ -1,6 +1,7 @@
 package ru.robotmitya.robohead;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -194,5 +195,11 @@ public final class Settings extends PreferenceActivity implements OnPreferenceCh
         }
 
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, FaceActivity.class));
     }
 }
