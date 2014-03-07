@@ -1,29 +1,30 @@
 package ru.robotmitya.robohead;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.view.WindowManager.LayoutParams;
 
-public class FaceActivity extends Activity {
+public class FaceFragment extends Fragment {
     private FaceHelper mFaceHelper;
     private BroadcastReceiver mMessageReceiver;
 
-    public FaceActivity() {
+    public FaceFragment() {
         super();
 
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(FaceNode.BROADCAST_FACE_CHANGE_EXTRA_NAME);
-                Log.d("Message received in FaceActivity: " + message);
+                Log.d("Message received in FaceFragment: " + message);
                 FaceType faceType = FaceHelper.messageToFaceType(message);
                 if ((mFaceHelper != null) && (faceType != FaceType.ftUnknown)) {
                     mFaceHelper.setFace(faceType);
@@ -33,37 +34,40 @@ public class FaceActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_face);
-        getWindow().setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View result = inflater.inflate(R.layout.face_fragment, container, false);
 
-        ImageView faceImageView = (ImageView) findViewById(R.id.imageViewFace);
+        if (result == null) {
+            return null;
+        }
+
+        ImageView faceImageView = (ImageView) result.findViewById(R.id.imageViewFace);
         mFaceHelper = new FaceHelper(faceImageView);
         mFaceHelper.setFace(FaceType.ftOk);
 
-        new FaceTouchHelper(this, faceImageView, mFaceHelper);
+        new FaceTouchHelper(getActivity(), faceImageView, mFaceHelper);
 
-        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
+        ImageButton settingsButton = (ImageButton) result.findViewById(R.id.settingsButton);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FaceActivity.this, Settings.class));
+                startActivity(new Intent(getActivity(), Settings.class));
             }
         });
+
+        return result;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
                 mMessageReceiver, new IntentFilter(FaceNode.BROADCAST_FACE_CHANGE_NAME));
     }
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
         super.onPause();
     }
 }

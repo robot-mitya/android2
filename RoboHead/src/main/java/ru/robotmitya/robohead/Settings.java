@@ -196,10 +196,4 @@ public final class Settings extends PreferenceActivity implements OnPreferenceCh
 
         return false;
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(this, FaceActivity.class));
-    }
 }

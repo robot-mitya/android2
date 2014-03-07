@@ -35,16 +35,6 @@
         </activity>
 
         <activity
-            android:name=".FaceActivity"
-            android:label="@string/app_name"
-            android:theme="@style/FaceTheme"
-            android:screenOrientation="landscape"
-            android:launchMode="singleInstance"
-            android:excludeFromRecents="true"
-            android:noHistory="true">
-        </activity>
-
-        <activity
             android:name="org.ros.android.MasterChooser"
             android:screenOrientation="landscape">
         </activity>

@@ -1,5 +1,7 @@
 package ru.robotmitya.robohead;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +10,6 @@ import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.ros.address.InetAddressFactory;
@@ -47,22 +48,16 @@ public class MainActivity extends RosActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        Settings.initialize(this);
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FaceFragment faceFragment = new FaceFragment();
+        fragmentTransaction.add(R.id.face_fragment, faceFragment);
+        fragmentTransaction.commit();
 
-//        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                startActivity(new Intent(MainActivity.this, Settings.class));
-//                return true;
-//            }
-//        };
+        Settings.initialize(this);
 
         mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
         mEyePreviewView.setHandler(mEyeNodeHandler);
-//        mEyePreviewView.setOnLongClickListener(onLongClickListener);
-
-        LinearLayout rootLinearLayout = (LinearLayout) findViewById(R.id.root_linear_layout);
-//        rootLinearLayout.setOnLongClickListener(onLongClickListener);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -102,8 +97,6 @@ public class MainActivity extends RosActivity {
 
         ReflexNode reflexNode = new ReflexNode();
         nodeMainExecutor.execute(reflexNode, nodeConfiguration);
-
-        startActivity(new Intent(this, FaceActivity.class));
     }
 
     private void initBluetoothBodyNode(final NodeMainExecutor nodeMainExecutor,
