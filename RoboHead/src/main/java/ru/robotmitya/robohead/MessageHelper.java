@@ -76,7 +76,7 @@ public final class MessageHelper {
      * @param message сообщение.
      * @return значение из сообщения.
      */
-    public static String getMessageValue(final String message) {
+    public static String getMessageStringValue(final String message) {
         String result;
 
         // Первые символы считаем идентификатором.
@@ -88,6 +88,15 @@ public final class MessageHelper {
 
         result = correctLength(result, Settings.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
         return result;
+    }
+
+    public static int getMessageIntegerValue(final String message) {
+        String textValue = MessageHelper.getMessageStringValue(message);
+        if (textValue.isEmpty()) {
+            return 0;
+        }
+
+        return Integer.valueOf(textValue, 16);
     }
 
     /**

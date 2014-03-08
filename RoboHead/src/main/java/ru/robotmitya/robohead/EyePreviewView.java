@@ -54,7 +54,7 @@ public class EyePreviewView extends RosCameraPreviewView {
             public void onNewMessage(final std_msgs.String message) {
                 String messageBody = message.getData();
                 String command = MessageHelper.getMessageIdentifier(messageBody);
-                String value = MessageHelper.getMessageValue(messageBody);
+                String value = MessageHelper.getMessageStringValue(messageBody);
                 if (command.contentEquals("I")) {
                     if (value.contentEquals("0010")) {
                         Log.d("Video off");
