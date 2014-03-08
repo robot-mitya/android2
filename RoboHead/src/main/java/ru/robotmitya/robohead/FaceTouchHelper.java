@@ -1,14 +1,10 @@
 package ru.robotmitya.robohead;
 
-//import android.os.Handler;
-//import android.os.Message;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.InputDevice.MotionRange;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
@@ -24,6 +20,8 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Менеджер управления лицом.
 	 */
 	private FaceHelper mFaceHelper;
+
+    private ImageView mImageView;
 
 	/**
 	 * Сохранённая x-координата экрана в момент касания.
@@ -44,7 +42,7 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Коэффициенты перевода координат касания расчитываются один раз при первом касании.
 	 * Признак используется для определения первого касания.
 	 */
-	private boolean mCoefsCalculated;
+	private boolean mCoefsCalculated = false;
 	
 	/**
 	 * Коэффициент для перевода X-координаты касания в универсальные координаты.
@@ -59,30 +57,10 @@ public final class FaceTouchHelper implements OnTouchListener {
 	private float mCoefY;
 	
 	/**
-	 * Используется для определения универсальной X-координаты.
-	 */
-	private float mMinX;
-	
-	/**
-	 * Используется для определения универсальной Y-координаты.
-	 */
-	private float mMinY;
-	
-	/**
 	 * Суммарная длина поглаживания.
 	 */
 	private float mStrokeSize;
 	
-//	/**
-//	 * Хэндлер, принимающий сообщения, сигнализирующие о необходимости что-то сделать. 
-//	 */
-//	private Handler mHandlerDelayedAction = new Handler() {
-//		@Override
-//		public void handleMessage(final Message msg) {
-//			mFaceHelper.setFace(FaceType.ftOk);
-//		}
-//	};
-
 	/**
 	 * Конструктор класса.
 	 * @param imageView контрол для вывода анимации.
@@ -91,6 +69,7 @@ public final class FaceTouchHelper implements OnTouchListener {
 	public FaceTouchHelper(final Context context, final ImageView imageView, final FaceHelper faceHelper) {
         mContext = context;
 		mFaceHelper = faceHelper;
+        mImageView = imageView;
 		imageView.setOnTouchListener(this);
 	}
 
@@ -101,17 +80,12 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * @return true, если действие распознано и обработано.
 	 */
 	public boolean onTouch(final View v, final MotionEvent event) {
-		if (!mCoefsCalculated) {
-			InputDevice touchScreen = event.getDevice();
-			MotionRange motionRange = touchScreen.getMotionRange(0);
-			mCoefX = 1 / (motionRange.getMax() - motionRange.getMin());
-			mMinX = motionRange.getMin();
-			motionRange = touchScreen.getMotionRange(1);
-			mCoefY = 1 / (motionRange.getMax() - motionRange.getMin());
-			mMinY = motionRange.getMin();
-			mCoefsCalculated = true;
-		}
-		
+        if (!mCoefsCalculated) {
+            mCoefX = 1f / (float)mImageView.getWidth();
+            mCoefY = 1f / (float)mImageView.getHeight();
+            mCoefsCalculated = true;
+        }
+
 		float uniX = getUniX(event.getX());
 		float uniY = getUniY(event.getY());
 
@@ -158,7 +132,7 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 */
 	private float getUniX(final float x) {
 		if (mCoefsCalculated) {
-			return mMinX + mCoefX * x;
+			return mCoefX * x;
 		} else {
 			return 0;
 		}
@@ -171,7 +145,7 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 */
 	private float getUniY(final float y) {
 		if (mCoefsCalculated) {
-			return mMinY + mCoefY * y;
+			return mCoefY * y;
 		} else {
 			return 0;
 		}
@@ -179,12 +153,16 @@ public final class FaceTouchHelper implements OnTouchListener {
 	
 	/**
 	 * Определение зоны поглаживания.
-	 * @param uniX координата.
+     * @param uniX координата.
 	 * @param uniY координата.
 	 * @return true, если координаты соответствуют зоне поглаживания.
 	 */
 	private boolean isInHairArea(final float uniX, final float uniY) {
-		final float foreHeadMaxY = 0.0926850957509333f;
+        if (isEyeArea(uniX, uniY)) {
+            return false;
+        }
+
+		final float foreHeadMaxY = 0.180f;
 		return (mFaceHelper.getFace() == FaceType.ftOk) && (uniY < foreHeadMaxY);		
 	}
 	
@@ -207,7 +185,6 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Действие при нажатии на нос.
 	 */
 	private void pushNose() {
-//		SoundManager.playSound(SoundManager.BEEP, 1);
         Log.d("Nose was pushed");
         Intent intent = new Intent(FaceNode.BROADCAST_FACE_PUSH_NOSE);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
@@ -221,16 +198,16 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 */
 	private boolean isEyeArea(final float uniX, final float uniY) {
 		// Левый глаз:
-		final float minLX = 0.2502606882168926f;
-		final float maxLX = 0.3023983315954119f;
-		final float minLY = 0.2040816326530612f;
-		final float maxLY = 0.2968460111317254f;
+		final float minLX = 0.225f;
+		final float maxLX = 0.360f;
+		final float minLY = 0.132f;
+		final float maxLY = 0.370f;
 		
 		// Правый глаз:
-		final float minRX = 0.6256517205422315f;
-		final float maxRX = 0.7299270072992701f;
-		final float minRY = 0.1484230055658627f;
-		final float maxRY = 0.3153988868274583f;
+		final float minRX = 0.618f;
+		final float maxRX = 0.817f;
+		final float minRY = 0.067f;
+		final float maxRY = 0.420f;
 
 		boolean isLeftEyeArea = (uniX >= minLX) && (uniX < maxLX) && (uniY >= minLY) && (uniY < maxLY);
 		boolean isRightEyeArea = (uniX >= minRX) && (uniX < maxRX) && (uniY >= minRY) && (uniY < maxRY);
@@ -241,17 +218,6 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Действие при тычке в глаз.
 	 */
 	private void pushEye() {
-//		// Злое лицо на 5 секунд:
-////		mFaceHelper.setFace(FaceType.ftAngry);
-////		final int happyFaceDuration = 5000;
-////		mHandlerDelayedAction.sendEmptyMessageDelayed(0, happyFaceDuration);
-//
-//		// Порычать секунду:
-//		final int vibrateDuration = 800;
-//		SoundManager.vibrate(vibrateDuration);
-//
-//		// Отскочить назад:
-//		BluetoothHelper.send(MessageConstant.FACETYPE_ANGRY_JUMP_BACK);
         Log.d("Eye was pushed");
         Intent intent = new Intent(FaceNode.BROADCAST_FACE_PUSH_EYE);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
