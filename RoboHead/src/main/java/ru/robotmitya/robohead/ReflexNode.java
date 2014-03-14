@@ -23,6 +23,7 @@ public final class ReflexNode implements NodeMain {
 
     public ReflexNode() {
         initHappyReflex();
+        initAngryReflex();
     }
 
     private void initHappyReflex() {
@@ -32,6 +33,12 @@ public final class ReflexNode implements NodeMain {
         mHappyReflex.add("t0001");
         mHappyReflex.add("W0FA0");
         mHappyReflex.add("M0001");
+    }
+
+    private void initAngryReflex() {
+        Log.e("++++++++++++++++++++++++ 0000" + MessageHelper.makeMessage("=", (short)0));
+        Log.e("++++++++++++++++++++++++ 0100" + MessageHelper.makeMessage("=", (short)256));
+        Log.e("++++++++++++++++++++++++ FF00" + MessageHelper.makeMessage("=", (short)-256));
     }
 
     private boolean mIsExecutingReflex = false;

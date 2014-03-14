@@ -4,9 +4,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.+'
     }
 }
 apply plugin: 'android'
+apply plugin: 'android-test'
 
 repositories {
     mavenCentral()
@@ -22,12 +24,18 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+//    sourceSets {
+//        instrumentTest.setRoot('src/test')
+//    }
+
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
     packagingOptions {
         /* https://github.com/rosjava/android_core/issues/194 */
         exclude 'META-INF/LICENSE.txt'
@@ -40,5 +48,8 @@ dependencies {
 //    compile 'org.ros.android_core:android_honeycomb_mr2:0.1.+'
     compile 'org.ros.rosjava_core:rosjava:0.1.+'
     compile 'com.android.support:appcompat-v7:+'
+//    androidTestCompile 'junit:junit:4.11'
+    androidTestCompile 'junit:junit:4.5+'
+//    instrumentTestCompile 'com.google.guava:guava:14.0.1'
 //    compile "com.android.support:appcompat-v7:19.0.+"
 }

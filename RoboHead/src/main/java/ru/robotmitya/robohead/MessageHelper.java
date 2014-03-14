@@ -36,7 +36,8 @@ public final class MessageHelper {
         String result = text;
         int sourceLength = text.length();
         if (sourceLength > length) {
-            result = text.substring(0, length);
+            result = text.substring(sourceLength - length, sourceLength);
+//            result = text.substring(0, length);
         } else if (sourceLength < length) {
             int charsToAdd = length - sourceLength;
             for (int i = 0; i < charsToAdd; i++) {
@@ -57,6 +58,19 @@ public final class MessageHelper {
         String identifier = correctLength(messageIdentifier, Settings.MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
         String value = correctLength(messageValue, Settings.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
         return identifier.concat(value);
+    }
+
+    /**
+     * Building message from identifier and integer value.
+     * @param messageIdentifier message identifier chars.
+     * @param messageValue signed 2 byte integer value.
+     * @return text message.
+     */
+    public static String makeMessage(final String messageIdentifier, final short messageValue) {
+        String identifier = correctLength(messageIdentifier, Settings.MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
+        String hexValue = Integer.toHexString(messageValue).toUpperCase();
+        hexValue = MessageHelper.correctLength(hexValue, Settings.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
+        return identifier.concat(hexValue);
     }
 
     /**
