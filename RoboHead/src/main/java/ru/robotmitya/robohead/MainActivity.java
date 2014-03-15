@@ -95,7 +95,7 @@ public class MainActivity extends RosActivity {
         FaceNode faceNode = new FaceNode(this);
         nodeMainExecutor.execute(faceNode, nodeConfiguration);
 
-        ReflexNode reflexNode = new ReflexNode();
+        ReflexNode reflexNode = new ReflexNode(this);
         nodeMainExecutor.execute(reflexNode, nodeConfiguration);
     }
 

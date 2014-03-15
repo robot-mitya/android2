@@ -71,7 +71,7 @@ public class BluetoothBodyNode implements NodeMain {
                     if (messageList != null) {
                         // Выполнить каждую принятую команду:
                         for (String messageText : messageList) {
-                            Log.d("BluetoothBodyNode has received: " + messageText);
+                            Log.d("BluetoothBodyNode has received from body: " + messageText);
                         }
                     }
                 } else {
@@ -149,7 +149,7 @@ public class BluetoothBodyNode implements NodeMain {
                     }
                 }
 
-                Log.d("BluetoothBodyNode has sent: " + messageBody);
+                Log.d("BluetoothBodyNode has sent to body: " + messageBody);
             }
         });
     }

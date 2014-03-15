@@ -275,6 +275,12 @@ public final class FaceHelper {
         if (message.contentEquals("M0005")) {
             return FaceType.ftIll;
         }
+        if (message.contentEquals("M0006")) {
+            return FaceType.ftReadyToPlay;
+        }
+        if (message.contentEquals("M0101")) {
+            return FaceType.ftHappy;
+        }
         if (message.contentEquals("M0102")) {
             return FaceType.ftReadyToPlay;
         }
@@ -286,6 +292,9 @@ public final class FaceHelper {
         }
         if (message.contentEquals("M0105")) {
             return FaceType.ftHappy;
+        }
+        if (message.contentEquals("M0106")) {
+            return FaceType.ftOk;
         }
         return FaceType.ftUnknown;
     }
