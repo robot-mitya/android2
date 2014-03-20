@@ -121,6 +121,7 @@ public final class ReflexNode implements NodeMain {
         std_msgs.String message = publisher.newMessage();
         message.setData(command);
         publisher.publish(message);
+        Log.d("Message sent from ReflexNode to " + publisher.getTopicName().toString() + ": " + command);
     }
 
     @Override
