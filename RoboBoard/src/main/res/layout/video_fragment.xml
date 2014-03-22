@@ -8,6 +8,8 @@
     <org.ros.android.view.RosImageView
         android:id="@+id/imageViewVideo"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        android:background="@color/board_background_color"
+        />
 
 </RelativeLayout>

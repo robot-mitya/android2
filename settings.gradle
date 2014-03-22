@@ -1,4 +1,4 @@
-include ':RoboHead', ':RoboBoard'
+include ':RoboHead', ':RoboBoard', ':RoboCommonLib'
 /*
  * Copyright (C) 2011 Google Inc.
  *

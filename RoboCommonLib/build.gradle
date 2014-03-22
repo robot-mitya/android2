@@ -7,7 +7,7 @@ buildscript {
         classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.+'
     }
 }
-apply plugin: 'android'
+apply plugin: 'android-library'
 apply plugin: 'android-test'
 
 repositories {
@@ -40,13 +40,9 @@ android {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'org.ros.android_core:android_gingerbread_mr1:0.1.+'
-//    compile 'org.ros.android_core:android_honeycomb_mr2:0.1.+'
     compile 'org.ros.rosjava_core:rosjava:0.1.+'
     compile 'com.android.support:appcompat-v7:+'
-//    androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'junit:junit:4.5+'
-//    instrumentTestCompile 'com.google.guava:guava:14.0.1'
-//    compile "com.android.support:appcompat-v7:19.0.+"
-    compile project(":RoboCommonLib")
 }

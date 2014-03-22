@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="board_background_color">#80ffbb33</color>
     <color name="board_button_background_color">#40ffff00</color>
     <color name="board_button_background_pressed_color">#ffffbb33</color>
 </resources>

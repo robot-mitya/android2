@@ -68,21 +68,6 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         return mRoboBodyMac;
     }
 
-    /**
-     * Длина сообщений, между уровнями ПК, телефон, контроллер.
-     */
-    public static final int MESSAGE_LENGTH = 5;
-
-    /**
-     * Длина идентификатора в сообщении.
-     */
-    public static final int MESSAGE_IDENTIFIER_LENGTH = 1;
-
-    /**
-     * Длина значения в сообщении.
-     */
-    public static final int MESSAGE_VALUE_LENGTH = 4;
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

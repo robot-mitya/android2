@@ -1,4 +1,4 @@
-package ru.robotmitya.robohead;
+package ru.robotmitya.robocommonlib;
 
 /**
  * Created by dmitrydzz on 1/28/14.
@@ -7,6 +7,21 @@ package ru.robotmitya.robohead;
  *
  */
 public final class MessageHelper {
+    /**
+     * Длина сообщений, между уровнями ПК, телефон, контроллер.
+     */
+    public static final int MESSAGE_LENGTH = 5;
+
+    /**
+     * Длина идентификатора в сообщении.
+     */
+    public static final int MESSAGE_IDENTIFIER_LENGTH = 1;
+
+    /**
+     * Длина значения в сообщении.
+     */
+    public static final int MESSAGE_VALUE_LENGTH = 4;
+
     /**
      * Конструктор спрятан.
      */
@@ -55,8 +70,8 @@ public final class MessageHelper {
      * @return сообщение.
      */
     public static String makeMessage(final String messageIdentifier, final String messageValue) {
-        String identifier = correctLength(messageIdentifier, SettingsActivity.MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
-        String value = correctLength(messageValue, SettingsActivity.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
+        String identifier = correctLength(messageIdentifier, MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
+        String value = correctLength(messageValue, MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
         return identifier.concat(value);
     }
 
@@ -67,9 +82,9 @@ public final class MessageHelper {
      * @return text message.
      */
     public static String makeMessage(final String messageIdentifier, final short messageValue) {
-        String identifier = correctLength(messageIdentifier, SettingsActivity.MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
+        String identifier = correctLength(messageIdentifier, MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
         String hexValue = Integer.toHexString(messageValue).toUpperCase();
-        hexValue = MessageHelper.correctLength(hexValue, SettingsActivity.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
+        hexValue = MessageHelper.correctLength(hexValue, MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
         return identifier.concat(hexValue);
     }
 
@@ -79,9 +94,9 @@ public final class MessageHelper {
      * @return идентификатор сообщения.
      */
     public static String getMessageIdentifier(final String message) {
-        int realLength = Math.min(message.length(), SettingsActivity.MESSAGE_IDENTIFIER_LENGTH);
+        int realLength = Math.min(message.length(), MESSAGE_IDENTIFIER_LENGTH);
         String result = message.substring(0, realLength);
-        result = correctLength(result, SettingsActivity.MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
+        result = correctLength(result, MESSAGE_IDENTIFIER_LENGTH, IDENTIFIER_PREFIX);
         return result;
     }
 
@@ -94,13 +109,13 @@ public final class MessageHelper {
         String result;
 
         // Первые символы считаем идентификатором.
-        if (message.length() <= SettingsActivity.MESSAGE_IDENTIFIER_LENGTH) {
+        if (message.length() <= MESSAGE_IDENTIFIER_LENGTH) {
             result = "";
         } else {
-            result = message.substring(SettingsActivity.MESSAGE_IDENTIFIER_LENGTH, message.length());
+            result = message.substring(MESSAGE_IDENTIFIER_LENGTH, message.length());
         }
 
-        result = correctLength(result, SettingsActivity.MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
+        result = correctLength(result, MESSAGE_VALUE_LENGTH, VALUE_PREFIX);
         return result;
     }
 

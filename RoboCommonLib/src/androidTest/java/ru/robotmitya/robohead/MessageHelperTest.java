@@ -1,4 +1,4 @@
-package ru.robotmitya.robohead;
+package ru.robotmitya.robocommonlib;
 
 import junit.framework.TestCase;
 
