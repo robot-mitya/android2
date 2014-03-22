@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Robot Mitya</string>
+    <string name="app_name">RoboHead</string>
 
     <string name="error_no_bluetooth_adapter">Bluetooth adapter is not found</string>
     <string name="error_bluetooth_adapter_is_not_activated">Bluetooth adapter is not turned on</string>

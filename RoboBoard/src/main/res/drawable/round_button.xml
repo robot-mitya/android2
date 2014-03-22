@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="@dimen/board_button_width" android:height="@dimen/board_button_height" />
+                    <solid android:color="@color/board_button_background_pressed_color" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_settings"
+                android:left="@dimen/board_button_padding"
+                android:top="@dimen/board_button_padding"
+                android:right="@dimen/board_button_padding"
+                android:bottom="@dimen/board_button_padding" />
+        </layer-list>
+    </item>
+
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="@dimen/board_button_width" android:height="@dimen/board_button_height" />
+                    <solid android:color="@color/board_button_background_pressed_color" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_settings"
+                android:left="@dimen/board_button_padding"
+                android:top="@dimen/board_button_padding"
+                android:right="@dimen/board_button_padding"
+                android:bottom="@dimen/board_button_padding" />
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="@dimen/board_button_width" android:height="@dimen/board_button_height" />
+                    <solid android:color="@color/board_button_background_color" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/ic_settings"
+                android:left="@dimen/board_button_padding"
+                android:top="@dimen/board_button_padding"
+                android:right="@dimen/board_button_padding"
+                android:bottom="@dimen/board_button_padding" />
+        </layer-list>
+    </item>
+
+</selector>
+

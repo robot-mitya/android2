@@ -51,7 +51,7 @@ public class FaceFragment extends Fragment {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), Settings.class));
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
         });
 

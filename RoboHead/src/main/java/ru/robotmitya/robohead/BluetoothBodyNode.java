@@ -62,7 +62,7 @@ public class BluetoothBodyNode implements NodeMain {
                     List<String> messageList = null;
                     try {
                         // Получить список принятых на данный момент команд:
-                        messageList = getMessagesFromStream(mInputStream, Settings.MESSAGE_LENGTH);
+                        messageList = getMessagesFromStream(mInputStream, SettingsActivity.MESSAGE_LENGTH);
                     } catch (Exception e) {
                         Log.e("BluetoothBodyNode input error: " + e.getMessage());
                         cancel();
@@ -79,7 +79,7 @@ public class BluetoothBodyNode implements NodeMain {
                     // всех устройств в округе.
                     // createRfcommSocketToServiceRecord(), к сожалению, не работает
                     try {
-                        BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(Settings.getRoboBodyMac());
+                        BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(SettingsActivity.getRoboBodyMac());
                         Method method = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
                         mBluetoothSocket = (BluetoothSocket) method.invoke(bluetoothDevice, 1 /*Integer.valueOf(1)*/);
 

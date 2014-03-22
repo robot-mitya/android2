@@ -59,17 +59,17 @@ public class EyePreviewView extends RosCameraPreviewView {
                     if (value.contentEquals("0010")) {
                         Log.d("Video off");
                         stopVideoStreaming();
-                        Settings.setCameraIndex(EyePreviewView.this.getContext(), -1);
+                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), -1);
                     } else if (value.contentEquals("0011")) {
                         Log.d("Camera 0 is turned on");
                         int cameraIndex = 0;
                         startVideoStreaming(cameraIndex);
-                        Settings.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
+                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
                     } else if (value.contentEquals("0012")) {
                         Log.d("Camera 1 is turned on");
                         int cameraIndex = 1;
                         startVideoStreaming(cameraIndex);
-                        Settings.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
+                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
                     }
                 }
             }
@@ -86,7 +86,7 @@ public class EyePreviewView extends RosCameraPreviewView {
         stopVideoStreaming();
         final int index = cameraIndex;
         final int numberOfCameras = Camera.getNumberOfCameras();
-        if ((index < 0) || (index >= numberOfCameras)) {
+        if ((numberOfCameras == 0) || (index < 0) || (index >= numberOfCameras)) {
             return;
         }
 
