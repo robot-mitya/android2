@@ -24,27 +24,23 @@ public class MainActivity extends RosActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         mVideoFragment = new VideoFragment();
         fragmentTransaction.add(R.id.video_fragment, mVideoFragment);
-
         mBoardFragment = new BoardFragment();
         fragmentTransaction.add(R.id.board_fragment, mBoardFragment);
-
         fragmentTransaction.commit();
 
+        SettingsActivity.initialize(this);
     }
 
     @Override
     public void startMasterChooser() {
         Intent data = new Intent();
-        data.putExtra("ROS_MASTER_URI", "http://192.168.100.10:11311");//SettingsActivity.getMasterUri());
+        data.putExtra("ROS_MASTER_URI", SettingsActivity.getMasterUri());
         data.putExtra("NEW_MASTER", false);
         data.putExtra("ROS_MASTER_PRIVATE", false);
         onActivityResult(0, RESULT_OK, data);

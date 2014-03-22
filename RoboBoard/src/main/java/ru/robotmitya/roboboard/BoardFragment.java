@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class BoardFragment extends Fragment {
@@ -17,11 +18,19 @@ public class BoardFragment extends Fragment {
             return null;
         }
 
-        Button buttonSettings = (Button) result.findViewById(R.id.buttonSettings);
+        ImageView buttonSettings = (ImageView) result.findViewById(R.id.buttonSettings);
         buttonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
+            }
+        });
+
+        ImageView buttonSwitchCam = (ImageView) result.findViewById(R.id.buttonSwitchCam);
+        buttonSwitchCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(BoardFragment.this.getActivity(), "!", Toast.LENGTH_SHORT).show();
             }
         });
 

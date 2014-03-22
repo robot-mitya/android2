@@ -3,30 +3,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <Button
+    <ImageView
         android:id="@+id/buttonSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/round_button"
+        android:background="@drawable/board_button"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
         android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
     />
 
-    <Button
+    <ImageView
         android:id="@+id/buttonSwitchCam"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonSettings"
         android:layout_alignParentRight="true"
-        android:background="@drawable/round_button"
+        android:background="@drawable/board_button"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
         android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_switch_cam"
     />
 
 </RelativeLayout>
