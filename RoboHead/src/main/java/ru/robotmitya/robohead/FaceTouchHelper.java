@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
+import ru.robotmitya.robocommonlib.Log;
+
 /**
  * Класс для контроля касаний к лица робота.
  * @author Дмитрий Дзахов

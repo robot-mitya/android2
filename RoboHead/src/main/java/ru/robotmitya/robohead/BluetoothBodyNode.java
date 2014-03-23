@@ -24,6 +24,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.robotmitya.robocommonlib.Log;
+import ru.robotmitya.robocommonlib.MessageHelper;
+
 /**
  * Created by dmitrydzz on 1/27/14.
  *
@@ -62,7 +65,7 @@ public class BluetoothBodyNode implements NodeMain {
                     List<String> messageList = null;
                     try {
                         // Получить список принятых на данный момент команд:
-                        messageList = getMessagesFromStream(mInputStream, SettingsActivity.MESSAGE_LENGTH);
+                        messageList = getMessagesFromStream(mInputStream, MessageHelper.MESSAGE_LENGTH);
                     } catch (Exception e) {
                         Log.e("BluetoothBodyNode input error: " + e.getMessage());
                         cancel();

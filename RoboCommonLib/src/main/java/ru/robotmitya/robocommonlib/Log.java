@@ -1,4 +1,4 @@
-package ru.robotmitya.robohead;
+package ru.robotmitya.robocommonlib;
 
 /**
  * Created by dmitrydzz on 1/28/14.

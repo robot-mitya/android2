@@ -14,6 +14,9 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import ru.robotmitya.robocommonlib.Log;
+import ru.robotmitya.robocommonlib.MessageHelper;
+
 /**
  * Created by dmitrydzz on 1/30/14.
  */

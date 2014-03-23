@@ -14,6 +14,8 @@ import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import ru.robotmitya.robocommonlib.Log;
+
 /**
  * Created by dmitrydzz on 3/3/14.
  *

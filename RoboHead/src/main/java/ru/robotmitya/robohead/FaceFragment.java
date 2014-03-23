@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import ru.robotmitya.robocommonlib.Log;
+
 public class FaceFragment extends Fragment {
     private FaceHelper mFaceHelper;
     private BroadcastReceiver mMessageReceiver;
