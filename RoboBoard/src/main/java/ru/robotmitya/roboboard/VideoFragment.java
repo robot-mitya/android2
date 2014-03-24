@@ -28,7 +28,6 @@ public class VideoFragment extends Fragment {
         mImageView.setTopicName("/camera/image/compressed");
         mImageView.setMessageType(sensor_msgs.CompressedImage._TYPE);
         mImageView.setMessageToBitmapCallable(new BitmapFromCompressedImage());
-        mImageView.setAdjustViewBounds(true);
 
         return result;
     }

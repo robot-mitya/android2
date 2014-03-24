@@ -3,6 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <!--Right column-->
+
     <ImageView
         android:id="@+id/buttonSettings"
         android:layout_width="wrap_content"
@@ -31,6 +33,98 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_switch_cam"
+    />
+
+    <!--Left column-->
+
+    <ImageView
+        android:id="@+id/buttonFaceOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
+    />
+
+    <ImageView
+        android:id="@+id/buttonFaceHappy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceOk"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
+    />
+
+    <ImageView
+        android:id="@+id/buttonFaceBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceHappy"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
+    />
+
+    <ImageView
+        android:id="@+id/buttonFaceAngry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceBlue"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
+    />
+
+    <ImageView
+        android:id="@+id/buttonFaceIll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceAngry"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
+    />
+
+    <ImageView
+        android:id="@+id/buttonFaceReadyToPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceIll"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_settings"
     />
 
 </RelativeLayout>

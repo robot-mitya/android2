@@ -44,4 +44,5 @@ dependencies {
     compile 'org.ros.rosjava_core:rosjava:0.1.+'
     compile 'com.android.support:appcompat-v7:+'
     androidTestCompile 'junit:junit:4.5+'
+    compile project(":RoboCommonLib")
 }

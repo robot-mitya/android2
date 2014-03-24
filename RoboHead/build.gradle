@@ -44,9 +44,6 @@ dependencies {
 //    compile 'org.ros.android_core:android_honeycomb_mr2:0.1.+'
     compile 'org.ros.rosjava_core:rosjava:0.1.+'
     compile 'com.android.support:appcompat-v7:+'
-//    androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'junit:junit:4.5+'
-//    instrumentTestCompile 'com.google.guava:guava:14.0.1'
-//    compile "com.android.support:appcompat-v7:19.0.+"
     compile project(":RoboCommonLib")
 }
