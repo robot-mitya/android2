@@ -15,6 +15,8 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import ru.robotmitya.robocommonlib.Log;
+import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 3/3/14.
@@ -66,7 +68,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: hair patting");
-                publish("M0101");
+                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_HAPPY));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -76,7 +78,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: eye push");
-                publish("M0104");
+                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_ANGRY));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -86,7 +88,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("Message received in FaceNode: nose push");
-                publish("M0106");
+                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_NOSE));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(

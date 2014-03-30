@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.RoboState;
+import ru.robotmitya.robocommonlib.Rs;
 
 public class BoardFragment extends Fragment {
     private BoardNode mBoardNode;
@@ -39,7 +41,9 @@ public class BoardFragment extends Fragment {
             public void onClick(View v) {
                 if (mBoardNode != null) {
                     RoboState.switchCam();
-                    String command = MessageHelper.makeMessage("I", (short)(0x0011 + RoboState.getSelectedCamIndex()));
+                    String command = MessageHelper.makeMessage(
+                            Rs.Instruction.ID,
+                            (short)(Rs.Instruction.CAMERA_FRONT_ON + RoboState.getSelectedCamIndex()));
                     mBoardNode.publishToEyeTopic(command);
                 }
             }
@@ -78,7 +82,7 @@ public class BoardFragment extends Fragment {
         public void onClick(View v) {
             if (mBoardNode != null) {
                 int value = (Integer)v.getTag();
-                String command = MessageHelper.makeMessage("M", (short)value);
+                String command = MessageHelper.makeMessage(Rs.Mood.ID, (short)value);
                 mBoardNode.publishToFaceTopic(command);
             }
         }

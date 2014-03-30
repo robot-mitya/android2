@@ -34,6 +34,7 @@ import ru.robotmitya.robocommonlib.MessageHelper;
 public class BluetoothBodyNode implements NodeMain {
     private Context mContext;
     private BluetoothAdapter mBluetoothAdapter;
+    private HeadStateNode mHeadStateNode;
 
     private BluetoothSocket mBluetoothSocket = null;
     private InputStream mInputStream = null;
@@ -42,10 +43,12 @@ public class BluetoothBodyNode implements NodeMain {
 
     public BluetoothBodyNode(
             final Context context,
-            final BluetoothAdapter bluetoothAdapter) {
+            final BluetoothAdapter bluetoothAdapter,
+            final HeadStateNode headStateNode) {
         super();
         mContext = context;
         mBluetoothAdapter = bluetoothAdapter;
+        mHeadStateNode = headStateNode;
         mConnected = false;
     }
 
@@ -75,6 +78,7 @@ public class BluetoothBodyNode implements NodeMain {
                         // Выполнить каждую принятую команду:
                         for (String messageText : messageList) {
                             Log.d("BluetoothBodyNode has received from body: " + messageText);
+                            mHeadStateNode.changeState(messageText);
                         }
                     }
                 } else {

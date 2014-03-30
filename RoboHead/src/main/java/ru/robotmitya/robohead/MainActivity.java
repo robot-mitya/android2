@@ -88,9 +88,13 @@ public class MainActivity extends RosActivity {
         NodeConfiguration nodeConfiguration =
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
+
+        HeadStateNode headStateNode = new HeadStateNode();
+        nodeMainExecutor.execute(headStateNode, nodeConfiguration);
+
         nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
-        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration);
+        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration, headStateNode);
 
         FaceNode faceNode = new FaceNode(this);
         nodeMainExecutor.execute(faceNode, nodeConfiguration);
@@ -100,7 +104,8 @@ public class MainActivity extends RosActivity {
     }
 
     private void initBluetoothBodyNode(final NodeMainExecutor nodeMainExecutor,
-                                       final NodeConfiguration nodeConfiguration) {
+                                       final NodeConfiguration nodeConfiguration,
+                                       final HeadStateNode headStateNode) {
         if (mBluetoothAdapter == null) {
             Log.e(getString(R.string.error_no_bluetooth_adapter));
             runOnUiThread(new Runnable() {
@@ -124,7 +129,7 @@ public class MainActivity extends RosActivity {
                 }
             });
         } else {
-            BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter);
+            BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter, headStateNode);
             nodeMainExecutor.execute(bluetoothBodyNode, nodeConfiguration);
         }
     }

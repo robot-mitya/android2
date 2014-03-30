@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 3/6/14.
@@ -45,44 +46,44 @@ public final class ReflexNode implements NodeMain {
 
     private void initHappyReflex() {
         mHappyReflex = new ArrayList<String>();
-        mHappyReflex.add("M0101"); // smile, wag the tail
-        mHappyReflex.add(MessageHelper.makeMessage("W", (short) 4000)); // 4 seconds delay
-        mHappyReflex.add("M0001"); // normal face
+        mHappyReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_HAPPY)); // smile, wag the tail
+        mHappyReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short) 4000)); // 4 seconds delay
+        mHappyReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private void initPlayReflex() {
         mPlayReflex = new ArrayList<String>();
-        mPlayReflex.add("M0102"); // want to play face, jump
-        mPlayReflex.add(MessageHelper.makeMessage("W", (short) 4000)); // 4 seconds delay
-        mPlayReflex.add("M0001"); // normal face
+        mPlayReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_PLAY)); // want to play face, jump
+        mPlayReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short) 4000)); // 4 seconds delay
+        mPlayReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private void initSadReflex() {
         mSadReflex = new ArrayList<String>();
-        mSadReflex.add("M0103"); // sad face, hang down his head
-        mSadReflex.add(MessageHelper.makeMessage("W", (short)5000)); // 5 seconds delay
-        mSadReflex.add("M0001"); // normal face
+        mSadReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_SAD)); // sad face, hang down his head
+        mSadReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short)5000)); // 5 seconds delay
+        mSadReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private void initAngryReflex() {
         mAngryReflex = new ArrayList<String>();
-        mAngryReflex.add("M0104");
-        mAngryReflex.add(MessageHelper.makeMessage("W", (short)4000)); // 4 seconds delay
-        mAngryReflex.add("M0001"); // normal face
+        mAngryReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_ANGRY));
+        mAngryReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short)4000)); // 4 seconds delay
+        mAngryReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private void initDanceReflex() {
         mDanceReflex = new ArrayList<String>();
-        mDanceReflex.add("M0105");
-        mDanceReflex.add(MessageHelper.makeMessage("W", (short)6500)); // 6.5 seconds delay
-        mDanceReflex.add("M0001"); // normal face
+        mDanceReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_DANCE));
+        mDanceReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short)6500)); // 6.5 seconds delay
+        mDanceReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private void initNoseReflex() {
         mNoseReflex = new ArrayList<String>();
-        mNoseReflex.add("M0106");
-        mNoseReflex.add(MessageHelper.makeMessage("W", (short) 3000)); // 3 seconds delay
-        mNoseReflex.add("M0001"); // normal face
+        mNoseReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_NOSE));
+        mNoseReflex.add(MessageHelper.makeMessage(Rs.Wait.ID, (short) 3000)); // 3 seconds delay
+        mNoseReflex.add(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.FACE_OK)); // normal face
     }
 
     private boolean mIsExecutingReflex = false;
@@ -100,7 +101,7 @@ public final class ReflexNode implements NodeMain {
                     String messageIdentifier = MessageHelper.getMessageIdentifier(command);
                     int messageValue = MessageHelper.getMessageIntegerValue(command);
 
-                    if (messageIdentifier.equals("W")) {
+                    if (messageIdentifier.equals(Rs.Wait.ID)) {
                         try {
                             Thread.sleep(messageValue);
                         } catch (InterruptedException e) {
@@ -108,7 +109,7 @@ public final class ReflexNode implements NodeMain {
                                     ReflexNode.this.getClass().getName(), command));
                         }
                     } else {
-                        if (messageIdentifier.equals("M")) {
+                        if (messageIdentifier.equals(Rs.Mood.ID)) {
                             publishCommand(mFacePublisher, command);
                         }
                         publishCommand(mBodyPublisher, command);
@@ -142,20 +143,24 @@ public final class ReflexNode implements NodeMain {
             @Override
             public void onNewMessage(std_msgs.String message) {
                 String messageBody = message.getData();
+                String identifier = MessageHelper.getMessageIdentifier(messageBody);
+                int value = MessageHelper.getMessageIntegerValue(messageBody);
 
                 Log.d("Message received in ReflexNode: " + messageBody);
-                if (messageBody.equals("M0101")) {
-                    executeReflex(mHappyReflex);
-                } else if (messageBody.equals("M0102")) {
-                    executeReflex(mPlayReflex);
-                } else if (messageBody.equals("M0103")) {
-                    executeReflex(mSadReflex);
-                } else if (messageBody.equals("M0104")) {
-                    executeReflex(mAngryReflex);
-                } else if (messageBody.equals("M0105")) {
-                    executeReflex(mDanceReflex);
-                } else if (messageBody.equals("M0106")) {
-                    executeReflex(mNoseReflex);
+                if (identifier.contentEquals(Rs.Mood.ID)) {
+                    if (value == Rs.Mood.ACTION_HAPPY) {
+                        executeReflex(mHappyReflex);
+                    } else if (value == Rs.Mood.ACTION_PLAY) {
+                        executeReflex(mPlayReflex);
+                    } else if (value == Rs.Mood.ACTION_SAD) {
+                        executeReflex(mSadReflex);
+                    } else if (value == Rs.Mood.ACTION_ANGRY) {
+                        executeReflex(mAngryReflex);
+                    } else if (value == Rs.Mood.ACTION_DANCE) {
+                        executeReflex(mDanceReflex);
+                    } else if (value == Rs.Mood.ACTION_NOSE) {
+                        executeReflex(mNoseReflex);
+                    }
                 }
             }
         });
@@ -163,16 +168,13 @@ public final class ReflexNode implements NodeMain {
 
     @Override
     public void onShutdown(Node node) {
-
     }
 
     @Override
     public void onShutdownComplete(Node node) {
-
     }
 
     @Override
     public void onError(Node node, Throwable throwable) {
-
     }
 }

@@ -9,6 +9,7 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import ru.robotmitya.robocommonlib.Log;
+import ru.robotmitya.robocommonlib.RoboState;
 
 /**
  * Created by dmitrydzz on 3/23/14.
@@ -44,7 +45,7 @@ public class BoardNode implements NodeMain {
 
     private void initializeRoboState() {
         //todo: Change this after implementing command "IFFFF".
-        RoboState.setNumberOfCams((short)2);
+        RoboState.setNumberOfCams((short) 2);
         RoboState.setSelectedCamIndex((short)1);
     }
 

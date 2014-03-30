@@ -5,6 +5,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
 
+import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.Rs;
+
 /**
  * Выражение лица робота.
  * @author Дмитрий Дзахов
@@ -260,40 +263,46 @@ public final class FaceHelper {
 	}
 
     public static FaceType messageToFaceType(final String message) {
-        if (message.contentEquals("M0001")) {
+        String identifier = MessageHelper.getMessageIdentifier(message);
+        if (!identifier.contentEquals(Rs.Mood.ID)) {
+            return FaceType.ftUnknown;
+        }
+
+        int value = MessageHelper.getMessageIntegerValue(message);
+        if (value == Rs.Mood.FACE_OK) {
             return FaceType.ftOk;
         }
-        if (message.contentEquals("M0002")) {
+        if (value == Rs.Mood.FACE_HAPPY) {
             return FaceType.ftHappy;
         }
-        if (message.contentEquals("M0003")) {
+        if (value == Rs.Mood.FACE_BLUE) {
             return FaceType.ftBlue;
         }
-        if (message.contentEquals("M0004")) {
+        if (value == Rs.Mood.FACE_ANGRY) {
             return FaceType.ftAngry;
         }
-        if (message.contentEquals("M0005")) {
+        if (value == Rs.Mood.FACE_ILL) {
             return FaceType.ftIll;
         }
-        if (message.contentEquals("M0006")) {
+        if (value == Rs.Mood.FACE_READY_TO_PLAY) {
             return FaceType.ftReadyToPlay;
         }
-        if (message.contentEquals("M0101")) {
+        if (value == Rs.Mood.ACTION_HAPPY) {
             return FaceType.ftHappy;
         }
-        if (message.contentEquals("M0102")) {
+        if (value == Rs.Mood.ACTION_PLAY) {
             return FaceType.ftReadyToPlay;
         }
-        if (message.contentEquals("M0103")) {
+        if (value == Rs.Mood.ACTION_SAD) {
             return FaceType.ftBlue;
         }
-        if (message.contentEquals("M0104")) {
+        if (value == Rs.Mood.ACTION_ANGRY) {
             return FaceType.ftAngry;
         }
-        if (message.contentEquals("M0105")) {
+        if (value == Rs.Mood.ACTION_DANCE) {
             return FaceType.ftHappy;
         }
-        if (message.contentEquals("M0106")) {
+        if (value == Rs.Mood.ACTION_NOSE) {
             return FaceType.ftOk;
         }
         return FaceType.ftUnknown;

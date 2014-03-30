@@ -16,6 +16,7 @@ import org.ros.node.topic.Subscriber;
 
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 1/30/14.
@@ -57,18 +58,18 @@ public class EyePreviewView extends RosCameraPreviewView {
             public void onNewMessage(final std_msgs.String message) {
                 String messageBody = message.getData();
                 String command = MessageHelper.getMessageIdentifier(messageBody);
-                String value = MessageHelper.getMessageStringValue(messageBody);
-                if (command.contentEquals("I")) {
-                    if (value.contentEquals("0010")) {
+                int value = MessageHelper.getMessageIntegerValue(messageBody);
+                if (command.contentEquals(Rs.Instruction.ID)) {
+                    if (value == Rs.Instruction.CAMERA_OFF) {
                         Log.d("Video off");
                         stopVideoStreaming();
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), -1);
-                    } else if (value.contentEquals("0011")) {
+                    } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d("Camera 0 is turned on");
                         int cameraIndex = 0;
                         startVideoStreaming(cameraIndex);
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
-                    } else if (value.contentEquals("0012")) {
+                    } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d("Camera 1 is turned on");
                         int cameraIndex = 1;
                         startVideoStreaming(cameraIndex);
