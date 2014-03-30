@@ -14,6 +14,7 @@ import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.Rs;
@@ -43,14 +44,14 @@ public class FaceNode implements NodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/face_node");
+        return GraphName.of(AppConst.RoboHead.FACE_NODE);
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        mPublisher = connectedNode.newPublisher("robot_mitya/reflex", std_msgs.String._TYPE);
+        mPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/face", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(std_msgs.String message) {

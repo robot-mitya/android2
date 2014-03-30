@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import org.ros.android.BitmapFromCompressedImage;
 import org.ros.android.view.RosImageView;
 
+import ru.robotmitya.robocommonlib.AppConst;
+
 public class VideoFragment extends Fragment {
 
     private RosImageView<sensor_msgs.CompressedImage> mImageView;
@@ -25,7 +27,7 @@ public class VideoFragment extends Fragment {
         }
 
         mImageView = (RosImageView<sensor_msgs.CompressedImage>) result.findViewById(R.id.imageViewVideo);
-        mImageView.setTopicName("/camera/image/compressed");
+        mImageView.setTopicName(AppConst.RoboHead.CAMERA_TOPIC);
         mImageView.setMessageType(sensor_msgs.CompressedImage._TYPE);
         mImageView.setMessageToBitmapCallable(new BitmapFromCompressedImage());
 

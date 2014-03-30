@@ -43,7 +43,7 @@ public class BoardFragment extends Fragment {
                     RoboState.switchCam();
                     String command = MessageHelper.makeMessage(
                             Rs.Instruction.ID,
-                            (short)(Rs.Instruction.CAMERA_FRONT_ON + RoboState.getSelectedCamIndex()));
+                            (short)(Rs.Instruction.CAMERA_BACK_ON + RoboState.getSelectedCamIndex()));
                     mBoardNode.publishToEyeTopic(command);
                 }
             }

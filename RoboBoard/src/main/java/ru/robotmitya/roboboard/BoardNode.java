@@ -8,6 +8,7 @@ import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.RoboState;
 
@@ -21,15 +22,15 @@ public class BoardNode implements NodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/board_node");
+        return GraphName.of(AppConst.RoboBoard.BOARD_NODE);
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        mEyePublisher = connectedNode.newPublisher("robot_mitya/eye", std_msgs.String._TYPE);
-        mFacePublisher = connectedNode.newPublisher("robot_mitya/face", std_msgs.String._TYPE);
+        mEyePublisher = connectedNode.newPublisher(AppConst.RoboHead.EYE_TOPIC, std_msgs.String._TYPE);
+        mFacePublisher = connectedNode.newPublisher(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/board", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(std_msgs.String message) {

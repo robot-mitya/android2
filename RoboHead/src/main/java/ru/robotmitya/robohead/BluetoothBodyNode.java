@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 
@@ -54,7 +55,7 @@ public class BluetoothBodyNode implements NodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/bluetooth_body_node");
+        return GraphName.of(AppConst.RoboHead.BLUETOOTH_BODY_NODE);
     }
 
     @Override
@@ -137,7 +138,7 @@ public class BluetoothBodyNode implements NodeMain {
             }
         });
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/body", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(final std_msgs.String message) {

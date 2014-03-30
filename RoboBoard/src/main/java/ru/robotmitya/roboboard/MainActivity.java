@@ -11,6 +11,8 @@ import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
+import ru.robotmitya.robocommonlib.AppConst;
+
 public class MainActivity extends RosActivity {
 
     private VideoFragment mVideoFragment;
@@ -55,7 +57,7 @@ public class MainActivity extends RosActivity {
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(), getMasterUri());
 
         nodeMainExecutor.execute(mBoardNode, nodeConfiguration);
-        nodeMainExecutor.execute(mVideoFragment.getImageView(), nodeConfiguration.setNodeName("robot_mitya/video_node"));
+        nodeMainExecutor.execute(mVideoFragment.getImageView(), nodeConfiguration.setNodeName(AppConst.RoboBoard.VIDEO_NODE));
     }
 
 }

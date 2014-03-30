@@ -12,8 +12,8 @@ public class Rs {
         public static final short HEADLIGHTS_ON = 0x0001;
 
         public static final short CAMERA_OFF = 0x0010;
-        public static final short CAMERA_FRONT_ON = 0x0011;
-        public static final short CAMERA_BACK_ON = 0x0012;
+        public static final short CAMERA_BACK_ON = 0x0011;
+        public static final short CAMERA_FRONT_ON = 0x0012;
 
         public static final short MIC_OFF = 0x0020;
         public static final short MIC_ON = 0x0021;

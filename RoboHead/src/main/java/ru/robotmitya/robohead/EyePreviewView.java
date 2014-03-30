@@ -14,6 +14,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.topic.Subscriber;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.Rs;
@@ -45,14 +46,14 @@ public class EyePreviewView extends RosCameraPreviewView {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/eye_node");
+        return GraphName.of(AppConst.RoboHead.EYE_NODE);
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
         super.onStart(connectedNode);
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/eye", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.EYE_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(final std_msgs.String message) {
@@ -64,12 +65,12 @@ public class EyePreviewView extends RosCameraPreviewView {
                         Log.d("Video off");
                         stopVideoStreaming();
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), -1);
-                    } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
+                    } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d("Camera 0 is turned on");
                         int cameraIndex = 0;
                         startVideoStreaming(cameraIndex);
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
-                    } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
+                    } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d("Camera 1 is turned on");
                         int cameraIndex = 1;
                         startVideoStreaming(cameraIndex);

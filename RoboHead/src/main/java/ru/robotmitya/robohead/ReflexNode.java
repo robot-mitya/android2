@@ -13,6 +13,7 @@ import org.ros.node.topic.Subscriber;
 import java.lang.String;
 import java.util.ArrayList;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.Rs;
@@ -130,15 +131,15 @@ public final class ReflexNode implements NodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/reflex_node");
+        return GraphName.of(AppConst.RoboHead.REFLEX_NODE);
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        mBodyPublisher = connectedNode.newPublisher("robot_mitya/body", std_msgs.String._TYPE);
-        mFacePublisher = connectedNode.newPublisher("robot_mitya/face", std_msgs.String._TYPE);
+        mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
+        mFacePublisher = connectedNode.newPublisher(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
 
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("robot_mitya/reflex", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(std_msgs.String message) {

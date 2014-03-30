@@ -8,6 +8,7 @@ import org.ros.node.topic.Publisher;
 
 import java.lang.String;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.RoboState;
@@ -23,12 +24,12 @@ public class HeadStateNode implements NodeMain {
 
     @Override
     public GraphName getDefaultNodeName() {
-        return GraphName.of("robot_mitya/head_state_node");
+        return GraphName.of(AppConst.RoboHead.HEAD_STATE_NODE);
     }
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        mBoardPublisher = connectedNode.newPublisher("robot_mitya/board", std_msgs.String._TYPE);
+        mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
     }
 
     @Override
