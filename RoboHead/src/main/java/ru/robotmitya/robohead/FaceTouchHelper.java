@@ -187,7 +187,7 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Действие при нажатии на нос.
 	 */
 	private void pushNose() {
-        Log.d("Nose was pushed");
+        Log.d(this, "nose was pushed");
         Intent intent = new Intent(FaceNode.BROADCAST_FACE_PUSH_NOSE);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
 	}
@@ -220,13 +220,13 @@ public final class FaceTouchHelper implements OnTouchListener {
 	 * Действие при тычке в глаз.
 	 */
 	private void pushEye() {
-        Log.d("Eye was pushed");
+        Log.d(this, "eye was pushed");
         Intent intent = new Intent(FaceNode.BROADCAST_FACE_PUSH_EYE);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
 	}
 
     private void patHair() {
-        Log.d("Hair patting");
+        Log.d(this, "hair patting");
         Intent intent = new Intent(FaceNode.BROADCAST_FACE_PATTING);
         LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
     }

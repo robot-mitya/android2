@@ -71,14 +71,14 @@ public class BluetoothBodyNode implements NodeMain {
                         // Получить список принятых на данный момент команд:
                         messageList = getMessagesFromStream(mInputStream, MessageHelper.MESSAGE_LENGTH);
                     } catch (Exception e) {
-                        Log.e("BluetoothBodyNode input error: " + e.getMessage());
+                        Log.e(BluetoothBodyNode.this.getClass(), "input error: " + e.getMessage());
                         cancel();
                     }
 
                     if (messageList != null) {
                         // Выполнить каждую принятую команду:
                         for (String messageText : messageList) {
-                            Log.d("BluetoothBodyNode has received from body: " + messageText);
+                            Log.messageReceived(BluetoothBodyNode.this, "body", messageText);
                             mHeadStateNode.changeState(messageText);
                         }
                     }
@@ -98,9 +98,9 @@ public class BluetoothBodyNode implements NodeMain {
                         mInputStream = mBluetoothSocket.getInputStream();
                         mOutputStream = mBluetoothSocket.getOutputStream();
                         mConnected = true;
-                        Log.d("BluetoothBodyNode: started");
+                        Log.d(BluetoothBodyNode.this, "started");
                     } catch (Exception e) {
-                        Log.e("BluetoothBodyNode connection error: " + e.getMessage());
+                        Log.e(BluetoothBodyNode.this, "connection error: " + e.getMessage());
                         cancel();
                     }
                 }
@@ -143,21 +143,21 @@ public class BluetoothBodyNode implements NodeMain {
             @Override
             public void onNewMessage(final std_msgs.String message) {
                 String messageBody = message.getData();
+                Log.messageReceived(BluetoothBodyNode.this, messageBody);
 
                 if (mConnected) {
                     if (mBluetoothSocket != null) {
                         try {
                             mOutputStream.write(messageBody.getBytes());
+                            Log.d(BluetoothBodyNode.this, "sent to body via Bluetooth: " + messageBody);
                         } catch (IOException e) {
                             String errorText = String.format(
                                     mContext.getResources().getString(R.string.error_sending_message_through_bluetooth),
                                     message);
-                            Log.e(errorText);
+                            Log.e(BluetoothBodyNode.this, errorText);
                         }
                     }
                 }
-
-                Log.d("BluetoothBodyNode has sent to body: " + messageBody);
             }
         });
     }
@@ -175,7 +175,7 @@ public class BluetoothBodyNode implements NodeMain {
             }
         }
         mConnected = false;
-        Log.d("BluetoothBodyNode: stopped");
+        Log.d(this, "stopped");
     }
 
     @Override

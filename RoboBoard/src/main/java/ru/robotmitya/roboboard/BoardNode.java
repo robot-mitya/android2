@@ -36,7 +36,7 @@ public class BoardNode implements NodeMain {
             public void onNewMessage(std_msgs.String message) {
                 String messageBody = message.getData();
 
-                Log.d("Message received in BoardNode: " + messageBody);
+                Log.messageReceived(BoardNode.this, messageBody);
                 //...
             }
         });
@@ -66,7 +66,7 @@ public class BoardNode implements NodeMain {
         std_msgs.String message = publisher.newMessage();
         message.setData(command);
         publisher.publish(message);
-        Log.d("Message sent from BoardNode to " + publisher.getTopicName().toString() + ": " + command);
+        Log.messagePublished(this, publisher.getTopicName().toString(), command);
     }
 
     public void publishToEyeTopic(final String message) {

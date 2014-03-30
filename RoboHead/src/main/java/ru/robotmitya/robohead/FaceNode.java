@@ -57,7 +57,7 @@ public class FaceNode implements NodeMain {
             public void onNewMessage(std_msgs.String message) {
                 String messageBody = message.getData();
 
-                Log.d("Message received in FaceNode: " + messageBody);
+                Log.messageReceived(FaceNode.this, messageBody);
 
                 Intent intent = new Intent(BROADCAST_FACE_CHANGE_NAME);
                 intent.putExtra(BROADCAST_FACE_CHANGE_EXTRA_NAME, messageBody);
@@ -68,7 +68,7 @@ public class FaceNode implements NodeMain {
         mBroadcastReceiverPatting = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("Message received in FaceNode: hair patting");
+                Log.d(FaceNode.this, "broadcast received: hair patting");
                 publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_HAPPY));
             }
         };
@@ -78,7 +78,7 @@ public class FaceNode implements NodeMain {
         mBroadcastReceiverPushEye = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("Message received in FaceNode: eye push");
+                Log.d(FaceNode.this, "broadcast received: eye push");
                 publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_ANGRY));
             }
         };
@@ -88,7 +88,7 @@ public class FaceNode implements NodeMain {
         mBroadcastReceiverPushNose = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("Message received in FaceNode: nose push");
+                Log.d(FaceNode.this, "broadcast received: nose push");
                 publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_NOSE));
             }
         };
@@ -116,6 +116,7 @@ public class FaceNode implements NodeMain {
             std_msgs.String message = mPublisher.newMessage();
             message.setData(command);
             mPublisher.publish(message);
+            Log.messagePublished(this, mPublisher.getTopicName().toString(), command);
         }
     }
 }

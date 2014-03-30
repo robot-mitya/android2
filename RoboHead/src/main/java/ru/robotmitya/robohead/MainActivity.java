@@ -107,7 +107,7 @@ public class MainActivity extends RosActivity {
                                        final NodeConfiguration nodeConfiguration,
                                        final HeadStateNode headStateNode) {
         if (mBluetoothAdapter == null) {
-            Log.e(getString(R.string.error_no_bluetooth_adapter));
+            Log.e(this, getString(R.string.error_no_bluetooth_adapter));
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(
@@ -118,7 +118,7 @@ public class MainActivity extends RosActivity {
                 }
             });
         } else if (!mBluetoothAdapter.isEnabled()) {
-            Log.e(getString(R.string.error_bluetooth_adapter_is_not_activated));
+            Log.e(this, getString(R.string.error_bluetooth_adapter_is_not_activated));
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(

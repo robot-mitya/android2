@@ -64,14 +64,6 @@ public class HeadStateNode implements NodeMain {
         message.setData(command);
         mBoardPublisher.publish(message);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.
-                append("Message sent from ").
-                append(getClass().getName()).
-                append(" to ").
-                append(mBoardPublisher.getTopicName().toString()).
-                append(": ").
-                append(command);
-        Log.d(stringBuilder.toString());
+        Log.messagePublished(this, mBoardPublisher.getTopicName().toString(), command);
     }
 }

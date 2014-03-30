@@ -26,7 +26,7 @@ public class FaceFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(FaceNode.BROADCAST_FACE_CHANGE_EXTRA_NAME);
-                Log.d("Message received in FaceFragment: " + message);
+                Log.d(FaceFragment.this, "message received in FaceFragment: " + message);
                 FaceType faceType = FaceHelper.messageToFaceType(message);
                 if ((mFaceHelper != null) && (faceType != FaceType.ftUnknown)) {
                     mFaceHelper.setFace(faceType);

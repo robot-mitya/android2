@@ -1,72 +1,93 @@
 package ru.robotmitya.robocommonlib;
 
+import org.ros.node.NodeMain;
+
 /**
  * Created by dmitrydzz on 1/28/14.
- * Класс для вывода в журнал трассировочных данных.
  * @author dmitrydzz
  *
  */
 public final class Log {
     /**
-     * Признак вывода трассировочных данных в журнал.
+     * Flag to enable/disable logging.
      */
-    static final boolean ENABLE_LOG = true;
+    public static final boolean ENABLE_LOG = true;
 
     /**
-     * Тег для фильтрации в журнале.
+     * Tag to filter.
      */
-    static final String LOG_TAG = "Mitya";
+    public static final String LOG_TAG = "Mitya";
 
-    /**
-     * Закрытый конструктор.
-     */
     private Log() { }
 
     /**
-     * Вывод подробностей.
-     * @param msg текст сообщения.
+     * Log details.
+     * @param source object - the source of event.
+     * @param msg message text.
      */
-    public static void v(final String msg) {
+    public static void v(final Object source, final String msg) {
         if (ENABLE_LOG) {
-            android.util.Log.v(LOG_TAG, msg);
+            android.util.Log.v(LOG_TAG, source.getClass().getName() + " => " + msg);
         }
     }
 
     /**
-     * Вывод предупреждения.
-     * @param msg текст предупреждения.
+     * Log warning.
+     * @param source object - the source of event.
+     * @param msg message text.
      */
-    public static void w(final String msg) {
+    public static void w(final Object source, final String msg) {
         if (ENABLE_LOG) {
-            android.util.Log.w(LOG_TAG, msg);
+            android.util.Log.w(LOG_TAG, source.getClass().getName() + " => " + msg);
         }
     }
 
     /**
-     * Вывод информации.
-     * @param msg информационное сообщение.
+     * Log info.
+     * @param source object - the source of event.
+     * @param msg message text.
      */
-    public static void i(final String msg) {
+    public static void i(final Object source, final String msg) {
         if (ENABLE_LOG) {
-            android.util.Log.i(LOG_TAG, msg);
+            android.util.Log.i(LOG_TAG, source.getClass().getName() + " => " + msg);
         }
     }
 
     /**
-     * Вывод отладочной информации.
-     * @param msg текст ссобщения.
+     * Log debug info.
+     * @param source object - the source of event.
+     * @param msg message text.
      */
-    public static void d(final String msg) {
+    public static void d(final Object source, final String msg) {
         if (ENABLE_LOG) {
-            android.util.Log.d(LOG_TAG, msg);
+            android.util.Log.d(LOG_TAG, source.getClass().getName() + " => " + msg);
         }
     }
 
     /**
-     * Фиксация ошибки.
-     * @param msg текст ошибки.
+     * Log error.
+     * @param source object - the source of event.
+     * @param msg message text.
      */
-    public static void e(final String msg) {
-        android.util.Log.e(LOG_TAG, msg);
+    public static void e(final Object source, final String msg) {
+        android.util.Log.e(LOG_TAG, source.getClass().getName() + " => " + msg);
+    }
+
+    public static void messagePublished(final NodeMain node, final String topic, final String message) {
+        if (ENABLE_LOG) {
+            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => published to " + topic + ": " + message);
+        }
+    }
+
+    public static void messageReceived(final NodeMain node, final String message) {
+        if (ENABLE_LOG) {
+            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => received: " + message);
+        }
+    }
+
+    public static void messageReceived(final NodeMain node, final String from, final String message) {
+        if (ENABLE_LOG) {
+            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => received from " + from + ": " + message);
+        }
     }
 }

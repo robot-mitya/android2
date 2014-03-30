@@ -7,7 +7,7 @@
     <string name="error_bluetooth_adapter_is_not_activated">Bluetooth adapter is not turned on</string>
     <string name="error_sending_message_through_bluetooth">There\'s an error while sending a message through Bluetooth (%s)</string>
 
-    <string name="error_command_failed">%1$s: command failed (%2$s)</string>
+    <string name="error_command_failed">command failed: %1$s</string>
 
     <string name="dialog_settings_title">Application settings</string>
 

@@ -106,8 +106,7 @@ public final class ReflexNode implements NodeMain {
                         try {
                             Thread.sleep(messageValue);
                         } catch (InterruptedException e) {
-                            Log.e(String.format(mContext.getResources().getString(R.string.error_command_failed),
-                                    ReflexNode.this.getClass().getName(), command));
+                            Log.e(ReflexNode.this, String.format(mContext.getResources().getString(R.string.error_command_failed), command));
                         }
                     } else {
                         if (messageIdentifier.equals(Rs.Mood.ID)) {
@@ -126,7 +125,7 @@ public final class ReflexNode implements NodeMain {
         std_msgs.String message = publisher.newMessage();
         message.setData(command);
         publisher.publish(message);
-        Log.d("Message sent from ReflexNode to " + publisher.getTopicName().toString() + ": " + command);
+        Log.messagePublished(this, publisher.getTopicName().toString(), command);
     }
 
     @Override
@@ -147,7 +146,7 @@ public final class ReflexNode implements NodeMain {
                 String identifier = MessageHelper.getMessageIdentifier(messageBody);
                 int value = MessageHelper.getMessageIntegerValue(messageBody);
 
-                Log.d("Message received in ReflexNode: " + messageBody);
+                Log.messageReceived(ReflexNode.this, messageBody);
                 if (identifier.contentEquals(Rs.Mood.ID)) {
                     if (value == Rs.Mood.ACTION_HAPPY) {
                         executeReflex(mHappyReflex);

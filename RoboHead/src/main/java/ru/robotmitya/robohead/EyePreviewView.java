@@ -58,20 +58,21 @@ public class EyePreviewView extends RosCameraPreviewView {
             @Override
             public void onNewMessage(final std_msgs.String message) {
                 String messageBody = message.getData();
+                Log.messageReceived(EyePreviewView.this, messageBody);
                 String command = MessageHelper.getMessageIdentifier(messageBody);
                 int value = MessageHelper.getMessageIntegerValue(messageBody);
                 if (command.contentEquals(Rs.Instruction.ID)) {
                     if (value == Rs.Instruction.CAMERA_OFF) {
-                        Log.d("Video off");
+                        Log.d(EyePreviewView.this, "video off");
                         stopVideoStreaming();
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), -1);
                     } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
-                        Log.d("Camera 0 is turned on");
+                        Log.d(EyePreviewView.this, "camera 0 is turned on");
                         int cameraIndex = 0;
                         startVideoStreaming(cameraIndex);
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
                     } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
-                        Log.d("Camera 1 is turned on");
+                        Log.d(EyePreviewView.this, "camera 1 is turned on");
                         int cameraIndex = 1;
                         startVideoStreaming(cameraIndex);
                         SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
