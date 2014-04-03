@@ -52,14 +52,26 @@ public class HeadStateNode implements NodeMain {
                 case Rs.Instruction.HEADLIGHTS_OFF:
                 case Rs.Instruction.HEADLIGHTS_ON:
                     if (RoboState.setHeadlights(value)) {
-                        publish(message);
+                        publishToBoard(message);
+                    }
+                    break;
+                case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP:
+                case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_START:
+                    if (RoboState.setMainAccumulatorCharging(value)) {
+                        publishToBoard(message);
+                    }
+                    break;
+                case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP:
+                case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_START:
+                    if (RoboState.setPhoneAccumulatorCharging(value)) {
+                        publishToBoard(message);
                     }
                     break;
             }
         }
     }
 
-    private void publish(final String command) {
+    private void publishToBoard(final String command) {
         std_msgs.String message = mBoardPublisher.newMessage();
         message.setData(command);
         mBoardPublisher.publish(message);
