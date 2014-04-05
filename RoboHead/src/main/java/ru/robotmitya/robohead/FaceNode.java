@@ -24,12 +24,12 @@ import ru.robotmitya.robocommonlib.Rs;
  *
  */
 public class FaceNode implements NodeMain {
-    public static String BROADCAST_FACE_CHANGE_NAME = "ru.robot-mitya.FACE-CHANGE";
+    public static String BROADCAST_FACE_CHANGE_NAME = "ru.robotmitya.robohead.FACE-CHANGE";
     public static String BROADCAST_FACE_CHANGE_EXTRA_NAME = "message";
 
-    public static String BROADCAST_FACE_PATTING = "ru.robot-mitya.FACE-PAT";
-    public static String BROADCAST_FACE_PUSH_EYE = "ru.robot-mitya.FACE-EYE-DIG";
-    public static String BROADCAST_FACE_PUSH_NOSE = "ru.robot-mitya.FACE-NOSE-DIG";
+    public static String BROADCAST_FACE_PATTING = "ru.robotmitya.robohead.FACE-PAT";
+    public static String BROADCAST_FACE_PUSH_EYE = "ru.robotmitya.robohead.FACE-EYE-DIG";
+    public static String BROADCAST_FACE_PUSH_NOSE = "ru.robotmitya.robohead.FACE-NOSE-DIG";
 
     private Context mContext;
     private BroadcastReceiver mBroadcastReceiverPatting;

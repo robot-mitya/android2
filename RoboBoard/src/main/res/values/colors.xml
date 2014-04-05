@@ -3,4 +3,5 @@
     <color name="board_background_color">#80ffbb33</color>
     <color name="board_button_background_color">#40ffff00</color>
     <color name="board_button_background_pressed_color">#ffffbb33</color>
+    <color name="board_button_checked_stroke_color">#ffff8800</color>
 </resources>

@@ -21,6 +21,7 @@ import ru.robotmitya.robocommonlib.Log;
 public class MainActivity extends RosActivity {
     private EyePreviewView mEyePreviewView;
     private BluetoothAdapter mBluetoothAdapter;
+    private HeadStateNode mHeadStateNode;
 
     private Handler mEyeNodeHandler = new Handler(new Handler.Callback() {
         @Override
@@ -48,9 +49,11 @@ public class MainActivity extends RosActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        mHeadStateNode = new HeadStateNode();
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FaceFragment faceFragment = new FaceFragment();
+        FaceFragment faceFragment = new FaceFragment(mHeadStateNode);
         fragmentTransaction.add(R.id.face_fragment, faceFragment);
         fragmentTransaction.commit();
 
@@ -89,12 +92,11 @@ public class MainActivity extends RosActivity {
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress());
         nodeConfiguration.setMasterUri(getMasterUri());
 
-        HeadStateNode headStateNode = new HeadStateNode();
-        nodeMainExecutor.execute(headStateNode, nodeConfiguration);
+        nodeMainExecutor.execute(mHeadStateNode, nodeConfiguration);
 
         nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
-        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration, headStateNode);
+        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration, mHeadStateNode);
 
         FaceNode faceNode = new FaceNode(this);
         nodeMainExecutor.execute(faceNode, nodeConfiguration);

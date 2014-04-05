@@ -72,18 +72,18 @@ public final class FaceHelper {
 	/**
 	 * Хэндлер, принимающий сообщения, сигнализирующие о необходимости что-то сделать. 
 	 */
-	private Handler mHandlerDelayedAction = new Handler() {
-		@Override
-		public void handleMessage(final Message msg) {
-			switch (mCurrentFace) {
-			case ftReadyToPlay:
-				setFace(FaceType.ftOk);
-				break;
-			default:
-				return;
-			}
-		}
-	};
+//	private Handler mHandlerDelayedAction = new Handler() {
+//		@Override
+//		public void handleMessage(final Message msg) {
+//			switch (mCurrentFace) {
+//			case ftReadyToPlay:
+//				setFace(FaceType.ftOk);
+//				break;
+//			default:
+//				return;
+//			}
+//		}
+//	};
 
 	/**
 	 * Конструктор класса.
@@ -238,10 +238,10 @@ public final class FaceHelper {
 		mCurrentFace = face;
 		startAnimation(resource);
 		
-		if (face == FaceType.ftReadyToPlay) {
-			final int readyToPlayPause = 5000;
-			mHandlerDelayedAction.sendEmptyMessageDelayed(0, readyToPlayPause);
-		}
+//		if (face == FaceType.ftReadyToPlay) {
+//			final int readyToPlayPause = 5000;
+//			mHandlerDelayedAction.sendEmptyMessageDelayed(0, readyToPlayPause);
+//		}
 		
         return true;
 	}

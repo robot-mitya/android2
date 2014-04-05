@@ -16,20 +16,23 @@ import android.widget.ImageView;
 import ru.robotmitya.robocommonlib.Log;
 
 public class FaceFragment extends Fragment {
+    private HeadStateNode mHeadStateNode;
     private FaceHelper mFaceHelper;
     private BroadcastReceiver mMessageReceiver;
 
-    public FaceFragment() {
+    public FaceFragment(final HeadStateNode headStateNode) {
         super();
+        mHeadStateNode = headStateNode;
 
         mMessageReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(FaceNode.BROADCAST_FACE_CHANGE_EXTRA_NAME);
-                Log.d(FaceFragment.this, "message received in FaceFragment: " + message);
+                Log.d(FaceFragment.this, "message received: " + message);
                 FaceType faceType = FaceHelper.messageToFaceType(message);
                 if ((mFaceHelper != null) && (faceType != FaceType.ftUnknown)) {
                     mFaceHelper.setFace(faceType);
+                    mHeadStateNode.changeState(message);
                 }
             }
         };

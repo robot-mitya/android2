@@ -29,7 +29,7 @@ public class MainActivity extends RosActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mBoardNode = new BoardNode();
+        mBoardNode = new BoardNode(this);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

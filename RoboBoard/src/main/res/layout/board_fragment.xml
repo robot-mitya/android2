@@ -37,7 +37,7 @@
 
     <!--Left column-->
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,10 +49,10 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_ok"
     />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceHappy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,10 +64,10 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_happy"
     />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceBlue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,10 +79,10 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_blue"
     />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceAngry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,10 +94,10 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_angry"
     />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceIll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,10 +109,10 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_ill"
     />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceReadyToPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_settings"
+        android:src="@drawable/ic_face_ready_to_play"
     />
 
 </RelativeLayout>

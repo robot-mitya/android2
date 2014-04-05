@@ -1,5 +1,9 @@
 package ru.robotmitya.roboboard;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
@@ -17,8 +21,17 @@ import ru.robotmitya.robocommonlib.RoboState;
  *
  */
 public class BoardNode implements NodeMain {
+    public static String BROADCAST_MESSAGE_RECEIVED_NAME = "ru.robotmitya.roboboard.MESSAGE-RECEIVED";
+    public static String BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME = "message";
+
+    private Context mContext;
+
     private Publisher<std_msgs.String> mEyePublisher;
     private Publisher<std_msgs.String> mFacePublisher;
+
+    public BoardNode(final Context context) {
+        mContext = context;
+    }
 
     @Override
     public GraphName getDefaultNodeName() {
@@ -37,7 +50,10 @@ public class BoardNode implements NodeMain {
                 String messageBody = message.getData();
 
                 Log.messageReceived(BoardNode.this, messageBody);
-                //...
+
+                Intent intent = new Intent(BROADCAST_MESSAGE_RECEIVED_NAME);
+                intent.putExtra(BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME, messageBody);
+                LocalBroadcastManager.getInstance(BoardNode.this.mContext).sendBroadcast(intent);
             }
         });
 

@@ -75,19 +75,19 @@ public final class Log {
 
     public static void messagePublished(final NodeMain node, final String topic, final String message) {
         if (ENABLE_LOG) {
-            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => published to " + topic + ": " + message);
+            android.util.Log.d(LOG_TAG, node.getDefaultNodeName() + " => published to " + topic + ": " + message);
         }
     }
 
     public static void messageReceived(final NodeMain node, final String message) {
         if (ENABLE_LOG) {
-            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => received: " + message);
+            android.util.Log.d(LOG_TAG, node.getDefaultNodeName() + " => received: " + message);
         }
     }
 
     public static void messageReceived(final NodeMain node, final String from, final String message) {
         if (ENABLE_LOG) {
-            android.util.Log.e(LOG_TAG, node.getDefaultNodeName() + " => received from " + from + ": " + message);
+            android.util.Log.d(LOG_TAG, node.getDefaultNodeName() + " => received from " + from + ": " + message);
         }
     }
 }
