@@ -46,4 +46,25 @@ public class Rs {
     public class Wait {
         public static final String ID = "W";
     }
+
+    public class Tail {
+        public static final String ID = "t";
+
+        public static final short WAG_1 = 0x0001;
+        public static final short WAG_2 = 0x0002;
+    }
+
+    public class No {
+        public static final String ID = "n";
+
+        public static final short SHAKE_1 = 0x0001;
+        public static final short SHAKE_2 = 0x0002;
+    }
+
+    public class Yes {
+        public static final String ID = "y";
+
+        public static final short SHAKE_1 = 0x0001;
+        public static final short SHAKE_2 = 0x0002;
+    }
 }

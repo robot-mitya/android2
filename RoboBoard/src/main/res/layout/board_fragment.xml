@@ -35,7 +35,7 @@
         android:src="@drawable/ic_action_like"
         />
 
-    <ImageView
+    <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonHeadlights"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
