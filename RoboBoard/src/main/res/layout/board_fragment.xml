@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <!--Right column-->
+    <!--First right column-->
 
     <ImageView
         android:id="@+id/buttonSettings"
@@ -21,7 +21,7 @@
     />
 
     <ImageView
-        android:id="@+id/buttonSwitchCam"
+        android:id="@+id/buttonActionLike"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonSettings"
@@ -32,10 +32,72 @@
         android:layout_marginRight="@dimen/board_button_marging"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_like"
+        />
+
+    <ImageView
+        android:id="@+id/buttonHeadlights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonActionLike"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_headlights"
+        />
+
+    <ImageView
+        android:id="@+id/buttonActionNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonHeadlights"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_no"
+        />
+
+    <ImageView
+        android:id="@+id/buttonActionYes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonActionNo"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_yes"
+        />
+
+    <!--Second right column-->
+
+    <ImageView
+        android:id="@+id/buttonSwitchCam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/buttonSettings"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_switch_cam"
     />
 
-    <!--Left column-->
+    <!--First left column-->
 
     <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceOk"
@@ -53,7 +115,7 @@
     />
 
     <ru.robotmitya.roboboard.CheckableImageView
-        android:id="@+id/buttonFaceHappy"
+        android:id="@+id/buttonFaceIll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonFaceOk"
@@ -64,56 +126,11 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_face_happy"
-    />
-
-    <ru.robotmitya.roboboard.CheckableImageView
-        android:id="@+id/buttonFaceBlue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonFaceHappy"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/board_button"
-        android:layout_marginLeft="@dimen/board_button_marging"
-        android:layout_marginTop="@dimen/board_button_marging"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp"
-        android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_face_blue"
-    />
+        android:src="@drawable/ic_face_ill"
+        />
 
     <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonFaceAngry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonFaceBlue"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/board_button"
-        android:layout_marginLeft="@dimen/board_button_marging"
-        android:layout_marginTop="@dimen/board_button_marging"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp"
-        android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_face_angry"
-    />
-
-    <ru.robotmitya.roboboard.CheckableImageView
-        android:id="@+id/buttonFaceIll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonFaceAngry"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/board_button"
-        android:layout_marginLeft="@dimen/board_button_marging"
-        android:layout_marginTop="@dimen/board_button_marging"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="0dp"
-        android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_face_ill"
-    />
-
-    <ru.robotmitya.roboboard.CheckableImageView
-        android:id="@+id/buttonFaceReadyToPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonFaceIll"
@@ -124,7 +141,114 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
-        android:src="@drawable/ic_face_ready_to_play"
+        android:src="@drawable/ic_face_angry"
+        />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonFaceBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceAngry"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_face_blue"
+        />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonFaceHappy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonFaceBlue"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_face_happy"
+    />
+
+    <!--Second left column-->
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonActionPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/buttonFaceOk"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_antion_play"
+    />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonActionDance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/buttonFaceIll"
+        android:layout_below="@+id/buttonActionPlay"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_dance"
+    />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonActionAngry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/buttonFaceAngry"
+        android:layout_below="@+id/buttonActionDance"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_angry"
+    />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonActionBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/buttonFaceBlue"
+        android:layout_below="@+id/buttonActionAngry"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_blue"
+    />
+
+    <ru.robotmitya.roboboard.CheckableImageView
+        android:id="@+id/buttonActionHappy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/buttonFaceHappy"
+        android:layout_below="@+id/buttonActionBlue"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="@dimen/board_button_marging"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_action_happy"
     />
 
 </RelativeLayout>

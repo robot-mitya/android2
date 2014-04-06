@@ -28,6 +28,7 @@ public class BoardNode implements NodeMain {
 
     private Publisher<std_msgs.String> mEyePublisher;
     private Publisher<std_msgs.String> mFacePublisher;
+    private Publisher<std_msgs.String> mReflexPublisher;
 
     public BoardNode(final Context context) {
         mContext = context;
@@ -42,6 +43,7 @@ public class BoardNode implements NodeMain {
     public void onStart(ConnectedNode connectedNode) {
         mEyePublisher = connectedNode.newPublisher(AppConst.RoboHead.EYE_TOPIC, std_msgs.String._TYPE);
         mFacePublisher = connectedNode.newPublisher(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
+        mReflexPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
 
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
@@ -91,5 +93,9 @@ public class BoardNode implements NodeMain {
 
     public void publishToFaceTopic(final String message) {
         publishCommand(mFacePublisher, message);
+    }
+
+    public void publishToReflexTopic(final String message) {
+        publishCommand(mReflexPublisher, message);
     }
 }

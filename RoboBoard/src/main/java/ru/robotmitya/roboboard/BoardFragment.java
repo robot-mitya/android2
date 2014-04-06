@@ -23,11 +23,16 @@ public class BoardFragment extends Fragment {
     private BroadcastReceiver mMessageReceiver;
 
     private CheckableImageView mButtonFaceOk;
-    private CheckableImageView mButtonFaceHappy;
-    private CheckableImageView mButtonFaceBlue;
-    private CheckableImageView mButtonFaceAngry;
     private CheckableImageView mButtonFaceIll;
-    private CheckableImageView mButtonFaceReadyToPlay;
+    private CheckableImageView mButtonFaceAngry;
+    private CheckableImageView mButtonFaceBlue;
+    private CheckableImageView mButtonFaceHappy;
+
+    private CheckableImageView mButtonActionPlay;
+    private CheckableImageView mButtonActionDance;
+    private CheckableImageView mButtonActionAngry;
+    private CheckableImageView mButtonActionBlue;
+    private CheckableImageView mButtonActionHappy;
 
     public BoardFragment(final BoardNode boardNode) {
         super();
@@ -43,34 +48,51 @@ public class BoardFragment extends Fragment {
                 int value = MessageHelper.getMessageIntegerValue(message);
                 if (identifier.contentEquals(Rs.Mood.ID)) {
                     mButtonFaceOk.setChecked(false);
-                    mButtonFaceHappy.setChecked(false);
-                    mButtonFaceBlue.setChecked(false);
-                    mButtonFaceAngry.setChecked(false);
                     mButtonFaceIll.setChecked(false);
-                    mButtonFaceReadyToPlay.setChecked(false);
+                    mButtonFaceAngry.setChecked(false);
+                    mButtonFaceBlue.setChecked(false);
+                    mButtonFaceHappy.setChecked(false);
+
+                    mButtonActionPlay.setChecked(false);
+                    mButtonActionDance.setChecked(false);
+                    mButtonActionAngry.setChecked(false);
+                    mButtonActionBlue.setChecked(false);
+                    mButtonActionHappy.setChecked(false);
 
                     switch (value) {
-                        case Rs.Mood.ACTION_NOSE: //todo need more buttons
+                        case Rs.Mood.ACTION_NOSE:
                         case Rs.Mood.FACE_OK:
                             mButtonFaceOk.setChecked(true);
-                            break;
-                        case Rs.Mood.ACTION_HAPPY: //todo need more buttons
-                        case Rs.Mood.FACE_HAPPY:
-                            mButtonFaceHappy.setChecked(true);
-                            break;
-                        case Rs.Mood.FACE_BLUE:
-                            mButtonFaceBlue.setChecked(true);
-                            break;
-                        case Rs.Mood.ACTION_ANGRY: //todo need more buttons
-                        case Rs.Mood.FACE_ANGRY:
-                            mButtonFaceAngry.setChecked(true);
                             break;
                         case Rs.Mood.FACE_ILL:
                             mButtonFaceIll.setChecked(true);
                             break;
-                        case Rs.Mood.FACE_READY_TO_PLAY:
-                            mButtonFaceReadyToPlay.setChecked(true);
+                        case Rs.Mood.FACE_ANGRY:
+                            mButtonFaceAngry.setChecked(true);
                             break;
+                        case Rs.Mood.FACE_BLUE:
+                            mButtonFaceBlue.setChecked(true);
+                            break;
+                        case Rs.Mood.FACE_HAPPY:
+                            mButtonFaceHappy.setChecked(true);
+                            break;
+
+                        case Rs.Mood.ACTION_PLAY:
+                            mButtonActionPlay.setChecked(true);
+                            break;
+                        case Rs.Mood.ACTION_DANCE:
+                            mButtonActionDance.setChecked(true);
+                            break;
+                        case Rs.Mood.ACTION_ANGRY:
+                            mButtonActionAngry.setChecked(true);
+                            break;
+                        case Rs.Mood.ACTION_SAD:
+                            mButtonActionBlue.setChecked(true);
+                            break;
+                        case Rs.Mood.ACTION_HAPPY:
+                            mButtonActionHappy.setChecked(true);
+                            break;
+
                     }
                 }
             }
@@ -106,41 +128,68 @@ public class BoardFragment extends Fragment {
             }
         });
 
-        // Face buttons:
+        // Mood buttons:
         mButtonFaceOk = (CheckableImageView) result.findViewById(R.id.buttonFaceOk);
-        mButtonFaceOk.setTag(1);
-        mButtonFaceOk.setOnClickListener(moodListener);
-
-        mButtonFaceHappy = (CheckableImageView) result.findViewById(R.id.buttonFaceHappy);
-        mButtonFaceHappy.setTag(2);
-        mButtonFaceHappy.setOnClickListener(moodListener);
-
-        mButtonFaceBlue = (CheckableImageView) result.findViewById(R.id.buttonFaceBlue);
-        mButtonFaceBlue.setTag(3);
-        mButtonFaceBlue.setOnClickListener(moodListener);
-
-        mButtonFaceAngry = (CheckableImageView) result.findViewById(R.id.buttonFaceAngry);
-        mButtonFaceAngry.setTag(4);
-        mButtonFaceAngry.setOnClickListener(moodListener);
+        mButtonFaceOk.setTag(Rs.Mood.FACE_OK);
+        mButtonFaceOk.setOnClickListener(faceListener);
 
         mButtonFaceIll = (CheckableImageView) result.findViewById(R.id.buttonFaceIll);
-        mButtonFaceIll.setTag(5);
-        mButtonFaceIll.setOnClickListener(moodListener);
+        mButtonFaceIll.setTag(Rs.Mood.FACE_ILL);
+        mButtonFaceIll.setOnClickListener(faceListener);
 
-        mButtonFaceReadyToPlay = (CheckableImageView) result.findViewById(R.id.buttonFaceReadyToPlay);
-        mButtonFaceReadyToPlay.setTag(6);
-        mButtonFaceReadyToPlay.setOnClickListener(moodListener);
+        mButtonFaceAngry = (CheckableImageView) result.findViewById(R.id.buttonFaceAngry);
+        mButtonFaceAngry.setTag(Rs.Mood.FACE_ANGRY);
+        mButtonFaceAngry.setOnClickListener(faceListener);
+
+        mButtonFaceBlue = (CheckableImageView) result.findViewById(R.id.buttonFaceBlue);
+        mButtonFaceBlue.setTag(Rs.Mood.FACE_BLUE);
+        mButtonFaceBlue.setOnClickListener(faceListener);
+
+        mButtonFaceHappy = (CheckableImageView) result.findViewById(R.id.buttonFaceHappy);
+        mButtonFaceHappy.setTag(Rs.Mood.FACE_HAPPY);
+        mButtonFaceHappy.setOnClickListener(faceListener);
+
+        mButtonActionPlay = (CheckableImageView) result.findViewById(R.id.buttonActionPlay);
+        mButtonActionPlay.setTag(Rs.Mood.ACTION_PLAY);
+        mButtonActionPlay.setOnClickListener(reflexListener);
+
+        mButtonActionDance = (CheckableImageView) result.findViewById(R.id.buttonActionDance);
+        mButtonActionDance.setTag(Rs.Mood.ACTION_DANCE);
+        mButtonActionDance.setOnClickListener(reflexListener);
+
+        mButtonActionAngry = (CheckableImageView) result.findViewById(R.id.buttonActionAngry);
+        mButtonActionAngry.setTag(Rs.Mood.ACTION_ANGRY);
+        mButtonActionAngry.setOnClickListener(reflexListener);
+
+        mButtonActionBlue = (CheckableImageView) result.findViewById(R.id.buttonActionBlue);
+        mButtonActionBlue.setTag(Rs.Mood.ACTION_SAD);
+        mButtonActionBlue.setOnClickListener(reflexListener);
+
+        mButtonActionHappy = (CheckableImageView) result.findViewById(R.id.buttonActionHappy);
+        mButtonActionHappy.setTag(Rs.Mood.ACTION_HAPPY);
+        mButtonActionHappy.setOnClickListener(reflexListener);
 
         return result;
     }
 
-    private View.OnClickListener moodListener = new View.OnClickListener() {
+    private View.OnClickListener faceListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mBoardNode != null) {
-                int value = (Integer)v.getTag();
-                String command = MessageHelper.makeMessage(Rs.Mood.ID, (short)value);
+                short value = (Short)v.getTag();
+                String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
                 mBoardNode.publishToFaceTopic(command);
+            }
+        }
+    };
+
+    private View.OnClickListener reflexListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mBoardNode != null) {
+                short value = (Short)v.getTag();
+                String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
+                mBoardNode.publishToReflexTopic(command);
             }
         }
     };
