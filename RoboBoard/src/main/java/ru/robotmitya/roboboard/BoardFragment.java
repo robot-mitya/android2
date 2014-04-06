@@ -36,9 +36,8 @@ public class BoardFragment extends Fragment {
 
     private CheckableImageView mButtonHeadlights;
 
-    public BoardFragment(final BoardNode boardNode) {
+    public BoardFragment() {
         super();
-        this.mBoardNode = boardNode;
 
         mMessageReceiver = new BroadcastReceiver() {
             @Override
@@ -108,6 +107,11 @@ public class BoardFragment extends Fragment {
                 }
             }
         };
+    }
+
+    public BoardFragment(final BoardNode boardNode) {
+        this();
+        this.mBoardNode = boardNode;
     }
 
     @Override

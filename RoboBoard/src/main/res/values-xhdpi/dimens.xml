@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="board_button_width">70dp</dimen>
+    <dimen name="board_button_height">70dp</dimen>
+    <dimen name="board_button_marging">15dp</dimen>
+    <dimen name="board_button_padding">15dp</dimen>
+</resources>
