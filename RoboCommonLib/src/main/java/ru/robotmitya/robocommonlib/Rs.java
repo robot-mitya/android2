@@ -8,6 +8,8 @@ public class Rs {
     public class Instruction {
         public static final String ID = "I";
 
+        public static final short STATE_REQUEST = (short) 0xffff;
+
         public static final short HEADLIGHTS_OFF = 0x0000;
         public static final short HEADLIGHTS_ON = 0x0001;
 

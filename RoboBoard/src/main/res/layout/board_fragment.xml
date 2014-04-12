@@ -83,11 +83,26 @@
     <!--Second right column-->
 
     <ImageView
-        android:id="@+id/buttonSwitchCam"
+        android:id="@+id/buttonStateRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/buttonSettings"
         android:layout_alignParentTop="true"
+        android:background="@drawable/board_button"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/board_button_marging"
+        android:layout_marginRight="@dimen/board_button_marging"
+        android:layout_marginBottom="0dp"
+        android:padding="@dimen/board_button_padding"
+        android:src="@drawable/ic_refresh"
+    />
+
+    <ImageView
+        android:id="@+id/buttonSwitchCam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/buttonActionLike"
+        android:layout_below="@+id/buttonStateRequest"
         android:background="@drawable/board_button"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="@dimen/board_button_marging"
@@ -250,5 +265,25 @@
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_action_happy"
     />
+
+    <!-- Left (drive) joystick -->
+
+    <org.ros.android.view.VirtualJoystickView
+        android:id="@+id/drive_joystick"
+        android:layout_width="@dimen/joystick_size"
+        android:layout_height="@dimen/joystick_size"
+        android:layout_margin="@dimen/joystick_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
+
+    <!-- Right (head) joystick -->
+
+    <org.ros.android.view.VirtualJoystickView
+        android:id="@+id/head_joystick"
+        android:layout_width="@dimen/joystick_size"
+        android:layout_height="@dimen/joystick_size"
+        android:layout_margin="@dimen/joystick_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

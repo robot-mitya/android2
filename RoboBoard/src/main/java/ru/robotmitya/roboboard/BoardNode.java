@@ -12,9 +12,14 @@ import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
+import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.RoboState;
+import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 3/23/14.
@@ -61,13 +66,25 @@ public class BoardNode implements NodeMain {
             }
         });
 
-        initializeRoboState();
+        // This is a strange patch. After publisher is created it is not ready to publish messages.
+        // So I wait for 1 second before sending "IFFFF" message. That's a dangerous code.
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendRoboStateRequest();
+            }
+        }, 1000);
     }
 
-    private void initializeRoboState() {
-        //todo: Change this after implementing command "IFFFF".
+    public void sendRoboStateRequest() {
+        //todo: Change this after implementing command "IFFFF". See publishToEyeTopic below.
         RoboState.setNumberOfCams((short) 2);
         RoboState.setSelectedCamIndex((short)1);
+
+        String stateRequestCommand = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.STATE_REQUEST);
+        publishToFaceTopic(stateRequestCommand);
+//        publishToEyeTopic(stateRequestCommand);
+        publishToBodyTopic(stateRequestCommand);
     }
 
     @Override

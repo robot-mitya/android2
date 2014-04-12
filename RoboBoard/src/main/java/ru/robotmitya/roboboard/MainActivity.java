@@ -12,6 +12,7 @@ import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
 import ru.robotmitya.robocommonlib.AppConst;
+import ru.robotmitya.robocommonlib.Log;
 
 public class MainActivity extends RosActivity {
 
@@ -58,6 +59,8 @@ public class MainActivity extends RosActivity {
 
         nodeMainExecutor.execute(mBoardNode, nodeConfiguration);
         nodeMainExecutor.execute(mVideoFragment.getImageView(), nodeConfiguration.setNodeName(AppConst.RoboBoard.VIDEO_NODE));
+        nodeMainExecutor.execute(mBoardFragment.getDriveJoystick(), nodeConfiguration.setNodeName(AppConst.RoboBoard.DRIVE_JOYSTICK_NODE));
+        nodeMainExecutor.execute(mBoardFragment.getHeadJoystick(), nodeConfiguration.setNodeName(AppConst.RoboBoard.HEAD_JOYSTICK_NODE));
     }
 
 }

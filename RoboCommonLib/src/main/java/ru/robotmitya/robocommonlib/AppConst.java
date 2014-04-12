@@ -8,8 +8,12 @@ public class AppConst {
     public class RoboBoard {
         public static final String BOARD_NODE = "robot_mitya/board_node";
         public static final String VIDEO_NODE = "robot_mitya/video_node";
+        public static final String DRIVE_JOYSTICK_NODE = "robot_mitya/drive_joystick_node";
+        public static final String HEAD_JOYSTICK_NODE = "robot_mitya/head_joystick_node";
 
         public static final String BOARD_TOPIC = "robot_mitya/board";
+        public static final String DRIVE_JOYSTICK_TOPIC = "robot_mitya/drive_joystick";
+        public static final String HEAD_JOYSTICK_TOPIC = "robot_mitya/head_joystick";
     }
 
     public class RoboHead {

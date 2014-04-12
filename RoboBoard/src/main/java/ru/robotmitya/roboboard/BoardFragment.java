@@ -12,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.ros.android.view.VirtualJoystickView;
+
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.RoboState;
@@ -35,6 +38,9 @@ public class BoardFragment extends Fragment {
     private CheckableImageView mButtonActionHappy;
 
     private CheckableImageView mButtonHeadlights;
+
+    private VirtualJoystickView mDriveJoystick;
+    private VirtualJoystickView mHeadJoystick;
 
     public BoardFragment() {
         super();
@@ -208,6 +214,16 @@ public class BoardFragment extends Fragment {
             }
         });
 
+        ImageView buttonStateRequest = (ImageView) result.findViewById(R.id.buttonStateRequest);
+        buttonStateRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mBoardNode != null) {
+                    mBoardNode.sendRoboStateRequest();
+                }
+            }
+        });
+
         ImageView buttonSwitchCam = (ImageView) result.findViewById(R.id.buttonSwitchCam);
         buttonSwitchCam.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,11 +232,17 @@ public class BoardFragment extends Fragment {
                     RoboState.switchCam();
                     String command = MessageHelper.makeMessage(
                             Rs.Instruction.ID,
-                            (short)(Rs.Instruction.CAMERA_BACK_ON + RoboState.getSelectedCamIndex()));
+                            (short) (Rs.Instruction.CAMERA_BACK_ON + RoboState.getSelectedCamIndex()));
                     mBoardNode.publishToEyeTopic(command);
                 }
             }
         });
+
+        // Joysticks:
+        mDriveJoystick = (VirtualJoystickView) result.findViewById(R.id.drive_joystick);
+        mDriveJoystick.setTopicName(AppConst.RoboBoard.DRIVE_JOYSTICK_TOPIC);
+        mHeadJoystick = (VirtualJoystickView) result.findViewById(R.id.head_joystick);
+        mHeadJoystick.setTopicName(AppConst.RoboBoard.HEAD_JOYSTICK_TOPIC);
 
         return result;
     }
@@ -270,5 +292,13 @@ public class BoardFragment extends Fragment {
     public void onPause() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
         super.onPause();
+    }
+
+    public VirtualJoystickView getDriveJoystick() {
+        return mDriveJoystick;
+    }
+
+    public VirtualJoystickView getHeadJoystick() {
+        return mHeadJoystick;
     }
 }

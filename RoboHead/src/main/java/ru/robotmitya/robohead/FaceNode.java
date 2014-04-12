@@ -17,6 +17,7 @@ import org.ros.node.topic.Subscriber;
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.RoboState;
 import ru.robotmitya.robocommonlib.Rs;
 
 /**
@@ -36,7 +37,8 @@ public class FaceNode implements NodeMain {
     private BroadcastReceiver mBroadcastReceiverPushEye;
     private BroadcastReceiver mBroadcastReceiverPushNose;
 
-    private Publisher<std_msgs.String> mPublisher;
+    private Publisher<std_msgs.String> mReflexPublisher;
+    private Publisher<std_msgs.String> mBoardPublisher;
 
     public FaceNode(final Context context) {
         mContext = context;
@@ -49,7 +51,8 @@ public class FaceNode implements NodeMain {
 
     @Override
     public void onStart(ConnectedNode connectedNode) {
-        mPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
+        mReflexPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
+        mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
 
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
@@ -59,9 +62,14 @@ public class FaceNode implements NodeMain {
 
                 Log.messageReceived(FaceNode.this, messageBody);
 
-                Intent intent = new Intent(BROADCAST_FACE_CHANGE_NAME);
-                intent.putExtra(BROADCAST_FACE_CHANGE_EXTRA_NAME, messageBody);
-                LocalBroadcastManager.getInstance(FaceNode.this.mContext).sendBroadcast(intent);
+                if (isRoboStateRequest(messageBody)) {
+                    String request = MessageHelper.makeMessage(Rs.Mood.ID, RoboState.getMood());
+                    publishToBoardTopic(request);
+                } else {
+                    Intent intent = new Intent(BROADCAST_FACE_CHANGE_NAME);
+                    intent.putExtra(BROADCAST_FACE_CHANGE_EXTRA_NAME, messageBody);
+                    LocalBroadcastManager.getInstance(FaceNode.this.mContext).sendBroadcast(intent);
+                }
             }
         });
 
@@ -69,7 +77,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(FaceNode.this, "broadcast received: hair patting");
-                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_HAPPY));
+                publishToReflexTopic(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_HAPPY));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -79,7 +87,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(FaceNode.this, "broadcast received: eye push");
-                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_ANGRY));
+                publishToReflexTopic(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_ANGRY));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -89,7 +97,7 @@ public class FaceNode implements NodeMain {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(FaceNode.this, "broadcast received: nose push");
-                publish(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_NOSE));
+                publishToReflexTopic(MessageHelper.makeMessage(Rs.Mood.ID, Rs.Mood.ACTION_NOSE));
             }
         };
         LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -111,12 +119,25 @@ public class FaceNode implements NodeMain {
     public void onError(Node node, Throwable throwable) {
     }
 
-    private void publish(String command) {
-        if (mPublisher != null) {
-            std_msgs.String message = mPublisher.newMessage();
+    private void publishCommand(final Publisher<std_msgs.String> publisher, final String command) {
+        if (publisher != null) {
+            std_msgs.String message = publisher.newMessage();
             message.setData(command);
-            mPublisher.publish(message);
-            Log.messagePublished(this, mPublisher.getTopicName().toString(), command);
+            publisher.publish(message);
+            Log.messagePublished(this, publisher.getTopicName().toString(), command);
         }
+    }
+
+    private void publishToReflexTopic(String command) {
+        publishCommand(mReflexPublisher, command);
+    }
+
+    private void publishToBoardTopic(String command) {
+        publishCommand(mBoardPublisher, command);
+    }
+
+    private boolean isRoboStateRequest(final String message) {
+        return MessageHelper.getMessageIdentifier(message).contentEquals(Rs.Instruction.ID) &&
+                ((short)MessageHelper.getMessageIntegerValue(message) == Rs.Instruction.STATE_REQUEST);
     }
 }

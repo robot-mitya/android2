@@ -51,27 +51,23 @@ public class HeadStateNode implements NodeMain {
             switch (value) {
                 case Rs.Instruction.HEADLIGHTS_OFF:
                 case Rs.Instruction.HEADLIGHTS_ON:
-                    if (RoboState.setHeadlights(value)) {
-                        publishToBoard(message);
-                    }
+                    RoboState.setHeadlights(value);
+                    publishToBoard(message);
                     break;
                 case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP:
                 case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_START:
-                    if (RoboState.setMainAccumulatorCharging(value)) {
-                        publishToBoard(message);
-                    }
+                    RoboState.setMainAccumulatorCharging(value);
+                    publishToBoard(message);
                     break;
                 case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP:
                 case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_START:
-                    if (RoboState.setPhoneAccumulatorCharging(value)) {
-                        publishToBoard(message);
-                    }
+                    RoboState.setPhoneAccumulatorCharging(value);
+                    publishToBoard(message);
                     break;
             }
         } else if (identifier.equals(Rs.Mood.ID)) {
-            if (RoboState.setMood(value)) {
-                publishToBoard(message);
-            }
+            RoboState.setMood(value);
+            publishToBoard(message);
         }
     }
 
