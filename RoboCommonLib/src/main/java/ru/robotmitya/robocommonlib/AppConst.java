@@ -22,6 +22,8 @@ public class AppConst {
         public static final String FACE_NODE = "robot_mitya/face_node";
         public static final String HEAD_STATE_NODE = "robot_mitya/head_state_node";
         public static final String REFLEX_NODE = "robot_mitya/reflex_node";
+        public static final String DRIVE_JOYSTICK_ANALYZER_NODE = "robot_mitya/drive_joystick_analyzer_node";
+        public static final String HEAD_JOYSTICK_ANALYZER_NODE = "robot_mitya/head_joystick_analyzer_node";
 
         public static final String EYE_TOPIC = "robot_mitya/eye";
         public static final String CAMERA_TOPIC = "/camera/image/compressed";

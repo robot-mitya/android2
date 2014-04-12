@@ -103,6 +103,12 @@ public class MainActivity extends RosActivity {
 
         ReflexNode reflexNode = new ReflexNode(this);
         nodeMainExecutor.execute(reflexNode, nodeConfiguration);
+
+        DriveJoystickAnalyzerNode driveJoystickAnalyzerNode = new DriveJoystickAnalyzerNode();
+        nodeMainExecutor.execute(driveJoystickAnalyzerNode, nodeConfiguration);
+
+        HeadJoystickAnalyzerNode headJoystickAnalyzerNode = new HeadJoystickAnalyzerNode();
+        nodeMainExecutor.execute(headJoystickAnalyzerNode, nodeConfiguration);
     }
 
     private void initBluetoothBodyNode(final NodeMainExecutor nodeMainExecutor,
