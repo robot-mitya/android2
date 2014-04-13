@@ -13,6 +13,11 @@ public class RoboState {
     private static short mMainAccumulatorCharging;
     private static short mPhoneAccumulatorCharging;
 
+    private final static short mHeadHorizontalServoMinDegree = 0;
+    private final static short mHeadHorizontalServoMaxDegree = 180;
+    private final static short mHeadVerticalServoMinDegree = 0;
+    private final static short mHeadVerticalServoMaxDegree = 90;
+
     private static short mMood;
 
     static {
@@ -123,5 +128,21 @@ public class RoboState {
 
     public static short getMood() {
         return mMood;
+    }
+
+    public static short getHeadHorizontalServoMinDegree() {
+        return mHeadHorizontalServoMinDegree;
+    }
+
+    public static short getHeadHorizontalServoMaxDegree() {
+        return mHeadHorizontalServoMaxDegree;
+    }
+
+    public static short getHeadVerticalServoMinDegree() {
+        return mHeadVerticalServoMinDegree;
+    }
+
+    public static short getHeadVerticalServoMaxDegree() {
+        return mHeadVerticalServoMaxDegree;
     }
 }

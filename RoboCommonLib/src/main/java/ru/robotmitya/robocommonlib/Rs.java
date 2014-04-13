@@ -69,4 +69,12 @@ public class Rs {
         public static final short SHAKE_1 = 0x0001;
         public static final short SHAKE_2 = 0x0002;
     }
+
+    public class HeadHorizontalPosition {
+        public static final String ID = "H";
+    }
+
+    public class HeadVerticalPosition {
+        public static final String ID = "V";
+    }
 }
