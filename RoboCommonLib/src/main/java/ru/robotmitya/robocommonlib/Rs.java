@@ -77,4 +77,12 @@ public class Rs {
     public class HeadVerticalPosition {
         public static final String ID = "V";
     }
+
+    public class DriveLeft {
+        public static final String ID = "L";
+    }
+
+    public class DriveRight {
+        public static final String ID = "R";
+    }
 }
