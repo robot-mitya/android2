@@ -5,5 +5,5 @@
     <dimen name="board_button_marging">15dp</dimen>
     <dimen name="board_button_padding">15dp</dimen>
     <dimen name="joystick_size">240dp</dimen>
-    <dimen name="joystick_margin">10dp</dimen>
+    <dimen name="joystick_margin">20dp</dimen>
 </resources>
