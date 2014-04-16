@@ -15,15 +15,15 @@ import geometry_msgs.Vector3;
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.MotorsSpeed;
 import ru.robotmitya.robocommonlib.Rs;
-import std_msgs.*;
 
 /**
  * Created by dmitrydzz on 4/12/14.
  *
  */
 public class DriveJoystickAnalyzerNode implements NodeMain {
-    private final static double SIN_ALPHA_BOUND = 0.06;
+//    private final static double SIN_ALPHA_BOUND = 0.06;
 
     private Publisher<std_msgs.String> mBodyPublisher;
 
@@ -66,75 +66,108 @@ public class DriveJoystickAnalyzerNode implements NodeMain {
     public void onError(Node node, Throwable throwable) {
     }
 
-    private final class MotorsSpeed {
-        public short mLeft;
-        public short mRight;
-    }
-
-    private void calculateMotorsSpeed(final double x, final double y, final MotorsSpeed motorsSpeed) {
-        double vectorLength = Math.sqrt(x * x + y * y);
-        vectorLength = vectorLength < 0 ? 0 : vectorLength;
-        vectorLength = vectorLength > 1 ? 1 : vectorLength;
-
-        double sinAlpha = vectorLength == 0 ? 0 : (y >= 0 ? y / vectorLength : -y / vectorLength);
-
-        // Аж два раза корректирую синус. Дошёл до этого эмпирически. Только так чувствуется эффект.
-        sinAlpha = 1 - Math.sqrt(1 - (sinAlpha * sinAlpha)); // (нелинейная корректировка синуса) f(x) = 1 - sqrt(1 - x^2)
-        sinAlpha = 1 - Math.sqrt(1 - (sinAlpha * sinAlpha)); // (нелинейная корректировка синуса) f(x) = 1 - sqrt(1 - x^2)
-        sinAlpha = sinAlpha < 0 ? 0 : sinAlpha;
-        sinAlpha = sinAlpha > 1 ? 1 : sinAlpha;
-
-        boolean rotationModeOn = sinAlpha < SIN_ALPHA_BOUND;
-        int leftSpeed;
-        int rightSpeed;
-
-        if ((x >= 0) && (y >= 0)) {
-            leftSpeed = map(vectorLength, 0, 255);
-            rightSpeed = rotationModeOn ? -leftSpeed : map(sinAlpha * vectorLength, 0, 255);
-        } else if ((x < 0) && (y >= 0)) {
-            rightSpeed = map(vectorLength, 0, 255);
-            leftSpeed = rotationModeOn ? -rightSpeed : map(sinAlpha * vectorLength, 0, 255);
-        } else if ((x < 0) && (y < 0)) {
-            rightSpeed = map(vectorLength, 0, -255);
-            leftSpeed = rotationModeOn ? -rightSpeed : map(sinAlpha * vectorLength, 0, -255);
-        } else { // (x >= 0) && (y < 0)
-            leftSpeed = map(vectorLength, 0, -255);
-            rightSpeed = rotationModeOn ? -leftSpeed : map(sinAlpha * vectorLength, 0, -255);
-        }
-
-        // Делаю нелинейный прирост скорости. Функция - дуга окружности. f(x) = sqrt(2x - x^2)
-        leftSpeed = nonlinearSpeedCorrection(leftSpeed);
-        rightSpeed = nonlinearSpeedCorrection(rightSpeed);
-
-        motorsSpeed.mLeft = (short) leftSpeed;
-        motorsSpeed.mRight = (short) rightSpeed;
-    }
-
-    private int map(double value, int minResult, int maxResult) {
-        value = value < 0 ? 0 : value;
-        value = value > 1 ? 1 : value;
-        double result = minResult + (value * (maxResult - minResult));
-        return (int)Math.round(result);
-    }
-
-    public static int nonlinearSpeedCorrection(int speed) {
-        double floatSpeed = Math.abs(speed);
-        floatSpeed = floatSpeed / 255.0;
-        double floatResult = Math.sqrt((2 * floatSpeed) - (floatSpeed * floatSpeed));
-        floatResult = floatResult * 255.0;
-        int result = (int)Math.round(floatResult);
-        result = result > 255 ? 255 : result;
-        result = result < 0 ? 0 : result;
-        if (speed < 0) {
-            result = -result;
-        }
-        return result;
-    }
+//    private void calculateMotorsSpeed(final double x, final double y, final MotorsSpeed motorsSpeed) {
+//        double vectorLength = Math.sqrt(x * x + y * y);
+//        vectorLength = vectorLength < 0 ? 0 : vectorLength;
+//        vectorLength = vectorLength > 1 ? 1 : vectorLength;
+//
+//        double sinAlpha = vectorLength == 0 ? 0 : (y >= 0 ? y / vectorLength : -y / vectorLength);
+//
+//        // Аж два раза корректирую синус. Дошёл до этого эмпирически. Только так чувствуется эффект.
+//        sinAlpha = 1 - Math.sqrt(1 - (sinAlpha * sinAlpha)); // (нелинейная корректировка синуса) f(x) = 1 - sqrt(1 - x^2)
+//        sinAlpha = 1 - Math.sqrt(1 - (sinAlpha * sinAlpha)); // (нелинейная корректировка синуса) f(x) = 1 - sqrt(1 - x^2)
+//        sinAlpha = sinAlpha < 0 ? 0 : sinAlpha;
+//        sinAlpha = sinAlpha > 1 ? 1 : sinAlpha;
+//
+//        boolean rotationModeOn = sinAlpha < SIN_ALPHA_BOUND;
+//        int leftSpeed;
+//        int rightSpeed;
+//
+//        if ((x >= 0) && (y >= 0)) {
+//            leftSpeed = map(vectorLength, 0, 255);
+//            rightSpeed = rotationModeOn ? -leftSpeed : map(sinAlpha * vectorLength, 0, 255);
+//        } else if ((x < 0) && (y >= 0)) {
+//            rightSpeed = map(vectorLength, 0, 255);
+//            leftSpeed = rotationModeOn ? -rightSpeed : map(sinAlpha * vectorLength, 0, 255);
+//        } else if ((x < 0) && (y < 0)) {
+//            rightSpeed = map(vectorLength, 0, -255);
+//            leftSpeed = rotationModeOn ? -rightSpeed : map(sinAlpha * vectorLength, 0, -255);
+//        } else { // (x >= 0) && (y < 0)
+//            leftSpeed = map(vectorLength, 0, -255);
+//            rightSpeed = rotationModeOn ? -leftSpeed : map(sinAlpha * vectorLength, 0, -255);
+//        }
+//
+//        // Делаю нелинейный прирост скорости. Функция - дуга окружности. f(x) = sqrt(2x - x^2)
+//        leftSpeed = nonlinearSpeedCorrection(leftSpeed);
+//        rightSpeed = nonlinearSpeedCorrection(rightSpeed);
+//
+//        motorsSpeed.mLeft = (short) leftSpeed;
+//        motorsSpeed.mRight = (short) rightSpeed;
+//    }
+//
+//    private int map(double value, int minResult, int maxResult) {
+//        value = value < 0 ? 0 : value;
+//        value = value > 1 ? 1 : value;
+//        double result = minResult + (value * (maxResult - minResult));
+//        return (int)Math.round(result);
+//    }
+//
+//    public static int nonlinearSpeedCorrection(int speed) {
+//        double floatSpeed = Math.abs(speed);
+//        floatSpeed = floatSpeed / 255.0;
+//        double floatResult = Math.sqrt((2 * floatSpeed) - (floatSpeed * floatSpeed));
+//        floatResult = floatResult * 255.0;
+//        int result = (int)Math.round(floatResult);
+//        result = result > 255 ? 255 : result;
+//        result = result < 0 ? 0 : result;
+//        if (speed < 0) {
+//            result = -result;
+//        }
+//        return result;
+//    }
 
     private void publishCommand(final String command) {
         std_msgs.String message = mBodyPublisher.newMessage();
         message.setData(command);
         mBodyPublisher.publish(message);
         Log.messagePublished(this, mBodyPublisher.getTopicName().toString(), command);
+    }
+
+    public static final short MAX_SPEED = 255;
+
+    public static void calculateMotorsSpeed(double x, double y, final MotorsSpeed motorsSpeed) {
+        if ((x >= 0) && (y >= 0)) {
+            calculateMotorsSpeedInFirstQuadrant(x, y, motorsSpeed);
+        } else if ((x < 0) && (y >= 0)) {
+            x = -x;
+            calculateMotorsSpeedInFirstQuadrant(x, y, motorsSpeed);
+            short temp = motorsSpeed.mLeft;
+            motorsSpeed.mLeft = motorsSpeed.mRight;
+            motorsSpeed.mRight = temp;
+        } else if ((x < 0) && (y < 0)) {
+            x = -x;
+            y = -y;
+            calculateMotorsSpeedInFirstQuadrant(x, y, motorsSpeed);
+            motorsSpeed.mLeft = (short) -motorsSpeed.mLeft;
+            motorsSpeed.mRight = (short) -motorsSpeed.mRight;
+        } else if ((x >= 0) && (y < 0)) {
+            y = -y;
+            calculateMotorsSpeedInFirstQuadrant(x, y, motorsSpeed);
+            short temp = motorsSpeed.mLeft;
+            motorsSpeed.mLeft = (short) -motorsSpeed.mRight;
+            motorsSpeed.mRight = (short) -temp;
+        }
+    }
+
+    private static void calculateMotorsSpeedInFirstQuadrant(double x, double y, final MotorsSpeed motorsSpeed) {
+        if ((x >= 0) && (y >= 0)) {
+            double r = Math.sqrt(x * x + y * y);
+            double angle = Math.asin(y / r);
+
+            double rightCoef = r * (4 * angle / Math.PI - 1);
+
+            motorsSpeed.mLeft = (short) (Math.round(MAX_SPEED * r));
+            motorsSpeed.mRight = (short) (Math.round(MAX_SPEED * rightCoef));
+        }
     }
 }
