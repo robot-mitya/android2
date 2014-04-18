@@ -14,6 +14,7 @@ import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
 import ru.robotmitya.robocommonlib.RoboState;
 import ru.robotmitya.robocommonlib.Rs;
+import ru.robotmitya.robocommonlib.SensorValueAdapter;
 
 /**
  * Created by dmitrydzz on 4/12/14.
@@ -21,6 +22,8 @@ import ru.robotmitya.robocommonlib.Rs;
  */
 public class HeadJoystickAnalyzerNode implements NodeMain {
     private Publisher<std_msgs.String> mBodyPublisher;
+    private final SensorValueAdapter mHorizontalValueAdapter = new SensorValueAdapter(0.01, 0.4);
+    private final SensorValueAdapter mVerticalValueAdapter = new SensorValueAdapter(0.005, 0.4);
 
     @Override
     public GraphName getDefaultNodeName() {
@@ -42,10 +45,16 @@ public class HeadJoystickAnalyzerNode implements NodeMain {
                 JoystickPosition joystickPosition = new JoystickPosition(x, y);
                 correctCoordinatesFromCycleToSquareArea(joystickPosition);
                 // Round:
-                x = Math.round(joystickPosition.mX * 100) / 100;
-                y = Math.round(joystickPosition.mY * 100) / 100;
+//                x = (double)Math.round(joystickPosition.mX * 100) / 100F;
+//                y = (double)Math.round(joystickPosition.mY * 50) / 50F;
+//                joystickPosition.mX = x;
+//                joystickPosition.mY = y;
+                mHorizontalValueAdapter.put(joystickPosition.mX);
+                mVerticalValueAdapter.put(joystickPosition.mY);
+                joystickPosition.mX = mHorizontalValueAdapter.get();
+                joystickPosition.mY = mVerticalValueAdapter.get();
 
-                Log.messageReceived(HeadJoystickAnalyzerNode.this, String.format("x=%.3f, y=%.3f", x, y));
+                Log.messageReceived(HeadJoystickAnalyzerNode.this, String.format("x=%.3f, y=%.3f", joystickPosition.mX, joystickPosition.mY));
 
                 // Reverse vertical:
                 joystickPosition.mY = -joystickPosition.mY;
