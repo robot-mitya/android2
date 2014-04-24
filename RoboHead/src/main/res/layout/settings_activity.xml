@@ -29,6 +29,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <ListPreference
+            android:key="@string/option_front_camera_key"
+            android:title="@string/option_front_camera_title"
+            android:summary="@string/option_front_camera_summary"
+            android:dialogTitle="@string/option_front_camera_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ListPreference
+            android:key="@string/option_back_camera_key"
+            android:title="@string/option_back_camera_title"
+            android:summary="@string/option_back_camera_summary"
+            android:dialogTitle="@string/option_back_camera_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </PreferenceCategory>
 
 

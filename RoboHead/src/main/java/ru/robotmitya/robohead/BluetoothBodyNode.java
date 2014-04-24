@@ -14,6 +14,7 @@ import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
 import org.ros.node.Node;
 import org.ros.node.NodeMain;
+import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import java.io.DataInputStream;
@@ -35,21 +36,18 @@ import ru.robotmitya.robocommonlib.MessageHelper;
 public class BluetoothBodyNode implements NodeMain {
     private Context mContext;
     private BluetoothAdapter mBluetoothAdapter;
-    private HeadStateNode mHeadStateNode;
+
+    private Publisher<std_msgs.String> mHeadStatePublisher;
 
     private BluetoothSocket mBluetoothSocket = null;
     private InputStream mInputStream = null;
     private OutputStream mOutputStream = null;
     private boolean mConnected;
 
-    public BluetoothBodyNode(
-            final Context context,
-            final BluetoothAdapter bluetoothAdapter,
-            final HeadStateNode headStateNode) {
+    public BluetoothBodyNode(final Context context, final BluetoothAdapter bluetoothAdapter) {
         super();
         mContext = context;
         mBluetoothAdapter = bluetoothAdapter;
-        mHeadStateNode = headStateNode;
         mConnected = false;
     }
 
@@ -79,7 +77,7 @@ public class BluetoothBodyNode implements NodeMain {
                         // Выполнить каждую принятую команду:
                         for (String messageText : messageList) {
                             Log.messageReceived(BluetoothBodyNode.this, "body", messageText);
-                            mHeadStateNode.changeState(messageText);
+                            publishToHeadState(messageText);
                         }
                     }
                 } else {
@@ -138,6 +136,8 @@ public class BluetoothBodyNode implements NodeMain {
             }
         });
 
+        mHeadStatePublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_STATE_TOPIC, std_msgs.String._TYPE);
+
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -184,5 +184,13 @@ public class BluetoothBodyNode implements NodeMain {
 
     @Override
     public void onError(Node node, Throwable throwable) {
+    }
+
+    private void publishToHeadState(final String command) {
+        std_msgs.String message = mHeadStatePublisher.newMessage();
+        message.setData(command);
+        mHeadStatePublisher.publish(message);
+
+        Log.messagePublished(this, mHeadStatePublisher.getTopicName().toString(), command);
     }
 }

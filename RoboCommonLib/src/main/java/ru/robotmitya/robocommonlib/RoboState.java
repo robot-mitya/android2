@@ -7,7 +7,8 @@ package ru.robotmitya.robocommonlib;
 public class RoboState {
     private static short mHeadlights;
 
-    private static short mNumberOfCams;
+//    private static short mFrontCamIndex;
+//    private static short mBackCamIndex;
     private static short mSelectedCamIndex;
 
     private static short mMainAccumulatorCharging;
@@ -23,8 +24,9 @@ public class RoboState {
     static {
         mHeadlights = Rs.Instruction.HEADLIGHTS_OFF;
 
-        mNumberOfCams = 1;
-        mSelectedCamIndex = 0;
+//        mFrontCamIndex = -1;
+//        mBackCamIndex = -1;
+        mSelectedCamIndex = -1;
 
         mMainAccumulatorCharging = Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP;
         mPhoneAccumulatorCharging = Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP;
@@ -48,19 +50,34 @@ public class RoboState {
     }
 
 
-    // Number of cameras
-
-    public static boolean setNumberOfCams(final short value) {
-        if  (value != mNumberOfCams) {
-            mNumberOfCams = value;
-            return true;
-        }
-        return false;
-    }
-
-    public static short getmNumberOfCams() {
-        return mNumberOfCams;
-    }
+//    // Front camera
+//
+//    public static boolean setFrontCamIndex(final short value) {
+//        if  (value != mFrontCamIndex) {
+//            mFrontCamIndex = value;
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public static short getFrontCamIndex() {
+//        return mFrontCamIndex;
+//    }
+//
+//
+//    // Back camera
+//
+//    public static boolean setBackCamIndex(final short value) {
+//        if  (value != mBackCamIndex) {
+//            mBackCamIndex = value;
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    public static short getBackCamIndex() {
+//        return mBackCamIndex;
+//    }
 
 
     // Selected camera index
@@ -77,13 +94,15 @@ public class RoboState {
         return mSelectedCamIndex;
     }
 
-    public static void switchCam() {
-        if (mSelectedCamIndex < mNumberOfCams - 1) {
-            mSelectedCamIndex++;
-        } else {
-            mSelectedCamIndex = 0;
-        }
-    }
+//    public static void switchCam() {
+//        if (mSelectedCamIndex == mFrontCamIndex) {
+//            mSelectedCamIndex = mBackCamIndex;
+//        } else if (mSelectedCamIndex == mBackCamIndex) {
+//            mSelectedCamIndex = mFrontCamIndex;
+//        } else { // when (mSelectedCamIndex == -1)
+//            mSelectedCamIndex = mFrontCamIndex;
+//        }
+//    }
 
 
     // Main accumulator charge

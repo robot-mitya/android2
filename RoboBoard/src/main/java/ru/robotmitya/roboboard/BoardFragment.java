@@ -39,6 +39,8 @@ public class BoardFragment extends Fragment {
 
     private CheckableImageView mButtonHeadlights;
 
+    private CheckableImageView mButtonSwitchCamera;
+
     private VirtualJoystickView mDriveJoystick;
     private VirtualJoystickView mHeadJoystick;
 
@@ -108,6 +110,13 @@ public class BoardFragment extends Fragment {
                             break;
                         case Rs.Instruction.HEADLIGHTS_ON:
                             mButtonHeadlights.setChecked(true);
+                            break;
+                        case Rs.Instruction.CAMERA_OFF:
+                        case Rs.Instruction.CAMERA_FRONT_ON:
+                            mButtonSwitchCamera.setChecked(false);
+                            break;
+                        case Rs.Instruction.CAMERA_BACK_ON:
+                            mButtonSwitchCamera.setChecked(true);
                             break;
                     }
                 }
@@ -224,19 +233,8 @@ public class BoardFragment extends Fragment {
             }
         });
 
-        ImageView buttonSwitchCam = (ImageView) result.findViewById(R.id.buttonSwitchCam);
-        buttonSwitchCam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mBoardNode != null) {
-                    RoboState.switchCam();
-                    String command = MessageHelper.makeMessage(
-                            Rs.Instruction.ID,
-                            (short) (Rs.Instruction.CAMERA_BACK_ON + RoboState.getSelectedCamIndex()));
-                    mBoardNode.publishToEyeTopic(command);
-                }
-            }
-        });
+        mButtonSwitchCamera = (CheckableImageView) result.findViewById(R.id.buttonSwitchCam);
+        mButtonSwitchCamera.setOnClickListener(switchCamButtonListener);
 
         // Joysticks:
         mDriveJoystick = (VirtualJoystickView) result.findViewById(R.id.drive_joystick);
@@ -277,6 +275,17 @@ public class BoardFragment extends Fragment {
                 short value = mButtonHeadlights.isChecked() ? Rs.Instruction.HEADLIGHTS_OFF : Rs.Instruction.HEADLIGHTS_ON;
                 String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
                 mBoardNode.publishToBodyTopic(command);
+            }
+        }
+    };
+
+    private View.OnClickListener switchCamButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mBoardNode != null) {
+                short value = mButtonSwitchCamera.isChecked() ? Rs.Instruction.CAMERA_FRONT_ON : Rs.Instruction.CAMERA_BACK_ON;
+                String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
+                mBoardNode.publishToEyeTopic(command);
             }
         }
     };

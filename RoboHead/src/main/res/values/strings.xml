@@ -19,6 +19,15 @@
     <string name="option_camera_title">Camera</string>
     <string name="option_camera_summary">Select camera for video streaming</string>
     <string name="option_camera_dialog_title">Select camera</string>
+
+    <string name="option_front_camera_title">Front camera</string>
+    <string name="option_front_camera_summary">Select front camera for video streaming</string>
+    <string name="option_front_camera_dialog_title">Select front camera</string>
+
+    <string name="option_back_camera_title">Back camera</string>
+    <string name="option_back_camera_summary">Select back camera for video streaming</string>
+    <string name="option_back_camera_dialog_title">Select back camera</string>
+
     <string name="option_camera_entry_none">Disabled</string>
     <string name="option_camera_entry">Camera %s</string>
 

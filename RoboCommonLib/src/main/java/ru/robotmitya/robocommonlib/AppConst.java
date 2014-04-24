@@ -30,5 +30,6 @@ public class AppConst {
         public static final String FACE_TOPIC = "robot_mitya/face";
         public static final String BODY_TOPIC = "robot_mitya/body";
         public static final String REFLEX_TOPIC = "robot_mitya/reflex";
+        public static final String HEAD_STATE_TOPIC = "robot_mitya/head_state";
     }
 }

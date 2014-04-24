@@ -16,13 +16,11 @@ import android.widget.ImageView;
 import ru.robotmitya.robocommonlib.Log;
 
 public class FaceFragment extends Fragment {
-    private HeadStateNode mHeadStateNode;
     private FaceHelper mFaceHelper;
     private BroadcastReceiver mMessageReceiver;
 
     public FaceFragment(final HeadStateNode headStateNode) {
         super();
-        mHeadStateNode = headStateNode;
 
         mMessageReceiver = new BroadcastReceiver() {
             @Override
@@ -32,7 +30,6 @@ public class FaceFragment extends Fragment {
                 FaceType faceType = FaceHelper.messageToFaceType(message);
                 if ((mFaceHelper != null) && (faceType != FaceType.ftUnknown)) {
                     mFaceHelper.setFace(faceType);
-                    mHeadStateNode.changeState(message);
                 }
             }
         };

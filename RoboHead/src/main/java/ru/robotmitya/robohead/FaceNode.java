@@ -39,6 +39,7 @@ public class FaceNode implements NodeMain {
 
     private Publisher<std_msgs.String> mReflexPublisher;
     private Publisher<std_msgs.String> mBoardPublisher;
+    private Publisher<std_msgs.String> mHeadStatePublisher;
 
     public FaceNode(final Context context) {
         mContext = context;
@@ -53,6 +54,7 @@ public class FaceNode implements NodeMain {
     public void onStart(ConnectedNode connectedNode) {
         mReflexPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
         mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
+        mHeadStatePublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_STATE_TOPIC, std_msgs.String._TYPE);
 
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
@@ -69,6 +71,7 @@ public class FaceNode implements NodeMain {
                     Intent intent = new Intent(BROADCAST_FACE_CHANGE_NAME);
                     intent.putExtra(BROADCAST_FACE_CHANGE_EXTRA_NAME, messageBody);
                     LocalBroadcastManager.getInstance(FaceNode.this.mContext).sendBroadcast(intent);
+                    publishToHeadStateTopic(messageBody);
                 }
             }
         });
@@ -134,6 +137,10 @@ public class FaceNode implements NodeMain {
 
     private void publishToBoardTopic(String command) {
         publishCommand(mBoardPublisher, command);
+    }
+
+    private void publishToHeadStateTopic(String command) {
+        publishCommand(mHeadStatePublisher, command);
     }
 
     private boolean isRoboStateRequest(final String message) {

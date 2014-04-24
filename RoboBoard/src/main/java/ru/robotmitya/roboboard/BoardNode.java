@@ -26,8 +26,13 @@ import ru.robotmitya.robocommonlib.Rs;
  *
  */
 public class BoardNode implements NodeMain {
-    public static String BROADCAST_MESSAGE_RECEIVED_NAME = "ru.robotmitya.roboboard.MESSAGE-RECEIVED";
-    public static String BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME = "message";
+    public static final String BROADCAST_MESSAGE_RECEIVED_NAME = "ru.robotmitya.roboboard.MESSAGE-RECEIVED";
+    public static final String BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME = "message";
+
+    // No matter what real index is. These are internal indexes to identify phone's cameras.
+    private static final short NO_CAM = (short)-1;
+    private static final short FRONT_CAM_INDEX = (short)1;
+    private static final short BACK_CAM_INDEX = (short)0;
 
     private Context mContext;
 
@@ -52,6 +57,10 @@ public class BoardNode implements NodeMain {
         mReflexPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
         mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
 
+        RoboState.setFrontCamIndex(FRONT_CAM_INDEX);
+        RoboState.setBackCamIndex(BACK_CAM_INDEX);
+        RoboState.setSelectedCamIndex(NO_CAM);
+
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -59,6 +68,22 @@ public class BoardNode implements NodeMain {
                 String messageBody = message.getData();
 
                 Log.messageReceived(BoardNode.this, messageBody);
+
+                String identifier = MessageHelper.getMessageIdentifier(messageBody);
+                int value = MessageHelper.getMessageIntegerValue(messageBody);
+                if (identifier.contentEquals(Rs.Instruction.ID)) {
+                    switch (value) {
+                        case Rs.Instruction.CAMERA_OFF:
+                            RoboState.setSelectedCamIndex(NO_CAM);
+                            break;
+                        case Rs.Instruction.CAMERA_FRONT_ON:
+                            RoboState.setSelectedCamIndex(FRONT_CAM_INDEX);
+                            break;
+                        case Rs.Instruction.CAMERA_BACK_ON:
+                            RoboState.setSelectedCamIndex(BACK_CAM_INDEX);
+                            break;
+                    }
+                }
 
                 Intent intent = new Intent(BROADCAST_MESSAGE_RECEIVED_NAME);
                 intent.putExtra(BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME, messageBody);
@@ -77,13 +102,9 @@ public class BoardNode implements NodeMain {
     }
 
     public void sendRoboStateRequest() {
-        //todo: Change this after implementing command "IFFFF". See publishToEyeTopic below.
-        RoboState.setNumberOfCams((short) 2);
-        RoboState.setSelectedCamIndex((short)1);
-
         String stateRequestCommand = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.STATE_REQUEST);
         publishToFaceTopic(stateRequestCommand);
-//        publishToEyeTopic(stateRequestCommand);
+        publishToEyeTopic(stateRequestCommand);
         publishToBodyTopic(stateRequestCommand);
     }
 

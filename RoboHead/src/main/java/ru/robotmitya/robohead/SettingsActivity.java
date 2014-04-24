@@ -24,6 +24,8 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
     private static String mMasterUri;
 
     private static int mCameraIndex;
+    private static int mFrontCameraIndex;
+    private static int mBackCameraIndex;
 
     private static int mNumberOfCameras;
 
@@ -35,6 +37,8 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
     private EditTextPreference mEditTextPreferenceMasterUri;
 
     private ListPreference mListPreferenceCamera;
+    private ListPreference mListPreferenceFrontCamera;
+    private ListPreference mListPreferenceBackCamera;
 
     /**
      * EditText for mRoboBodyMac option.
@@ -49,6 +53,14 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         return mCameraIndex;
     }
 
+    public static int getFrontCameraIndex() {
+        return mFrontCameraIndex;
+    }
+
+    public static int getBackCameraIndex() {
+        return mBackCameraIndex;
+    }
+
     public static void setCameraIndex(final Context context, final int cameraIndex) {
         if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
             return;
@@ -58,6 +70,28 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
         settings.edit().putString(context.getString(R.string.option_camera_key), String.valueOf(cameraIndex)).commit();
+    }
+
+    public static void setFrontCameraIndex(final Context context, final int cameraIndex) {
+        if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
+            return;
+        }
+
+        mFrontCameraIndex = cameraIndex;
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings.edit().putString(context.getString(R.string.option_front_camera_key), String.valueOf(cameraIndex)).commit();
+    }
+
+    public static void setBackCameraIndex(final Context context, final int cameraIndex) {
+        if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
+            return;
+        }
+
+        mBackCameraIndex = cameraIndex;
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings.edit().putString(context.getString(R.string.option_back_camera_key), String.valueOf(cameraIndex)).commit();
     }
 
     /**
@@ -82,8 +116,6 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         mEditTextPreferenceMasterUri.setTitle(title);
         mEditTextPreferenceMasterUri.setOnPreferenceChangeListener(this);
 
-        key = getString(R.string.option_camera_key);
-        mListPreferenceCamera = (ListPreference) this.findPreference(key);
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
         ArrayList<CharSequence> values = new ArrayList<CharSequence>();
         entries.add(getString(R.string.option_camera_entry_none));
@@ -92,6 +124,9 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
             entries.add(String.format(getString(R.string.option_camera_entry), i + 1));
             values.add(String.valueOf(i));
         }
+
+        key = getString(R.string.option_camera_key);
+        mListPreferenceCamera = (ListPreference) this.findPreference(key);
         mListPreferenceCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mListPreferenceCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
         mListPreferenceCamera.setValue(String.valueOf(mCameraIndex));
@@ -99,6 +134,26 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         mListPreferenceCamera.setTitle(title);
         mListPreferenceCamera.setDialogTitle(R.string.option_camera_dialog_title);
         mListPreferenceCamera.setOnPreferenceChangeListener(this);
+
+        key = getString(R.string.option_front_camera_key);
+        mListPreferenceFrontCamera = (ListPreference) this.findPreference(key);
+        mListPreferenceFrontCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        mListPreferenceFrontCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
+        mListPreferenceFrontCamera.setValue(String.valueOf(mFrontCameraIndex));
+        title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex);
+        mListPreferenceFrontCamera.setTitle(title);
+        mListPreferenceFrontCamera.setDialogTitle(R.string.option_front_camera_dialog_title);
+        mListPreferenceFrontCamera.setOnPreferenceChangeListener(this);
+
+        key = getString(R.string.option_back_camera_key);
+        mListPreferenceBackCamera = (ListPreference) this.findPreference(key);
+        mListPreferenceBackCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
+        mListPreferenceBackCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
+        mListPreferenceBackCamera.setValue(String.valueOf(mBackCameraIndex));
+        title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex);
+        mListPreferenceBackCamera.setTitle(title);
+        mListPreferenceBackCamera.setDialogTitle(R.string.option_back_camera_dialog_title);
+        mListPreferenceBackCamera.setOnPreferenceChangeListener(this);
 
         key = getString(R.string.option_robobody_mac_key);
         mEditTextPreferenceRoboBodyMac = (EditTextPreference) this.findPreference(key);
@@ -133,13 +188,34 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         defaultValue = context.getString(R.string.option_master_uri_default_value);
         mMasterUri = settings.getString(key, defaultValue);
 
-        key = context.getString(R.string.option_camera_key);
+
         mNumberOfCameras = Camera.getNumberOfCameras();
+
+        key = context.getString(R.string.option_front_camera_key);
+        if (mNumberOfCameras > 1) {
+            defaultValue = String.valueOf(mNumberOfCameras - 1);
+        } else if (mNumberOfCameras > 0) {
+            defaultValue = String.valueOf(0);
+        } else {
+            defaultValue = String.valueOf(-1);
+        }
+        mFrontCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
+
+        key = context.getString(R.string.option_back_camera_key);
+        if (mNumberOfCameras > 0) {
+            defaultValue = String.valueOf(0);
+        } else {
+            defaultValue = String.valueOf(-1);
+        }
+        mBackCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
+
+        key = context.getString(R.string.option_camera_key);
         defaultValue = String.valueOf(mNumberOfCameras - 1);
         mCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
         if (mCameraIndex >= mNumberOfCameras) {
             mCameraIndex = mNumberOfCameras - 1;
         }
+
 
         key = context.getString(R.string.option_robobody_mac_key);
         defaultValue = context.getString(R.string.option_robobody_mac_default_value);
@@ -168,6 +244,20 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
             mCameraIndex = Integer.valueOf((String) newValue);
             String title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex);
             mListPreferenceCamera.setTitle(title);
+            return true;
+        }
+
+        if (preference == mListPreferenceFrontCamera) {
+            mFrontCameraIndex = Integer.valueOf((String) newValue);
+            String title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex);
+            mListPreferenceFrontCamera.setTitle(title);
+            return true;
+        }
+
+        if (preference == mListPreferenceBackCamera) {
+            mBackCameraIndex = Integer.valueOf((String) newValue);
+            String title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex);
+            mListPreferenceBackCamera.setTitle(title);
             return true;
         }
 

@@ -49,7 +49,7 @@ public class MainActivity extends RosActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        mHeadStateNode = new HeadStateNode();
+        mHeadStateNode = new HeadStateNode(this);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -96,7 +96,7 @@ public class MainActivity extends RosActivity {
 
         nodeMainExecutor.execute(mEyePreviewView, nodeConfiguration);
 
-        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration, mHeadStateNode);
+        initBluetoothBodyNode(nodeMainExecutor, nodeConfiguration);
 
         FaceNode faceNode = new FaceNode(this);
         nodeMainExecutor.execute(faceNode, nodeConfiguration);
@@ -112,8 +112,7 @@ public class MainActivity extends RosActivity {
     }
 
     private void initBluetoothBodyNode(final NodeMainExecutor nodeMainExecutor,
-                                       final NodeConfiguration nodeConfiguration,
-                                       final HeadStateNode headStateNode) {
+                                       final NodeConfiguration nodeConfiguration) {
         if (mBluetoothAdapter == null) {
             Log.e(this, getString(R.string.error_no_bluetooth_adapter));
             runOnUiThread(new Runnable() {
@@ -137,7 +136,7 @@ public class MainActivity extends RosActivity {
                 }
             });
         } else {
-            BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter, headStateNode);
+            BluetoothBodyNode bluetoothBodyNode = new BluetoothBodyNode(this, mBluetoothAdapter);
             nodeMainExecutor.execute(bluetoothBodyNode, nodeConfiguration);
         }
     }
