@@ -1,6 +1,5 @@
 package ru.robotmitya.robohead;
 
-import android.app.Application;
 import android.content.Context;
 
 import org.ros.message.MessageListener;
@@ -12,7 +11,6 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import java.lang.String;
-import java.util.Set;
 
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;

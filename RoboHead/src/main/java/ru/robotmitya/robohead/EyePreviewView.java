@@ -1,10 +1,14 @@
 package ru.robotmitya.robohead;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 
 import org.ros.android.view.camera.RosCameraPreviewView;
@@ -23,8 +27,11 @@ import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 1/30/14.
+ *
  */
 public class EyePreviewView extends RosCameraPreviewView {
+    public static final String BROADCAST_CAMERA_SETTINGS_NAME = "ru.robotmitya.robohead.CAMERA_SETTINGS";
+
     public static int VIDEO_STARTED = 1;
     public static int VIDEO_STOPPED = 2;
 
@@ -32,6 +39,31 @@ public class EyePreviewView extends RosCameraPreviewView {
 
     private Publisher<std_msgs.String> mBoardPublisher;
     private Publisher<std_msgs.String> mHeadStatePublisher;
+
+    private BroadcastReceiver mCameraSettingsBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final short selectedCamera = (short)SettingsActivity.getCameraIndex();
+            final short frontCamera = (short)SettingsActivity.getFrontCameraIndex();
+            final short backCamera = (short)SettingsActivity.getBackCameraIndex();
+            RoboState.setSelectedCamIndex(selectedCamera);
+            RoboState.setFrontCamIndex(frontCamera);
+            RoboState.setBackCamIndex(backCamera);
+
+            short value;
+            if (selectedCamera == frontCamera) {
+                value = Rs.Instruction.CAMERA_FRONT_ON;
+                startVideoStreaming(selectedCamera);
+            } else if (selectedCamera == backCamera) {
+                value = Rs.Instruction.CAMERA_BACK_ON;
+                startVideoStreaming(selectedCamera);
+            } else {
+                value = Rs.Instruction.CAMERA_OFF;
+                stopVideoStreaming();
+            }
+            publishToBoard(MessageHelper.makeMessage(Rs.Instruction.ID, value));
+        }
+    };
 
     public EyePreviewView(Context context) {
         super(context);
@@ -61,6 +93,9 @@ public class EyePreviewView extends RosCameraPreviewView {
         mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
         mHeadStatePublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_STATE_TOPIC, std_msgs.String._TYPE);
 
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                mCameraSettingsBroadcastReceiver, new IntentFilter(BROADCAST_CAMERA_SETTINGS_NAME));
+
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.EYE_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
@@ -74,24 +109,14 @@ public class EyePreviewView extends RosCameraPreviewView {
                         Log.d(EyePreviewView.this, "video off");
                         stopVideoStreaming();
                         publishToHeadState(messageBody);
-//                        int cameraIndex = -1;
-//                        RoboState.setSelectedCamIndex((short)cameraIndex);
-//                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
-//                        publishToBoard(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d(EyePreviewView.this, "back camera is turned on");
                         startVideoStreaming(SettingsActivity.getBackCameraIndex());
                         publishToHeadState(messageBody);
-//                        RoboState.setSelectedCamIndex((short) cameraIndex);
-//                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
-//                        publishToBoard(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d(EyePreviewView.this, "front camera is turned on");
                         startVideoStreaming(SettingsActivity.getFrontCameraIndex());
                         publishToHeadState(messageBody);
-//                        RoboState.setSelectedCamIndex((short) cameraIndex);
-//                        SettingsActivity.setCameraIndex(EyePreviewView.this.getContext(), cameraIndex);
-//                        publishToBoard(messageBody);
                     } else if (value == Rs.Instruction.STATE_REQUEST) {
                         String messageToBoard;
                         if (RoboState.getSelectedCamIndex() == SettingsActivity.getFrontCameraIndex()) {
@@ -112,13 +137,12 @@ public class EyePreviewView extends RosCameraPreviewView {
     public void onShutdown(Node node) {
         super.onShutdown(node);
         stopVideoStreaming();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mCameraSettingsBroadcastReceiver);
     }
 
     public void startVideoStreaming(final int cameraIndex) {
-        stopVideoStreaming();
-        final int index = cameraIndex;
         final int numberOfCameras = Camera.getNumberOfCameras();
-        if ((numberOfCameras == 0) || (index < 0) || (index >= numberOfCameras)) {
+        if ((numberOfCameras == 0) || (cameraIndex < 0) || (cameraIndex >= numberOfCameras)) {
             return;
         }
 
@@ -127,8 +151,9 @@ public class EyePreviewView extends RosCameraPreviewView {
         final Runnable r = new Runnable() {
             @Override
             public void run() {
-                if ((index >= 0) && (index < numberOfCameras)) {
-                    setCamera(Camera.open(index));
+                if ((cameraIndex >= 0) && (cameraIndex < numberOfCameras)) {
+                    releaseCamera();
+                    setCamera(Camera.open(cameraIndex));
                 }
             }
         };

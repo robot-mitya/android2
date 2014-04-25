@@ -1,6 +1,7 @@
 package ru.robotmitya.robohead;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 
@@ -244,6 +246,7 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
             mCameraIndex = Integer.valueOf((String) newValue);
             String title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex);
             mListPreferenceCamera.setTitle(title);
+            sendCameraSettingsWereChangedBroadcast();
             return true;
         }
 
@@ -251,6 +254,7 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
             mFrontCameraIndex = Integer.valueOf((String) newValue);
             String title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex);
             mListPreferenceFrontCamera.setTitle(title);
+            sendCameraSettingsWereChangedBroadcast();
             return true;
         }
 
@@ -258,6 +262,7 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
             mBackCameraIndex = Integer.valueOf((String) newValue);
             String title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex);
             mListPreferenceBackCamera.setTitle(title);
+            sendCameraSettingsWereChangedBroadcast();
             return true;
         }
 
@@ -269,5 +274,10 @@ public final class SettingsActivity extends PreferenceActivity implements OnPref
         }
 
         return false;
+    }
+
+    private void sendCameraSettingsWereChangedBroadcast() {
+        Intent intent = new Intent(EyePreviewView.BROADCAST_CAMERA_SETTINGS_NAME);
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 }

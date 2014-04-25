@@ -7,8 +7,8 @@ package ru.robotmitya.robocommonlib;
 public class RoboState {
     private static short mHeadlights;
 
-//    private static short mFrontCamIndex;
-//    private static short mBackCamIndex;
+    private static short mFrontCamIndex;
+    private static short mBackCamIndex;
     private static short mSelectedCamIndex;
 
     private static short mMainAccumulatorCharging;
@@ -24,8 +24,8 @@ public class RoboState {
     static {
         mHeadlights = Rs.Instruction.HEADLIGHTS_OFF;
 
-//        mFrontCamIndex = -1;
-//        mBackCamIndex = -1;
+        mFrontCamIndex = -1;
+        mBackCamIndex = -1;
         mSelectedCamIndex = -1;
 
         mMainAccumulatorCharging = Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP;
@@ -50,34 +50,34 @@ public class RoboState {
     }
 
 
-//    // Front camera
-//
-//    public static boolean setFrontCamIndex(final short value) {
-//        if  (value != mFrontCamIndex) {
-//            mFrontCamIndex = value;
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public static short getFrontCamIndex() {
-//        return mFrontCamIndex;
-//    }
-//
-//
-//    // Back camera
-//
-//    public static boolean setBackCamIndex(final short value) {
-//        if  (value != mBackCamIndex) {
-//            mBackCamIndex = value;
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    public static short getBackCamIndex() {
-//        return mBackCamIndex;
-//    }
+    // Front camera
+
+    public static boolean setFrontCamIndex(final short value) {
+        if  (value != mFrontCamIndex) {
+            mFrontCamIndex = value;
+            return true;
+        }
+        return false;
+    }
+
+    public static short getFrontCamIndex() {
+        return mFrontCamIndex;
+    }
+
+
+    // Back camera
+
+    public static boolean setBackCamIndex(final short value) {
+        if  (value != mBackCamIndex) {
+            mBackCamIndex = value;
+            return true;
+        }
+        return false;
+    }
+
+    public static short getBackCamIndex() {
+        return mBackCamIndex;
+    }
 
 
     // Selected camera index
