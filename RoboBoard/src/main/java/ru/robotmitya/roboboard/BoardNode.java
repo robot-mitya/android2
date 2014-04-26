@@ -118,13 +118,18 @@ public class BoardNode implements NodeMain {
 
     @Override
     public void onError(Node node, Throwable throwable) {
+        Log.e(this, throwable.getMessage());
     }
 
     private void publishCommand(final Publisher<std_msgs.String> publisher, final String command) {
-        std_msgs.String message = publisher.newMessage();
-        message.setData(command);
-        publisher.publish(message);
-        Log.messagePublished(this, publisher.getTopicName().toString(), command);
+        try {
+            std_msgs.String message = publisher.newMessage();
+            message.setData(command);
+            publisher.publish(message);
+            Log.messagePublished(this, publisher.getTopicName().toString(), command);
+        } catch (NullPointerException e) {
+            Log.e(this, e.getMessage());
+        }
     }
 
     public void publishToEyeTopic(final String message) {
