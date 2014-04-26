@@ -12,7 +12,6 @@ import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
 import ru.robotmitya.robocommonlib.AppConst;
-import ru.robotmitya.robocommonlib.Log;
 
 public class MainActivity extends RosActivity {
 
@@ -36,7 +35,7 @@ public class MainActivity extends RosActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         mVideoFragment = new VideoFragment();
         fragmentTransaction.add(R.id.video_fragment, mVideoFragment);
-        mBoardFragment = new BoardFragment(mBoardNode);
+        mBoardFragment = new BoardFragment();
         fragmentTransaction.add(R.id.board_fragment, mBoardFragment);
         fragmentTransaction.commit();
 

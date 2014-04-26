@@ -17,13 +17,11 @@ import org.ros.android.view.VirtualJoystickView;
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
-import ru.robotmitya.robocommonlib.RoboState;
 import ru.robotmitya.robocommonlib.Rs;
 
 public class BoardFragment extends Fragment {
-    private BoardNode mBoardNode;
 
-    private BroadcastReceiver mMessageReceiver;
+    private BroadcastReceiver mBroadcastReceiver;
 
     private CheckableImageView mButtonFaceOk;
     private CheckableImageView mButtonFaceIll;
@@ -47,10 +45,10 @@ public class BoardFragment extends Fragment {
     public BoardFragment() {
         super();
 
-        mMessageReceiver = new BroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra(BoardNode.BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME);
+                String message = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_GUI_EXTRA_NAME);
                 Log.d(BoardFragment.this, "message received: " + message);
 
                 String identifier = MessageHelper.getMessageIdentifier(message);
@@ -124,11 +122,6 @@ public class BoardFragment extends Fragment {
         };
     }
 
-    public BoardFragment(final BoardNode boardNode) {
-        this();
-        this.mBoardNode = boardNode;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.board_fragment, container, false);
@@ -191,10 +184,8 @@ public class BoardFragment extends Fragment {
         buttonActionLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBoardNode != null) {
-                    String command = MessageHelper.makeMessage(Rs.Tail.ID, Rs.Tail.WAG_1);
-                    mBoardNode.publishToBodyTopic(command);
-                }
+                String command = MessageHelper.makeMessage(Rs.Tail.ID, Rs.Tail.WAG_1);
+                sendMessageToBoardNodeForBodyTopic(v.getContext(), command);
             }
         });
 
@@ -205,10 +196,8 @@ public class BoardFragment extends Fragment {
         buttonActionNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBoardNode != null) {
-                    String command = MessageHelper.makeMessage(Rs.No.ID, Rs.No.SHAKE_1);
-                    mBoardNode.publishToBodyTopic(command);
-                }
+                String command = MessageHelper.makeMessage(Rs.No.ID, Rs.No.SHAKE_1);
+                sendMessageToBoardNodeForBodyTopic(v.getContext(), command);
             }
         });
 
@@ -216,10 +205,8 @@ public class BoardFragment extends Fragment {
         buttonActionYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBoardNode != null) {
-                    String command = MessageHelper.makeMessage(Rs.Yes.ID, Rs.Yes.SHAKE_1);
-                    mBoardNode.publishToBodyTopic(command);
-                }
+                String command = MessageHelper.makeMessage(Rs.Yes.ID, Rs.Yes.SHAKE_1);
+                sendMessageToBoardNodeForBodyTopic(v.getContext(), command);
             }
         });
 
@@ -227,9 +214,10 @@ public class BoardFragment extends Fragment {
         buttonStateRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBoardNode != null) {
-                    mBoardNode.sendRoboStateRequest();
-                }
+                String command = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.STATE_REQUEST);
+                sendMessageToBoardNodeForFaceTopic(v.getContext(), command);
+                sendMessageToBoardNodeForEyeTopic(v.getContext(), command);
+                sendMessageToBoardNodeForBodyTopic(v.getContext(), command);
             }
         });
 
@@ -248,45 +236,37 @@ public class BoardFragment extends Fragment {
     private View.OnClickListener faceButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mBoardNode != null) {
-                CheckableImageView button = (CheckableImageView)v;
-                short value = button.isChecked() ? Rs.Mood.FACE_OK : (Short)v.getTag();
-                String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
-                mBoardNode.publishToFaceTopic(command);
-            }
+            CheckableImageView button = (CheckableImageView)v;
+            short value = button.isChecked() ? Rs.Mood.FACE_OK : (Short)v.getTag();
+            String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
+            sendMessageToBoardNodeForFaceTopic(v.getContext(), command);
         }
     };
 
     private View.OnClickListener reflexButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mBoardNode != null) {
-                short value = (Short)v.getTag();
-                String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
-                mBoardNode.publishToReflexTopic(command);
-            }
+            short value = (Short)v.getTag();
+            String command = MessageHelper.makeMessage(Rs.Mood.ID, value);
+            sendMessageToBoardNodeForReflexTopic(v.getContext(), command);
         }
     };
 
     private View.OnClickListener headlightsButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mBoardNode != null) {
-                short value = mButtonHeadlights.isChecked() ? Rs.Instruction.HEADLIGHTS_OFF : Rs.Instruction.HEADLIGHTS_ON;
-                String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
-                mBoardNode.publishToBodyTopic(command);
-            }
+            short value = mButtonHeadlights.isChecked() ? Rs.Instruction.HEADLIGHTS_OFF : Rs.Instruction.HEADLIGHTS_ON;
+            String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
+            sendMessageToBoardNodeForBodyTopic(v.getContext(), command);
         }
     };
 
     private View.OnClickListener switchCamButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mBoardNode != null) {
-                short value = mButtonSwitchCamera.isChecked() ? Rs.Instruction.CAMERA_FRONT_ON : Rs.Instruction.CAMERA_BACK_ON;
-                String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
-                mBoardNode.publishToEyeTopic(command);
-            }
+            short value = mButtonSwitchCamera.isChecked() ? Rs.Instruction.CAMERA_FRONT_ON : Rs.Instruction.CAMERA_BACK_ON;
+            String command = MessageHelper.makeMessage(Rs.Instruction.ID, value);
+            sendMessageToBoardNodeForEyeTopic(v.getContext(), command);
         }
     };
 
@@ -294,12 +274,12 @@ public class BoardFragment extends Fragment {
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mMessageReceiver, new IntentFilter(BoardNode.BROADCAST_MESSAGE_RECEIVED_NAME));
+                mBroadcastReceiver, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME));
     }
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         super.onPause();
     }
 
@@ -310,4 +290,29 @@ public class BoardFragment extends Fragment {
     public VirtualJoystickView getHeadJoystick() {
         return mHeadJoystick;
     }
+
+    private void sendMessageToBoardNodeForBodyTopic(final Context context, final String command) {
+        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_BODY_NAME);
+        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_BODY_EXTRA_NAME, command);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendMessageToBoardNodeForEyeTopic(final Context context, final String command) {
+        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_EYE_NAME);
+        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_EYE_EXTRA_NAME, command);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendMessageToBoardNodeForFaceTopic(final Context context, final String command) {
+        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_FACE_NAME);
+        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_FACE_EXTRA_NAME, command);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendMessageToBoardNodeForReflexTopic(final Context context, final String command) {
+        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_NAME);
+        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_EXTRA_NAME, command);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
 }

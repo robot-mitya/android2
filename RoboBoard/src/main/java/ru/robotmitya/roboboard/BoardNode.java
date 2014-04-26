@@ -1,7 +1,9 @@
 package ru.robotmitya.roboboard;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.ros.message.MessageListener;
@@ -26,9 +28,6 @@ import ru.robotmitya.robocommonlib.Rs;
  *
  */
 public class BoardNode implements NodeMain {
-    public static final String BROADCAST_MESSAGE_RECEIVED_NAME = "ru.robotmitya.roboboard.MESSAGE-RECEIVED";
-    public static final String BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME = "message";
-
     // No matter what real index is. These are internal indexes to identify phone's cameras.
     private static final short NO_CAM = (short)-1;
     private static final short FRONT_CAM_INDEX = (short)1;
@@ -41,8 +40,45 @@ public class BoardNode implements NodeMain {
     private Publisher<std_msgs.String> mReflexPublisher;
     private Publisher<std_msgs.String> mBodyPublisher;
 
+    private BroadcastReceiver mBroadcastReceiverForBodyTopic;
+    private BroadcastReceiver mBroadcastReceiverForEyeTopic;
+    private BroadcastReceiver mBroadcastReceiverForFaceTopic;
+    private BroadcastReceiver mBroadcastReceiverForReflexTopic;
+
     public BoardNode(final Context context) {
         mContext = context;
+
+        mBroadcastReceiverForBodyTopic = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String command = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_BODY_EXTRA_NAME);
+                publishToBodyTopic(command);
+            }
+        };
+
+        mBroadcastReceiverForEyeTopic = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String command = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_EYE_EXTRA_NAME);
+                publishToEyeTopic(command);
+            }
+        };
+
+        mBroadcastReceiverForFaceTopic = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String command = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_FACE_EXTRA_NAME);
+                publishToFaceTopic(command);
+            }
+        };
+
+        mBroadcastReceiverForReflexTopic = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String command = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_EXTRA_NAME);
+                publishToReflexTopic(command);
+            }
+        };
     }
 
     @Override
@@ -60,6 +96,8 @@ public class BoardNode implements NodeMain {
         RoboState.setFrontCamIndex(FRONT_CAM_INDEX);
         RoboState.setBackCamIndex(BACK_CAM_INDEX);
         RoboState.setSelectedCamIndex(NO_CAM);
+
+        initializeBroadcasts();
 
         Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
@@ -85,8 +123,8 @@ public class BoardNode implements NodeMain {
                     }
                 }
 
-                Intent intent = new Intent(BROADCAST_MESSAGE_RECEIVED_NAME);
-                intent.putExtra(BROADCAST_MESSAGE_RECEIVED_EXTRA_NAME, messageBody);
+                Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME);
+                intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_GUI_EXTRA_NAME, messageBody);
                 LocalBroadcastManager.getInstance(BoardNode.this.mContext).sendBroadcast(intent);
             }
         });
@@ -101,6 +139,24 @@ public class BoardNode implements NodeMain {
         }, 1000);
     }
 
+    private void initializeBroadcasts() {
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverForBodyTopic, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_BODY_NAME));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverForEyeTopic, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_EYE_NAME));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverForFaceTopic, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_FACE_NAME));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(
+                mBroadcastReceiverForReflexTopic, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_NAME));
+    }
+
+    private void finalizeBroadcasts() {
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverForBodyTopic);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverForEyeTopic);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverForFaceTopic);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiverForReflexTopic);
+    }
+
     public void sendRoboStateRequest() {
         String stateRequestCommand = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.STATE_REQUEST);
         publishToFaceTopic(stateRequestCommand);
@@ -110,6 +166,7 @@ public class BoardNode implements NodeMain {
 
     @Override
     public void onShutdown(Node node) {
+        finalizeBroadcasts();
     }
 
     @Override

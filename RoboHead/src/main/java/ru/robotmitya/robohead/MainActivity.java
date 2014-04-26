@@ -53,7 +53,7 @@ public class MainActivity extends RosActivity {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        FaceFragment faceFragment = new FaceFragment(mHeadStateNode);
+        FaceFragment faceFragment = new FaceFragment();
         fragmentTransaction.add(R.id.face_fragment, faceFragment);
         fragmentTransaction.commit();
 

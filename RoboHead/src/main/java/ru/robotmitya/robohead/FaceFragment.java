@@ -19,7 +19,7 @@ public class FaceFragment extends Fragment {
     private FaceHelper mFaceHelper;
     private BroadcastReceiver mMessageReceiver;
 
-    public FaceFragment(final HeadStateNode headStateNode) {
+    public FaceFragment() {
         super();
 
         mMessageReceiver = new BroadcastReceiver() {
