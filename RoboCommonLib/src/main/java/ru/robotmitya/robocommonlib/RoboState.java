@@ -11,6 +11,8 @@ public class RoboState {
     private static short mBackCamIndex;
     private static short mSelectedCamIndex;
 
+    private static boolean mIsReverse;
+
     private static short mMainAccumulatorCharging;
     private static short mPhoneAccumulatorCharging;
 
@@ -27,6 +29,8 @@ public class RoboState {
         mFrontCamIndex = -1;
         mBackCamIndex = -1;
         mSelectedCamIndex = -1;
+
+        mIsReverse = false;
 
         mMainAccumulatorCharging = Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP;
         mPhoneAccumulatorCharging = Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP;
@@ -55,6 +59,7 @@ public class RoboState {
     public static boolean setFrontCamIndex(final short value) {
         if  (value != mFrontCamIndex) {
             mFrontCamIndex = value;
+            mIsReverse = mSelectedCamIndex == mBackCamIndex;
             return true;
         }
         return false;
@@ -70,6 +75,7 @@ public class RoboState {
     public static boolean setBackCamIndex(final short value) {
         if  (value != mBackCamIndex) {
             mBackCamIndex = value;
+            mIsReverse = mSelectedCamIndex == mBackCamIndex;
             return true;
         }
         return false;
@@ -85,6 +91,7 @@ public class RoboState {
     public static boolean setSelectedCamIndex(final short value) {
         if (value != mSelectedCamIndex) {
             mSelectedCamIndex = value;
+            mIsReverse = mSelectedCamIndex == mBackCamIndex;
             return true;
         }
         return false;
@@ -92,6 +99,10 @@ public class RoboState {
 
     public static short getSelectedCamIndex() {
         return mSelectedCamIndex;
+    }
+
+    public static boolean getIsReverse() {
+        return mIsReverse;
     }
 
 //    public static void switchCam() {

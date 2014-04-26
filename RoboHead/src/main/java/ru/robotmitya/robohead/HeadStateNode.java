@@ -38,6 +38,8 @@ public class HeadStateNode implements NodeMain {
     @Override
     public void onStart(final ConnectedNode connectedNode) {
         RoboState.setSelectedCamIndex((short)SettingsActivity.getCameraIndex());
+        RoboState.setFrontCamIndex((short)SettingsActivity.getFrontCameraIndex());
+        RoboState.setBackCamIndex((short)SettingsActivity.getBackCameraIndex());
 
         mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
 

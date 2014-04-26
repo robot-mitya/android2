@@ -42,6 +42,9 @@ public class HeadJoystickAnalyzerNode implements NodeMain {
                 Vector3 angular = message.getAngular();
                 double x = -angular.getZ();
                 double y = linear.getX();
+                if (RoboState.getIsReverse()) {
+                    y = -y;
+                }
                 JoystickPosition joystickPosition = new JoystickPosition(x, y);
                 correctCoordinatesFromCycleToSquareArea(joystickPosition);
                 // Round:
