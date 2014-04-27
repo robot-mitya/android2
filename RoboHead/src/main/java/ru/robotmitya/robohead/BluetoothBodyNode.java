@@ -85,7 +85,7 @@ public class BluetoothBodyNode implements NodeMain {
                     // всех устройств в округе.
                     // createRfcommSocketToServiceRecord(), к сожалению, не работает
                     try {
-                        BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(SettingsActivity.getRoboBodyMac());
+                        BluetoothDevice bluetoothDevice = mBluetoothAdapter.getRemoteDevice(SettingsFragment.getRoboBodyMac());
                         Method method = bluetoothDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
                         mBluetoothSocket = (BluetoothSocket) method.invoke(bluetoothDevice, 1 /*Integer.valueOf(1)*/);
 

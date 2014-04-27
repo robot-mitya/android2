@@ -37,9 +37,9 @@ public class HeadStateNode implements NodeMain {
 
     @Override
     public void onStart(final ConnectedNode connectedNode) {
-        RoboState.setSelectedCamIndex((short)SettingsActivity.getCameraIndex());
-        RoboState.setFrontCamIndex((short)SettingsActivity.getFrontCameraIndex());
-        RoboState.setBackCamIndex((short)SettingsActivity.getBackCameraIndex());
+        RoboState.setSelectedCamIndex((short)SettingsFragment.getCameraIndex());
+        RoboState.setFrontCamIndex((short)SettingsFragment.getFrontCameraIndex());
+        RoboState.setBackCamIndex((short)SettingsFragment.getBackCameraIndex());
 
         mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
 
@@ -61,18 +61,18 @@ public class HeadStateNode implements NodeMain {
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_OFF:
-                            SettingsActivity.setCameraIndex(mContext, -1);
-                            RoboState.setSelectedCamIndex((short) SettingsActivity.getCameraIndex());
+                            SettingsFragment.setCameraIndex(mContext, -1);
+                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_BACK_ON:
-                            SettingsActivity.setCameraIndex(mContext, SettingsActivity.getBackCameraIndex());
-                            RoboState.setSelectedCamIndex((short) SettingsActivity.getCameraIndex());
+                            SettingsFragment.setCameraIndex(mContext, SettingsFragment.getBackCameraIndex());
+                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_FRONT_ON:
-                            SettingsActivity.setCameraIndex(mContext, SettingsActivity.getFrontCameraIndex());
-                            RoboState.setSelectedCamIndex((short) SettingsActivity.getCameraIndex());
+                            SettingsFragment.setCameraIndex(mContext, SettingsFragment.getFrontCameraIndex());
+                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP:

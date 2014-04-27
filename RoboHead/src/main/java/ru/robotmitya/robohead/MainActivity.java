@@ -57,7 +57,7 @@ public class MainActivity extends RosActivity {
         fragmentTransaction.add(R.id.face_fragment, faceFragment);
         fragmentTransaction.commit();
 
-        SettingsActivity.initialize(this);
+        SettingsFragment.initialize(this);
 
         mEyePreviewView = (EyePreviewView) findViewById(R.id.eye_preview_view);
         mEyePreviewView.setHandler(mEyeNodeHandler);
@@ -68,7 +68,7 @@ public class MainActivity extends RosActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mEyePreviewView.startVideoStreaming(SettingsActivity.getCameraIndex());
+        mEyePreviewView.startVideoStreaming(SettingsFragment.getCameraIndex());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MainActivity extends RosActivity {
     @Override
     public void startMasterChooser() {
         Intent data = new Intent();
-        data.putExtra("ROS_MASTER_URI", SettingsActivity.getMasterUri());
+        data.putExtra("ROS_MASTER_URI", SettingsFragment.getMasterUri());
         data.putExtra("NEW_MASTER", true);
         data.putExtra("ROS_MASTER_PRIVATE", false);
         onActivityResult(0, RESULT_OK, data);

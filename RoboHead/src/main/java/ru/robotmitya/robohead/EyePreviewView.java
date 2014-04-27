@@ -43,9 +43,9 @@ public class EyePreviewView extends RosCameraPreviewView {
     private BroadcastReceiver mCameraSettingsBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final short selectedCamera = (short)SettingsActivity.getCameraIndex();
-            final short frontCamera = (short)SettingsActivity.getFrontCameraIndex();
-            final short backCamera = (short)SettingsActivity.getBackCameraIndex();
+            final short selectedCamera = (short)SettingsFragment.getCameraIndex();
+            final short frontCamera = (short)SettingsFragment.getFrontCameraIndex();
+            final short backCamera = (short)SettingsFragment.getBackCameraIndex();
             RoboState.setSelectedCamIndex(selectedCamera);
             RoboState.setFrontCamIndex(frontCamera);
             RoboState.setBackCamIndex(backCamera);
@@ -111,17 +111,17 @@ public class EyePreviewView extends RosCameraPreviewView {
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d(EyePreviewView.this, "back camera is turned on");
-                        startVideoStreaming(SettingsActivity.getBackCameraIndex());
+                        startVideoStreaming(SettingsFragment.getBackCameraIndex());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d(EyePreviewView.this, "front camera is turned on");
-                        startVideoStreaming(SettingsActivity.getFrontCameraIndex());
+                        startVideoStreaming(SettingsFragment.getFrontCameraIndex());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.STATE_REQUEST) {
                         String messageToBoard;
-                        if (RoboState.getSelectedCamIndex() == SettingsActivity.getFrontCameraIndex()) {
+                        if (RoboState.getSelectedCamIndex() == SettingsFragment.getFrontCameraIndex()) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_FRONT_ON);
-                        } else if (RoboState.getSelectedCamIndex() == SettingsActivity.getBackCameraIndex()) {
+                        } else if (RoboState.getSelectedCamIndex() == SettingsFragment.getBackCameraIndex()) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_BACK_ON);
                         } else {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_OFF);
