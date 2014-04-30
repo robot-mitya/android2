@@ -34,7 +34,7 @@ public class HeadJoystickAnalyzerNode implements NodeMain {
     public void onStart(ConnectedNode connectedNode) {
         mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
 
-        Subscriber<geometry_msgs.Twist> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.HEAD_JOYSTICK_TOPIC, geometry_msgs.Twist._TYPE);
+        Subscriber<geometry_msgs.Twist> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC, geometry_msgs.Twist._TYPE);
         subscriber.addMessageListener(new MessageListener<geometry_msgs.Twist>() {
             @Override
             public void onNewMessage(geometry_msgs.Twist message) {

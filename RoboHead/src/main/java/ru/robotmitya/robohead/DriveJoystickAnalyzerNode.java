@@ -36,7 +36,7 @@ public class DriveJoystickAnalyzerNode implements NodeMain {
     public void onStart(ConnectedNode connectedNode) {
         mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
 
-        Subscriber<Twist> subscriber = connectedNode.newSubscriber(AppConst.RoboBoard.DRIVE_JOYSTICK_TOPIC, geometry_msgs.Twist._TYPE);
+        Subscriber<Twist> subscriber = connectedNode.newSubscriber(AppConst.RoboHead.DRIVE_JOYSTICK_TOPIC, geometry_msgs.Twist._TYPE);
         subscriber.addMessageListener(new MessageListener<Twist>() {
             @Override
             public void onNewMessage(geometry_msgs.Twist message) {
