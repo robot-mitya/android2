@@ -27,7 +27,7 @@ public class VideoFragment extends Fragment {
         }
 
         mImageView = (RosImageView<sensor_msgs.CompressedImage>) result.findViewById(R.id.imageViewVideo);
-        mImageView.setTopicName(AppConst.RoboHead.CAMERA_TOPIC);
+        mImageView.setTopicName(AppConst.RoboBoard.CAMERA_TOPIC);
         mImageView.setMessageType(sensor_msgs.CompressedImage._TYPE);
         mImageView.setMessageToBitmapCallable(new BitmapFromCompressedImage());
 

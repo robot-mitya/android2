@@ -226,9 +226,9 @@ public class BoardFragment extends Fragment {
 
         // Joysticks:
         mDriveJoystick = (VirtualJoystickView) result.findViewById(R.id.drive_joystick);
-        mDriveJoystick.setTopicName(AppConst.RoboBoard.DRIVE_JOYSTICK_TOPIC);
+        mDriveJoystick.setTopicName(AppConst.RoboHead.DRIVE_JOYSTICK_TOPIC);
         mHeadJoystick = (VirtualJoystickView) result.findViewById(R.id.head_joystick);
-        mHeadJoystick.setTopicName(AppConst.RoboBoard.HEAD_JOYSTICK_TOPIC);
+        mHeadJoystick.setTopicName(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC);
 
         return result;
     }

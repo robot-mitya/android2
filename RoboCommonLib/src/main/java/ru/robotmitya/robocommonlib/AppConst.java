@@ -12,6 +12,7 @@ public class AppConst {
         public static final String HEAD_JOYSTICK_NODE = "robot_mitya/head_joystick_node";
 
         public static final String BOARD_TOPIC = "robot_mitya/board";
+        public static final String CAMERA_TOPIC = "/camera/image/compressed";
     }
 
     public class RoboHead {
@@ -24,7 +25,6 @@ public class AppConst {
         public static final String HEAD_JOYSTICK_ANALYZER_NODE = "robot_mitya/head_joystick_analyzer_node";
 
         public static final String EYE_TOPIC = "robot_mitya/eye";
-        public static final String CAMERA_TOPIC = "/camera/image/compressed";
         public static final String FACE_TOPIC = "robot_mitya/face";
         public static final String BODY_TOPIC = "robot_mitya/body";
         public static final String REFLEX_TOPIC = "robot_mitya/reflex";
