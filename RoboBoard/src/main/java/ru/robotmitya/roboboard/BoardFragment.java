@@ -45,13 +45,17 @@ public class BoardFragment extends Fragment {
     private VirtualJoystickView mDriveJoystick;
     private VirtualJoystickView mHeadJoystick;
 
-    private ImageView mImageViewBoardBattery;
-    private ImageView mImageViewBoardPlugged;
-    private TextView mTextViewBoardBatteryPercent;
+    private ImageView mImageViewRobotBattery;
+    private ImageView mImageViewRobotPlugged;
+    private TextView mTextViewRobotBatteryVoltage;
 
     private ImageView mImageViewHeadBattery;
     private ImageView mImageViewHeadPlugged;
     private TextView mTextViewHeadBatteryPercent;
+
+    private ImageView mImageViewBoardBattery;
+    private ImageView mImageViewBoardPlugged;
+    private TextView mTextViewBoardBatteryPercent;
 
     public BoardFragment() {
         super();
@@ -158,18 +162,41 @@ public class BoardFragment extends Fragment {
                     }
                 } else if (identifier.contentEquals(Rs.BatteryResponse.ID)) {
                     final int battery = value & 0xF000;
-                    if ((short)battery == Rs.BatteryResponse.ROBOHEAD_BATTERY) {
-                        final int plugged = value & 0x0F00;
-                        final int percent = value & 0x00FF;
-                        final int NOT_PLUGGED = 0;
-                        if (plugged == NOT_PLUGGED) {
-                            mImageViewHeadBattery.setVisibility(View.VISIBLE);
-                            mImageViewHeadPlugged.setVisibility(View.INVISIBLE);
-                        } else {
-                            mImageViewHeadBattery.setVisibility(View.INVISIBLE);
-                            mImageViewHeadPlugged.setVisibility(View.VISIBLE);
+                    switch ((short)battery) {
+                        case Rs.BatteryResponse.ROBOT_BATTERY_VOLTAGE: {
+                            final int centivolts = value & 0x0FFF;
+                            final float voltage = centivolts / 100F;
+                            mTextViewRobotBatteryVoltage.setText(
+                                    String.format("%.2f " + getString(R.string.board_volts), voltage));
+                            break;
                         }
-                        mTextViewHeadBatteryPercent.setText(percent + "%");
+                        case Rs.BatteryResponse.ROBOT_POWER_SUPPLY_VOLTAGE: {
+                            final int voltage = value & 0x0FFF;
+                            // Let's think that the robot is plugged in power supply
+                            // if ~1XXX-message voltage is greater then 5 volts (500 centivolts).
+                            if (voltage > 500) {
+                                mImageViewRobotBattery.setVisibility(View.INVISIBLE);
+                                mImageViewRobotPlugged.setVisibility(View.VISIBLE);
+                            } else {
+                                mImageViewRobotBattery.setVisibility(View.VISIBLE);
+                                mImageViewRobotPlugged.setVisibility(View.INVISIBLE);
+                            }
+                            break;
+                        }
+                        case Rs.BatteryResponse.ROBOHEAD_BATTERY: {
+                            final int plugged = value & 0x0F00;
+                            final int percent = value & 0x00FF;
+                            final int NOT_PLUGGED = 0;
+                            if (plugged == NOT_PLUGGED) {
+                                mImageViewHeadBattery.setVisibility(View.VISIBLE);
+                                mImageViewHeadPlugged.setVisibility(View.INVISIBLE);
+                            } else {
+                                mImageViewHeadBattery.setVisibility(View.INVISIBLE);
+                                mImageViewHeadPlugged.setVisibility(View.VISIBLE);
+                            }
+                            mTextViewHeadBatteryPercent.setText(percent + "%");
+                            break;
+                        }
                     }
                 }
             }
@@ -286,13 +313,17 @@ public class BoardFragment extends Fragment {
 
 
         // Batteries status:
-        mImageViewBoardBattery = (ImageView) result.findViewById(R.id.imageBoardBattery);
-        mImageViewBoardPlugged = (ImageView) result.findViewById(R.id.imageBoardPlugged);
-        mTextViewBoardBatteryPercent = (TextView) result.findViewById(R.id.textBoardCharged);
+        mImageViewRobotBattery = (ImageView) result.findViewById(R.id.imageRobotBattery);
+        mImageViewRobotPlugged = (ImageView) result.findViewById(R.id.imageRobotPlugged);
+        mTextViewRobotBatteryVoltage = (TextView) result.findViewById(R.id.textRobotCharged);
 
         mImageViewHeadBattery = (ImageView) result.findViewById(R.id.imageHeadBattery);
         mImageViewHeadPlugged = (ImageView) result.findViewById(R.id.imageHeadPlugged);
         mTextViewHeadBatteryPercent = (TextView) result.findViewById(R.id.textHeadCharged);
+
+        mImageViewBoardBattery = (ImageView) result.findViewById(R.id.imageBoardBattery);
+        mImageViewBoardPlugged = (ImageView) result.findViewById(R.id.imageBoardPlugged);
+        mTextViewBoardBatteryPercent = (TextView) result.findViewById(R.id.textBoardCharged);
 
         return result;
     }

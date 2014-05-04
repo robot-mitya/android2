@@ -89,6 +89,8 @@ public class Rs {
     public class BatteryResponse {
         public static final String ID = "~";
 
+        public static final short ROBOT_BATTERY_VOLTAGE = 0x0000;
+        public static final short ROBOT_POWER_SUPPLY_VOLTAGE = 0x1000;
         public static final short ROBOHEAD_BATTERY = 0x2000;
     }
 }
