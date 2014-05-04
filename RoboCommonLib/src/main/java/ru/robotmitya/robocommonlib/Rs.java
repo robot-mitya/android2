@@ -85,4 +85,10 @@ public class Rs {
     public class DriveRight {
         public static final String ID = "R";
     }
+
+    public class BatteryResponse {
+        public static final String ID = "~";
+
+        public static final short ROBOHEAD_BATTERY = 0x2000;
+    }
 }

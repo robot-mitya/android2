@@ -49,6 +49,10 @@ public class BoardFragment extends Fragment {
     private ImageView mImageViewBoardPlugged;
     private TextView mTextViewBoardBatteryPercent;
 
+    private ImageView mImageViewHeadBattery;
+    private ImageView mImageViewHeadPlugged;
+    private TextView mTextViewHeadBatteryPercent;
+
     public BoardFragment() {
         super();
 
@@ -151,6 +155,21 @@ public class BoardFragment extends Fragment {
                         case Rs.Instruction.CAMERA_BACK_ON:
                             mButtonSwitchCamera.setChecked(true);
                             break;
+                    }
+                } else if (identifier.contentEquals(Rs.BatteryResponse.ID)) {
+                    final int battery = value & 0xF000;
+                    if ((short)battery == Rs.BatteryResponse.ROBOHEAD_BATTERY) {
+                        final int plugged = value & 0x0F00;
+                        final int percent = value & 0x00FF;
+                        final int NOT_PLUGGED = 0;
+                        if (plugged == NOT_PLUGGED) {
+                            mImageViewHeadBattery.setVisibility(View.VISIBLE);
+                            mImageViewHeadPlugged.setVisibility(View.INVISIBLE);
+                        } else {
+                            mImageViewHeadBattery.setVisibility(View.INVISIBLE);
+                            mImageViewHeadPlugged.setVisibility(View.VISIBLE);
+                        }
+                        mTextViewHeadBatteryPercent.setText(percent + "%");
                     }
                 }
             }
@@ -271,6 +290,9 @@ public class BoardFragment extends Fragment {
         mImageViewBoardPlugged = (ImageView) result.findViewById(R.id.imageBoardPlugged);
         mTextViewBoardBatteryPercent = (TextView) result.findViewById(R.id.textBoardCharged);
 
+        mImageViewHeadBattery = (ImageView) result.findViewById(R.id.imageHeadBattery);
+        mImageViewHeadPlugged = (ImageView) result.findViewById(R.id.imageHeadPlugged);
+        mTextViewHeadBatteryPercent = (TextView) result.findViewById(R.id.textHeadCharged);
 
         return result;
     }
