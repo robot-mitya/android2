@@ -23,8 +23,8 @@ public class Rs {
         public static final short ACCUMULATOR_MAIN_CHARGING_STOP = 0x0030;
         public static final short ACCUMULATOR_MAIN_CHARGING_START = 0x0031;
 
-        public static final short ACCUMULATOR_PHONE_CHARGING_STOP = 0x0040;
-        public static final short ACCUMULATOR_PHONE_CHARGING_START = 0x0041;
+        public static final short ACCUMULATOR_ROBOHEAD_CHARGING_STOP = 0x0040;
+        public static final short ACCUMULATOR_ROBOHEAD_CHARGING_START = 0x0041;
     }
 
     public class Mood {
@@ -91,6 +91,7 @@ public class Rs {
 
         public static final short ROBOT_BATTERY_VOLTAGE = 0x0000;
         public static final short ROBOT_POWER_SUPPLY_VOLTAGE = 0x1000;
+        public static final short ROBOHEAD_BATTERY = 0x2000;
     }
 
     public class BatteryResponse {

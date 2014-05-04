@@ -14,7 +14,9 @@ public class RoboState {
     private static boolean mIsReverse;
 
     private static short mMainAccumulatorCharging;
-    private static short mPhoneAccumulatorCharging;
+    private static short mRoboHeadAccumulatorCharging;
+
+    private static short mRoboHeadBatteryState;
 
     private final static short mHeadHorizontalServoMinDegree = 0;
     private final static short mHeadHorizontalServoMaxDegree = 180;
@@ -33,7 +35,9 @@ public class RoboState {
         mIsReverse = false;
 
         mMainAccumulatorCharging = Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP;
-        mPhoneAccumulatorCharging = Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP;
+        mRoboHeadAccumulatorCharging = Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_STOP;
+
+        mRoboHeadBatteryState = Rs.BatteryResponse.ROBOHEAD_BATTERY;
 
         mMood = Rs.Mood.FACE_OK;
     }
@@ -133,18 +137,32 @@ public class RoboState {
 
     // Phone accumulator charge
 
-    public static boolean setPhoneAccumulatorCharging(final short value) {
-        if (value != mPhoneAccumulatorCharging) {
-            mPhoneAccumulatorCharging = value;
+    public static boolean setRoboHeadAccumulatorCharging(final short value) {
+        if (value != mRoboHeadAccumulatorCharging) {
+            mRoboHeadAccumulatorCharging = value;
             return true;
         }
         return false;
     }
 
-    public static short getPhoneAccumulatorCharging() {
-        return mPhoneAccumulatorCharging;
+    public static short getRoboHeadAccumulatorCharging() {
+        return mRoboHeadAccumulatorCharging;
     }
 
+
+    // RoboHead battery state for ~2XYY response
+
+    public static boolean setRoboHeadBatteryState(final short value) {
+        if (value != mRoboHeadBatteryState) {
+            mRoboHeadBatteryState = value;
+            return true;
+        }
+        return false;
+    }
+
+    public static short getRoboHeadBatteryState() {
+        return mRoboHeadBatteryState;
+    }
 
     // Mood
 

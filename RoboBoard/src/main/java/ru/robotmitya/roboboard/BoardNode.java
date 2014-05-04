@@ -39,6 +39,7 @@ public class BoardNode implements NodeMain {
     private Publisher<std_msgs.String> mFacePublisher;
     private Publisher<std_msgs.String> mReflexPublisher;
     private Publisher<std_msgs.String> mBodyPublisher;
+    private Publisher<std_msgs.String> mHeadStatePublisher;
 
     private BroadcastReceiver mBroadcastReceiverForBodyTopic;
     private BroadcastReceiver mBroadcastReceiverForEyeTopic;
@@ -92,6 +93,7 @@ public class BoardNode implements NodeMain {
         mFacePublisher = connectedNode.newPublisher(AppConst.RoboHead.FACE_TOPIC, std_msgs.String._TYPE);
         mReflexPublisher = connectedNode.newPublisher(AppConst.RoboHead.REFLEX_TOPIC, std_msgs.String._TYPE);
         mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
+        mHeadStatePublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_STATE_TOPIC, std_msgs.String._TYPE);
 
         RoboState.setFrontCamIndex(FRONT_CAM_INDEX);
         RoboState.setBackCamIndex(BACK_CAM_INDEX);
@@ -129,14 +131,17 @@ public class BoardNode implements NodeMain {
             }
         });
 
-        // This is a strange patch. After publisher is created it is not ready to publish messages.
-        // So I wait for 1 second before sending "IFFFF" message. That's a dangerous code.
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sendRoboStateRequest();
-            }
-        }, 1000);
+        // This is a strange patch. After publisher is created I don't no why but it is not ready to publish messages.
+        // So I wait for 1 second and then send "IFFFF" message 6 times with 1 second period.
+        for (int i = 0; i < 6; i++) {
+            int delay = 1000 * (i + 1);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sendRoboStateRequest();
+                }
+            }, delay);
+        }
     }
 
     private void initializeBroadcasts() {
@@ -162,6 +167,7 @@ public class BoardNode implements NodeMain {
         publishToFaceTopic(stateRequestCommand);
         publishToEyeTopic(stateRequestCommand);
         publishToBodyTopic(stateRequestCommand);
+        publishToHeadStateTopic(MessageHelper.makeMessage(Rs.BatteryRequest.ID, Rs.BatteryRequest.ROBOHEAD_BATTERY));
     }
 
     @Override
@@ -203,5 +209,9 @@ public class BoardNode implements NodeMain {
 
     public void publishToBodyTopic(final String message) {
         publishCommand(mBodyPublisher, message);
+    }
+
+    public void publishToHeadStateTopic(final String message) {
+        publishCommand(mHeadStatePublisher, message);
     }
 }

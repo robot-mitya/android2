@@ -1,6 +1,10 @@
 package ru.robotmitya.robohead;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
@@ -25,9 +29,34 @@ import ru.robotmitya.robocommonlib.Rs;
 public class HeadStateNode implements NodeMain {
     private final Context mContext;
     private Publisher<std_msgs.String> mBoardPublisher;
+    private BroadcastReceiver mBatteryBroadcastReceiver;
 
     public HeadStateNode(Context context) {
         mContext = context;
+
+        mBatteryBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try {
+                    int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+                    int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                    int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+                    int percent = (scale > 0) && (level > 0) ? level * 100 / scale : 0;
+
+                    short messageValue = Rs.BatteryResponse.ROBOHEAD_BATTERY;
+                    messageValue |= (short)percent;
+                    final int NOT_PLUGGED = 0;
+                    if (plugged != NOT_PLUGGED) {
+                        messageValue |= (short)0x0100;
+                    }
+
+                    RoboState.setRoboHeadBatteryState(messageValue);
+                    publishToBoard(MessageHelper.makeMessage(Rs.BatteryResponse.ID, messageValue));
+                } catch (Exception e) {
+                    Log.e(this, e.getMessage());
+                }
+            }
+        };
     }
 
     @Override
@@ -40,6 +69,8 @@ public class HeadStateNode implements NodeMain {
         RoboState.setSelectedCamIndex((short)SettingsFragment.getCameraIndex());
         RoboState.setFrontCamIndex((short)SettingsFragment.getFrontCameraIndex());
         RoboState.setBackCamIndex((short)SettingsFragment.getBackCameraIndex());
+
+        mContext.registerReceiver(mBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         mBoardPublisher = connectedNode.newPublisher(AppConst.RoboBoard.BOARD_TOPIC, std_msgs.String._TYPE);
 
@@ -80,15 +111,19 @@ public class HeadStateNode implements NodeMain {
                             RoboState.setMainAccumulatorCharging(value);
                             publishToBoard(messageBody);
                             break;
-                        case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_STOP:
-                        case Rs.Instruction.ACCUMULATOR_PHONE_CHARGING_START:
-                            RoboState.setPhoneAccumulatorCharging(value);
+                        case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_STOP:
+                        case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_START:
+                            RoboState.setRoboHeadAccumulatorCharging(value);
                             publishToBoard(messageBody);
                             break;
                     }
                 } else if (identifier.equals(Rs.Mood.ID)) {
                     RoboState.setMood(value);
                     publishToBoard(messageBody);
+                } else if (identifier.equals(Rs.BatteryRequest.ID)) {
+                    if (value == Rs.BatteryRequest.ROBOHEAD_BATTERY) {
+                        publishToBoard(MessageHelper.makeMessage(Rs.BatteryResponse.ID, RoboState.getRoboHeadBatteryState()));
+                    }
                 } else if (identifier.equals(Rs.BatteryResponse.ID)) {
                     publishToBoard(messageBody);
                 }
@@ -98,6 +133,7 @@ public class HeadStateNode implements NodeMain {
 
     @Override
     public void onShutdown(Node node) {
+        mContext.unregisterReceiver(mBatteryBroadcastReceiver);
     }
 
     @Override
