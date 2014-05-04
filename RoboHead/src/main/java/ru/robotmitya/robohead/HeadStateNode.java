@@ -89,6 +89,8 @@ public class HeadStateNode implements NodeMain {
                 } else if (identifier.equals(Rs.Mood.ID)) {
                     RoboState.setMood(value);
                     publishToBoard(messageBody);
+                } else if (identifier.equals(Rs.BatteryResponse.ID)) {
+                    publishToBoard(messageBody);
                 }
             }
         });

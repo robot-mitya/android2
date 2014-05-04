@@ -28,6 +28,7 @@ import java.util.List;
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
+import ru.robotmitya.robocommonlib.Rs;
 
 /**
  * Created by dmitrydzz on 1/27/14.
@@ -97,6 +98,8 @@ public class BluetoothBodyNode implements NodeMain {
                         mOutputStream = mBluetoothSocket.getOutputStream();
                         mConnected = true;
                         Log.d(BluetoothBodyNode.this, "started");
+
+                        startVoltageRequests();
                     } catch (Exception e) {
                         Log.e(BluetoothBodyNode.this, "connection error: " + e.getMessage());
                         cancel();
@@ -145,19 +148,7 @@ public class BluetoothBodyNode implements NodeMain {
                 String messageBody = message.getData();
                 Log.messageReceived(BluetoothBodyNode.this, messageBody);
 
-                if (mConnected) {
-                    if (mBluetoothSocket != null) {
-                        try {
-                            mOutputStream.write(messageBody.getBytes());
-                            Log.d(BluetoothBodyNode.this, "sent to body via Bluetooth: " + messageBody);
-                        } catch (IOException e) {
-                            String errorText = String.format(
-                                    mContext.getResources().getString(R.string.error_sending_message_through_bluetooth),
-                                    message);
-                            Log.e(BluetoothBodyNode.this, errorText);
-                        }
-                    }
-                }
+                sendToBody(messageBody);
             }
         });
     }
@@ -166,6 +157,7 @@ public class BluetoothBodyNode implements NodeMain {
     public void onShutdown(Node node) {
         if (mConnected) {
             try {
+                stopVoltageRequests();
                 if (mBluetoothSocket != null) {
                     mBluetoothSocket.close();
                     mBluetoothSocket = null;
@@ -192,5 +184,32 @@ public class BluetoothBodyNode implements NodeMain {
         mHeadStatePublisher.publish(message);
 
         Log.messagePublished(this, mHeadStatePublisher.getTopicName().toString(), command);
+    }
+
+    private void sendToBody(String messageBody) {
+        if (mConnected) {
+            if (mBluetoothSocket != null) {
+                try {
+                    mOutputStream.write(messageBody.getBytes());
+                    Log.d(BluetoothBodyNode.this, "sent to body via Bluetooth: " + messageBody);
+                } catch (IOException e) {
+                    String errorText = String.format(
+                            mContext.getResources().getString(R.string.error_sending_message_through_bluetooth),
+                            messageBody);
+                    Log.e(BluetoothBodyNode.this, errorText);
+                }
+            }
+        }
+    }
+
+    private void startVoltageRequests() {
+        final short period = 0x012c; // 300 centiseconds = 3 seconds
+        sendToBody(MessageHelper.makeMessage(Rs.BatteryRequest.ID, (short)(Rs.BatteryRequest.ROBOT_BATTERY_VOLTAGE | period)));
+        sendToBody(MessageHelper.makeMessage(Rs.BatteryRequest.ID, (short)(Rs.BatteryRequest.ROBOT_POWER_SUPPLY_VOLTAGE | period)));
+    }
+
+    private void stopVoltageRequests() {
+        sendToBody(MessageHelper.makeMessage(Rs.BatteryRequest.ID, Rs.BatteryRequest.ROBOT_BATTERY_VOLTAGE));
+        sendToBody(MessageHelper.makeMessage(Rs.BatteryRequest.ID, Rs.BatteryRequest.ROBOT_POWER_SUPPLY_VOLTAGE));
     }
 }
