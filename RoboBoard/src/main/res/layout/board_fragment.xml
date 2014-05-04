@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:longClickable="false">
 
     <!--First right column-->
 
@@ -18,7 +20,7 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_settings"
-    />
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/buttonActionLike"
@@ -33,7 +35,7 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_action_like"
-        />
+        tools:ignore="ContentDescription" />
 
     <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonHeadlights"
@@ -63,7 +65,7 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_action_no"
-        />
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/buttonActionYes"
@@ -78,7 +80,7 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_action_yes"
-        />
+        tools:ignore="ContentDescription" />
 
     <!--Second right column-->
 
@@ -95,7 +97,7 @@
         android:layout_marginBottom="0dp"
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_refresh"
-    />
+        tools:ignore="ContentDescription" />
 
     <ru.robotmitya.roboboard.CheckableImageView
         android:id="@+id/buttonSwitchCam"
@@ -265,6 +267,179 @@
         android:padding="@dimen/board_button_padding"
         android:src="@drawable/ic_action_happy"
     />
+
+    <!--Third left column-->
+
+    <!--Robot's battery-->
+
+    <ImageView
+        android:id="@+id/imageRobot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/buttonActionPlay"
+        android:layout_marginTop="@dimen/battery_image_top_marging"
+        android:layout_marginLeft="@dimen/battery_image_left_marging"
+        android:src="@drawable/ic_robot"
+        android:longClickable="false"
+        android:cropToPadding="false"
+        tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageRobotBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_battery"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageRobotPlugged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_plugged"
+            android:visibility="invisible"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/textRobotCharged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageRobotPlugged"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:text=""
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            android:textColor="#cdffffff"
+            android:longClickable="false"
+            android:cropToPadding="false" />
+
+    <!--RoboHead's battery-->
+
+    <ImageView
+        android:id="@+id/imageHead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageRobot"
+        android:layout_toRightOf="@+id/buttonActionPlay"
+        android:layout_marginTop="@dimen/battery_image_top_marging"
+        android:layout_marginLeft="@dimen/battery_image_left_marging"
+        android:src="@drawable/ic_phone"
+        android:longClickable="false"
+        android:cropToPadding="false"
+        tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageHeadBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageRobotBattery"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_battery"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageHeadPlugged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageRobotPlugged"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_plugged"
+            android:visibility="invisible"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/textHeadCharged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textRobotCharged"
+            android:layout_toRightOf="@+id/imageHeadPlugged"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:text=""
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            android:textColor="#cdffffff"
+            android:longClickable="false"
+            android:cropToPadding="false" />
+
+    <!--RoboBoard's battery-->
+
+    <ImageView
+        android:id="@+id/imageBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageHead"
+        android:layout_toRightOf="@+id/buttonActionPlay"
+        android:layout_marginTop="@dimen/battery_image_top_marging"
+        android:layout_marginLeft="@dimen/battery_image_left_marging"
+        android:src="@drawable/ic_board"
+        android:longClickable="false"
+        android:cropToPadding="false"
+        tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageBoardBattery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageHeadBattery"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_battery"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/imageBoardPlugged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageHeadPlugged"
+            android:layout_toRightOf="@+id/imageRobot"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:src="@drawable/ic_plugged"
+            android:visibility="invisible"
+            android:longClickable="false"
+            android:cropToPadding="false"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/textBoardCharged"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textHeadCharged"
+            android:layout_toRightOf="@+id/imageBoardPlugged"
+            android:layout_marginTop="@dimen/battery_image_top_marging"
+            android:layout_marginLeft="@dimen/battery_image_inside_marging"
+            android:text=""
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            android:textColor="#cdffffff"
+            android:longClickable="false"
+            android:cropToPadding="false" />
 
     <!-- Left (drive) joystick -->
 

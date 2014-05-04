@@ -5,12 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.ros.android.view.VirtualJoystickView;
 
@@ -21,7 +23,8 @@ import ru.robotmitya.robocommonlib.Rs;
 
 public class BoardFragment extends Fragment {
 
-    private BroadcastReceiver mBroadcastReceiver;
+    private BroadcastReceiver mBatteryBroadcastReceiver;
+    private BroadcastReceiver mButtonStateBroadcastReceiver;
 
     private CheckableImageView mButtonFaceOk;
     private CheckableImageView mButtonFaceIll;
@@ -42,10 +45,42 @@ public class BoardFragment extends Fragment {
     private VirtualJoystickView mDriveJoystick;
     private VirtualJoystickView mHeadJoystick;
 
+    private ImageView mImageViewBoardBattery;
+    private ImageView mImageViewBoardPlugged;
+    private TextView mTextViewBoardBatteryPercent;
+
     public BoardFragment() {
         super();
 
-        mBroadcastReceiver = new BroadcastReceiver() {
+        mBatteryBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (mTextViewBoardBatteryPercent == null) {
+                    return;
+                }
+
+                try {
+                    int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+                    int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                    int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100);
+                    int percent = (scale > 0) && (level > 0) ? level * 100 / scale : 0;
+
+                    final int NOT_PLUGGED = 0;
+                    if (plugged == NOT_PLUGGED) {
+                        mImageViewBoardBattery.setVisibility(View.VISIBLE);
+                        mImageViewBoardPlugged.setVisibility(View.INVISIBLE);
+                    } else {
+                        mImageViewBoardBattery.setVisibility(View.INVISIBLE);
+                        mImageViewBoardPlugged.setVisibility(View.VISIBLE);
+                    }
+                    mTextViewBoardBatteryPercent.setText(percent + "%");
+                } catch (Exception e) {
+                    Log.e(this, e.getMessage());
+                }
+            }
+        };
+
+        mButtonStateBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String message = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_GUI_EXTRA_NAME);
@@ -230,6 +265,13 @@ public class BoardFragment extends Fragment {
         mHeadJoystick = (VirtualJoystickView) result.findViewById(R.id.head_joystick);
         mHeadJoystick.setTopicName(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC);
 
+
+        // Batteries status:
+        mImageViewBoardBattery = (ImageView) result.findViewById(R.id.imageBoardBattery);
+        mImageViewBoardPlugged = (ImageView) result.findViewById(R.id.imageBoardPlugged);
+        mTextViewBoardBatteryPercent = (TextView) result.findViewById(R.id.textBoardCharged);
+
+
         return result;
     }
 
@@ -273,13 +315,22 @@ public class BoardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(
-                mBroadcastReceiver, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME));
+
+        final Context context = getActivity();
+        if (context != null) {
+            context.registerReceiver(mBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            LocalBroadcastManager.getInstance(context).registerReceiver(
+                    mButtonStateBroadcastReceiver, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME));
+        }
     }
 
     @Override
     public void onPause() {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
+        final Context context = getActivity();
+        if (context != null) {
+            context.unregisterReceiver(mBatteryBroadcastReceiver);
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mButtonStateBroadcastReceiver);
+        }
         super.onPause();
     }
 
