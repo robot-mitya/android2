@@ -443,7 +443,7 @@
 
     <!-- Left (drive) joystick -->
 
-    <org.ros.android.view.VirtualJoystickView
+    <ru.robotmitya.roboboard.BoardJoystickView
         android:id="@+id/drive_joystick"
         android:layout_width="@dimen/joystick_size"
         android:layout_height="@dimen/joystick_size"
@@ -453,7 +453,7 @@
 
     <!-- Right (head) joystick -->
 
-    <org.ros.android.view.VirtualJoystickView
+    <ru.robotmitya.roboboard.BoardJoystickView
         android:id="@+id/head_joystick"
         android:layout_width="@dimen/joystick_size"
         android:layout_height="@dimen/joystick_size"
