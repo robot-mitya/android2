@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.ros.android.view.VirtualJoystickView;
+//import org.ros.android.view.VirtualJoystickView;
 
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
@@ -42,8 +42,8 @@ public class BoardFragment extends Fragment {
 
     private CheckableImageView mButtonSwitchCamera;
 
-    private VirtualJoystickView mDriveJoystick;
-    private VirtualJoystickView mHeadJoystick;
+    private BoardJoystickView mDriveJoystick;
+    private BoardJoystickView mHeadJoystick;
 
     private ImageView mImageViewRobotBattery;
     private ImageView mImageViewRobotPlugged;
@@ -306,9 +306,9 @@ public class BoardFragment extends Fragment {
         mButtonSwitchCamera.setOnClickListener(switchCamButtonListener);
 
         // Joysticks:
-        mDriveJoystick = (VirtualJoystickView) result.findViewById(R.id.drive_joystick);
+        mDriveJoystick = (BoardJoystickView) result.findViewById(R.id.drive_joystick);
         mDriveJoystick.setTopicName(AppConst.RoboHead.DRIVE_JOYSTICK_TOPIC);
-        mHeadJoystick = (VirtualJoystickView) result.findViewById(R.id.head_joystick);
+        mHeadJoystick = (BoardJoystickView) result.findViewById(R.id.head_joystick);
         mHeadJoystick.setTopicName(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC);
 
 
@@ -387,11 +387,11 @@ public class BoardFragment extends Fragment {
         super.onPause();
     }
 
-    public VirtualJoystickView getDriveJoystick() {
+    public BoardJoystickView getDriveJoystick() {
         return mDriveJoystick;
     }
 
-    public VirtualJoystickView getHeadJoystick() {
+    public BoardJoystickView getHeadJoystick() {
         return mHeadJoystick;
     }
 
