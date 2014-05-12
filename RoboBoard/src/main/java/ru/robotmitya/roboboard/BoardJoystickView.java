@@ -1,6 +1,9 @@
 package ru.robotmitya.roboboard;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -252,7 +255,9 @@ public class BoardJoystickView extends RelativeLayout implements Animation.Anima
 
     public BoardJoystickView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initVirtualJoystick(context);
+        if (!isInEditMode()) {
+            initVirtualJoystick(context);
+        }
         topicName = "~cmd_vel";
     }
 
@@ -401,31 +406,49 @@ public class BoardJoystickView extends RelativeLayout implements Animation.Anima
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         // Call the parent's onLayout to setup the views.
         super.onLayout(changed, l, t, r, b);
-        // The parent container must be a square. A square container simplifies the
-        // code. A non-square container does not provide any benefit over a
-        // square.
-        if (mainLayout.getWidth() != mainLayout.getHeight()) {
-            // TODO(munjaldesai): Need to throw an exception/error. For now the
-            // touch events will not be processed.
-            this.setOnTouchListener(null);
+
+        if (!isInEditMode()) {
+            // The parent container must be a square. A square container simplifies the
+            // code. A non-square container does not provide any benefit over a
+            // square.
+            if (mainLayout.getWidth() != mainLayout.getHeight()) {
+                // TODO(munjaldesai): Need to throw an exception/error. For now the
+                // touch events will not be processed.
+                this.setOnTouchListener(null);
+            }
+            parentSize = mainLayout.getWidth();
+            if (parentSize < 200 || parentSize > 400) {
+                // TODO: Need to throw an exception for attempting to create
+                // a virtual joystick that is either too small or too big. For now the
+                // touch events will be processed.
+                this.setOnTouchListener(null);
+            }
+            // Calculate the center coordinates (radius) of parent container
+            // (mainLayout).
+            joystickRadius = mainLayout.getWidth() / 2;
+            normalizingMultiplier = BOX_TO_CIRCLE_RATIO / (parentSize / 2);
+            // Calculate the radius of the center divet as a normalize value.
+            deadZoneRatio = THUMB_DIVET_RADIUS * normalizingMultiplier;
+            // Determine the font size for the text view showing linear velocity. 8.3%
+            // of the overall size seems to work well.
+            magnitudeText.setTextSize(parentSize / 12);
         }
-        parentSize = mainLayout.getWidth();
-        if (parentSize < 200 || parentSize > 400) {
-            // TODO: Need to throw an exception for attempting to create
-            // a virtual joystick that is either too small or too big. For now the
-            // touch events will be processed.
-            this.setOnTouchListener(null);
-        }
-        // Calculate the center coordinates (radius) of parent container
-        // (mainLayout).
-        joystickRadius = mainLayout.getWidth() / 2;
-        normalizingMultiplier = BOX_TO_CIRCLE_RATIO / (parentSize / 2);
-        // Calculate the radius of the center divet as a normalize value.
-        deadZoneRatio = THUMB_DIVET_RADIUS * normalizingMultiplier;
-        // Determine the font size for the text view showing linear velocity. 8.3%
-        // of the overall size seems to work well.
-        magnitudeText.setTextSize(parentSize / 12);
     }
+
+/*
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if (isInEditMode()) {
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+//            canvas.drawLine(0, 0, getWidth(), getHeight(), paint);
+            canvas.drawLine(0, 0, 400, 400, paint);
+//            canvas.drawCircle(getWidth() / 2, getHeight() / 2, getWidth() / 2, paint);
+        }
+    }
+*/
 
     /**
      * Scale and rotate the intensity circle instantaneously. The key difference
