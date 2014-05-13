@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.EventLog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,6 +32,7 @@ import java.util.TimerTask;
 
 import geometry_msgs.Twist;
 import nav_msgs.Odometry;
+import ru.robotmitya.robocommonlib.Log;
 
 /*
  * Copyright (C) 2011 Google Inc.
@@ -440,7 +442,10 @@ public class BoardJoystickView extends RelativeLayout implements Animation.Anima
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        setBackgroundColor(Color.WHITE);
         if (isInEditMode()) {
+            setBackgroundColor(0xffffffff);
+            EventLog.writeEvent(0, "+++++++!!!");
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
 //            canvas.drawLine(0, 0, getWidth(), getHeight(), paint);

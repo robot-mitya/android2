@@ -445,6 +445,7 @@
 
     <ru.robotmitya.roboboard.BoardJoystickView
         android:id="@+id/drive_joystick"
+        android:background="#22ffffff"
         android:layout_width="@dimen/joystick_size"
         android:layout_height="@dimen/joystick_size"
         android:layout_margin="@dimen/joystick_margin"
@@ -455,6 +456,7 @@
 
     <ru.robotmitya.roboboard.BoardJoystickView
         android:id="@+id/head_joystick"
+        android:background="#22ffffff"
         android:layout_width="@dimen/joystick_size"
         android:layout_height="@dimen/joystick_size"
         android:layout_margin="@dimen/joystick_margin"
