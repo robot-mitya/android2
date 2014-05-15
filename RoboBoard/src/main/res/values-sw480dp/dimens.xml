@@ -7,6 +7,6 @@
     <dimen name="battery_image_top_marging">6dp</dimen>
     <dimen name="battery_image_left_marging">12dp</dimen>
     <dimen name="battery_image_inside_marging">6dp</dimen>
-    <dimen name="joystick_size">170dp</dimen>
-    <dimen name="joystick_margin">20dp</dimen>
+    <dimen name="joystick_size">180dp</dimen>
+    <dimen name="joystick_margin">10dp</dimen>
 </resources>
