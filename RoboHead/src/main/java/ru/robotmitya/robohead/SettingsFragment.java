@@ -4,16 +4,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.apache.http.conn.util.InetAddressUtils;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by dmitrydzz on 1/28/14.
@@ -35,6 +44,8 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
      * Robot's Bluetooth adapter MAC-address.
      */
     private static String mRoboBodyMac; // "00:12:03:31:01:22"
+
+    private PreferenceCategory mPreferenceCategoryRosCore;
 
     private EditTextPreference mEditTextPreferenceMasterUri;
 
@@ -111,6 +122,15 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         String key;
         String title;
+
+        key = getString(R.string.preference_ros_core_key);
+        mPreferenceCategoryRosCore = (PreferenceCategory) this.findPreference(key);
+        title = getString(R.string.preference_ros_core);
+        final String currentRosCore = getCurrentRosCore();
+        if (!currentRosCore.equals("")) {
+           title += " (" + getCurrentRosCore() + ")";
+        }
+        mPreferenceCategoryRosCore.setTitle(title);
 
         key = getString(R.string.option_master_uri_key);
         mEditTextPreferenceMasterUri = (EditTextPreference) this.findPreference(key);
@@ -279,5 +299,26 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     private void sendCameraSettingsWereChangedBroadcast() {
         Intent intent = new Intent(EyePreviewView.BROADCAST_CAMERA_SETTINGS_NAME);
         LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
+    }
+
+    private String getCurrentRosCore() {
+        final String ipAddressText = getIPAddress();
+        if (ipAddressText == "") {
+            return "";
+        } else {
+            return mMasterUri.toLowerCase().replaceFirst("localhost", ipAddressText);
+        }
+    }
+
+    public String getIPAddress() {
+        final WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager != null) {
+            final WifiInfo wifiInf = wifiManager.getConnectionInfo();
+            if (wifiInf != null) {
+                final int ipAddress = wifiInf.getIpAddress();
+                return String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+            }
+        }
+        return "";
     }
 }

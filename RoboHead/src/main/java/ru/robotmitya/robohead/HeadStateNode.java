@@ -133,7 +133,12 @@ public class HeadStateNode implements NodeMain {
 
     @Override
     public void onShutdown(Node node) {
-        mContext.unregisterReceiver(mBatteryBroadcastReceiver);
+        try {
+            mContext.unregisterReceiver(mBatteryBroadcastReceiver);
+        } catch (IllegalArgumentException e) {
+            // Got strange error: java.lang.IllegalArgumentException: Receiver not registered
+            // That couldn't be true %-\ So just catch it!
+        }
     }
 
     @Override
