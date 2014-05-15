@@ -16,13 +16,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 
-import org.apache.http.conn.util.InetAddressUtils;
-
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by dmitrydzz on 1/28/14.
@@ -44,8 +38,6 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
      * Robot's Bluetooth adapter MAC-address.
      */
     private static String mRoboBodyMac; // "00:12:03:31:01:22"
-
-    private PreferenceCategory mPreferenceCategoryRosCore;
 
     private EditTextPreference mEditTextPreferenceMasterUri;
 
@@ -124,13 +116,13 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         String title;
 
         key = getString(R.string.preference_ros_core_key);
-        mPreferenceCategoryRosCore = (PreferenceCategory) this.findPreference(key);
+        PreferenceCategory preferenceCategoryRosCore = (PreferenceCategory) this.findPreference(key);
         title = getString(R.string.preference_ros_core);
         final String currentRosCore = getCurrentRosCore();
         if (!currentRosCore.equals("")) {
            title += " (" + getCurrentRosCore() + ")";
         }
-        mPreferenceCategoryRosCore.setTitle(title);
+        preferenceCategoryRosCore.setTitle(title);
 
         key = getString(R.string.option_master_uri_key);
         mEditTextPreferenceMasterUri = (EditTextPreference) this.findPreference(key);
@@ -303,10 +295,12 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     private String getCurrentRosCore() {
         final String ipAddressText = getIPAddress();
-        if (ipAddressText == "") {
+        if (ipAddressText.equals("")) {
             return "";
         } else {
-            return mMasterUri.toLowerCase().replaceFirst("localhost", ipAddressText);
+            return mMasterUri
+                    .toLowerCase()
+                    .replaceFirst("localhost", ipAddressText);
         }
     }
 
