@@ -5,9 +5,9 @@
     <dimen name="board_button_height">90dp</dimen>
     <dimen name="board_button_marging">6dp</dimen>
     <dimen name="board_button_padding">6dp</dimen>
-    <dimen name="battery_image_top_marging">4dp</dimen>
+    <dimen name="battery_image_top_marging">12dp</dimen>
     <dimen name="battery_image_left_marging">30dp</dimen>
-    <dimen name="battery_image_inside_marging">10dp</dimen>
+    <dimen name="battery_image_inside_marging">8dp</dimen>
     <dimen name="joystick_size">240dp</dimen>
     <dimen name="joystick_margin">20dp</dimen>
 </resources>
