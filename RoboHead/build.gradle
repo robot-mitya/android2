@@ -57,7 +57,12 @@ android {
 }
 
 dependencies {
-    compile 'org.ros.android_core:android_gingerbread_mr1:0.1.+'
+//    compile 'org.ros.android_core:android_gingerbread_mr1:0.1.+'
+//
+//    I've made CameraPreviewView protected, so I have to use sources.
+//    I'll make a pull request to main android_core repository.
+//    DmitryDzz
+    compile project(":android_gingerbread_mr1")
     compile 'org.ros.rosjava_core:rosjava:0.1.+'
     compile 'com.android.support:appcompat-v7:+'
     androidTestCompile 'junit:junit:4.5+'

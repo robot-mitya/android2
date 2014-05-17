@@ -19,6 +19,8 @@ import org.ros.node.Node;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import java.util.List;
+
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.MessageHelper;
@@ -188,5 +190,19 @@ public class EyePreviewView extends RosCameraPreviewView {
         mHeadStatePublisher.publish(message);
 
         Log.messagePublished(this, mHeadStatePublisher.getTopicName().toString(), command);
+    }
+
+    protected Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
+        for (int i = 0; i < sizes.size(); i++) {
+            Camera.Size size = sizes.get(i);
+            Log.d(this, "++++++ " + i + ": " + size.width + "x" + size.height);
+        }
+
+        Camera.Size result;
+        result = super.getOptimalPreviewSize(sizes, width, height);
+        Log.d(this, "++++++ optimal: " + result.width + "x" + result.height);
+//        result = sizes.get(9);
+        result = sizes.get(5);
+        return result;
     }
 }
