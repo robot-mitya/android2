@@ -16,7 +16,11 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
+
+import ru.robotmitya.robocommonlib.Log;
 
 /**
  * Created by dmitrydzz on 1/28/14.
@@ -205,6 +209,16 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         mNumberOfCameras = Camera.getNumberOfCameras();
 
+        CameraSizesSet cameraSizesSet = new CameraSizesSet();
+
+
+
+
+        temp();
+
+
+
+
         key = context.getString(R.string.option_front_camera_key);
         if (mNumberOfCameras > 1) {
             defaultValue = String.valueOf(mNumberOfCameras - 1);
@@ -314,5 +328,15 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
             }
         }
         return "";
+    }
+
+    private static void temp() {
+        CameraSizesSet cameraSizesSet = new CameraSizesSet();
+        cameraSizesSet.load();
+        try {
+            Log.d(cameraSizesSet, "+++++ " + cameraSizesSet.toJson());
+        } catch (JSONException e) {
+            Log.d(cameraSizesSet, "+++++");
+        }
     }
 }
