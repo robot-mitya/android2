@@ -32,6 +32,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     private static String mMasterUri;
 
+    private static String mJsonCameraSizesSet;
+    private static CameraSizesSet mCameraSizesSet;
+
     private static int mCameraIndex;
     private static int mFrontCameraIndex;
     private static int mBackCameraIndex;
@@ -134,14 +137,17 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mEditTextPreferenceMasterUri.setTitle(title);
         mEditTextPreferenceMasterUri.setOnPreferenceChangeListener(this);
 
-        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
-        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
-        entries.add(getString(R.string.option_camera_entry_none));
-        values.add(String.valueOf(-1));
-        for (int i = 0; i < mNumberOfCameras; i++) {
-            entries.add(String.format(getString(R.string.option_camera_entry), i + 1));
-            values.add(String.valueOf(i));
-        }
+        ArrayList<CharSequence> entries = getCameraEntries(mCameraSizesSet);
+        ArrayList<CharSequence> values = getCameraValues(mCameraSizesSet);
+
+//        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+//        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
+//        entries.add(getString(R.string.option_camera_entry_none));
+//        values.add(String.valueOf(-1));
+//        for (int i = 0; i < mNumberOfCameras; i++) {
+//            entries.add(String.format(getString(R.string.option_camera_entry), i + 1));
+//            values.add(String.valueOf(i));
+//        }
 
         key = getString(R.string.option_camera_key);
         mListPreferenceCamera = (ListPreference) this.findPreference(key);
@@ -180,14 +186,6 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mEditTextPreferenceRoboBodyMac.setOnPreferenceChangeListener(this);
     }
 
-    private String getCameraTextValue(final int value) {
-        if (value < 0) {
-            return getString(R.string.option_camera_entry_none);
-        } else {
-            return String.format(getString(R.string.option_camera_entry), value + 1);
-        }
-    }
-
     /**
      * Инициализация некоторых установок.
      * @param context контекст приложения.
@@ -206,18 +204,10 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         defaultValue = context.getString(R.string.option_master_uri_default_value);
         mMasterUri = settings.getString(key, defaultValue);
 
+        // Get mJsonCameraSizesSet:
+        loadCameraSizesSet(context);
 
         mNumberOfCameras = Camera.getNumberOfCameras();
-
-        CameraSizesSet cameraSizesSet = new CameraSizesSet();
-
-
-
-
-        temp();
-
-
-
 
         key = context.getString(R.string.option_front_camera_key);
         if (mNumberOfCameras > 1) {
@@ -330,13 +320,84 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         return "";
     }
 
-    private static void temp() {
-        CameraSizesSet cameraSizesSet = new CameraSizesSet();
-        cameraSizesSet.load();
-        try {
-            Log.d(cameraSizesSet, "+++++ " + cameraSizesSet.toJson());
-        } catch (JSONException e) {
-            Log.d(cameraSizesSet, "+++++");
+    private static void loadCameraSizesSet(final Context context) {
+        CameraSizesSet mCameraSizesSet = new CameraSizesSet();
+
+        // Load preference mJsonCameraSizesSet only once after app's first launch.
+        // Next time we'll read it from preference value.
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        mJsonCameraSizesSet = settings.getString(context.getString(R.string.option_json_camera_sizes_set), "");
+        if (mJsonCameraSizesSet.equals("")) {
+            Log.d(mCameraSizesSet, "First load");
+            mCameraSizesSet.load();
+            try {
+                mJsonCameraSizesSet = mCameraSizesSet.toJson();
+            } catch (JSONException e) {
+                Log.e(mCameraSizesSet, e.getMessage());
+            }
+            settings.edit().putString(context.getString(R.string.option_json_camera_sizes_set), mJsonCameraSizesSet).commit();
+        } else {
+            try {
+                mCameraSizesSet.fromJson(mJsonCameraSizesSet);
+            } catch (JSONException e) {
+                Log.e(mCameraSizesSet, e.getMessage());
+            }
         }
+
+        Log.d(mCameraSizesSet, "mJsonCameraSizesSet = " + mJsonCameraSizesSet);
+    }
+
+    public static ArrayList<CharSequence> getCameraEntries(final CameraSizesSet cameraSizesSet) {
+        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+
+        //todo: Change string constants to resources
+        entries.add("Disabled");
+        for (int i = 0; i < cameraSizesSet.length(); i++) {
+            final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
+            final int cameraNum = cameraSizes.getCameraIndex() + 1;
+            entries.add("Camera " + cameraNum + " [default]");
+            for (int j = 0; j < cameraSizes.getSizesLength(); j++) {
+                final CameraSizesSet.Size size = cameraSizes.getSize(j);
+                entries.add("Camera " + cameraNum + " [" + size.width + "x" + size.height + "]");
+            }
+        }
+
+        return entries;
+    }
+
+    public static ArrayList<CharSequence> getCameraValues(final CameraSizesSet cameraSizesSet) {
+        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
+
+        //todo: Change string constants to resources
+        values.add("FFFF");
+        for (int i = 0; i < cameraSizesSet.length(); i++) {
+            final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
+            final int cameraNum = cameraSizes.getCameraIndex();
+            values.add(integerToHex(cameraNum, 0xff));
+            for (int j = 0; j < cameraSizes.getSizesLength(); j++) {
+                values.add(integerToHex(cameraNum, j));
+            }
+        }
+
+        return values;
+    }
+
+    private String getCameraTextValue(final int value) {
+        if (value < 0) {
+            return getString(R.string.option_camera_entry_none);
+        } else {
+            return String.format(getString(R.string.option_camera_entry), value + 1);
+        }
+    }
+//    private static String getCameraTextValue(final int value) {
+//        return "";
+//    }
+
+    private static String integerToHex(int hiByte, int loByte) {
+        hiByte = hiByte & 0xff;
+        hiByte = hiByte << 8;
+        loByte = loByte & 0xff;
+        int value = hiByte + loByte;
+        return Integer.toHexString(0x10000 | value).substring(1).toUpperCase();
     }
 }
