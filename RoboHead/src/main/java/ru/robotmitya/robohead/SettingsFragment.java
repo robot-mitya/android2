@@ -154,7 +154,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mListPreferenceCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mListPreferenceCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
         mListPreferenceCamera.setValue(String.valueOf(mCameraIndex));
-        title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex);
+        title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex, mCameraSizesSet);
         mListPreferenceCamera.setTitle(title);
         mListPreferenceCamera.setDialogTitle(R.string.option_camera_dialog_title);
         mListPreferenceCamera.setOnPreferenceChangeListener(this);
@@ -164,7 +164,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mListPreferenceFrontCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mListPreferenceFrontCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
         mListPreferenceFrontCamera.setValue(String.valueOf(mFrontCameraIndex));
-        title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex);
+        title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex, mCameraSizesSet);
         mListPreferenceFrontCamera.setTitle(title);
         mListPreferenceFrontCamera.setDialogTitle(R.string.option_front_camera_dialog_title);
         mListPreferenceFrontCamera.setOnPreferenceChangeListener(this);
@@ -174,7 +174,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mListPreferenceBackCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
         mListPreferenceBackCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
         mListPreferenceBackCamera.setValue(String.valueOf(mBackCameraIndex));
-        title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex);
+        title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex, mCameraSizesSet);
         mListPreferenceBackCamera.setTitle(title);
         mListPreferenceBackCamera.setDialogTitle(R.string.option_back_camera_dialog_title);
         mListPreferenceBackCamera.setOnPreferenceChangeListener(this);
@@ -260,7 +260,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         if (preference == mListPreferenceCamera) {
             mCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex);
+            String title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex, mCameraSizesSet);
             mListPreferenceCamera.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
@@ -268,7 +268,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         if (preference == mListPreferenceFrontCamera) {
             mFrontCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex);
+            String title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex, mCameraSizesSet);
             mListPreferenceFrontCamera.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
@@ -276,7 +276,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         if (preference == mListPreferenceBackCamera) {
             mBackCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex);
+            String title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex, mCameraSizesSet);
             mListPreferenceBackCamera.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
@@ -321,7 +321,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     }
 
     private static void loadCameraSizesSet(final Context context) {
-        CameraSizesSet mCameraSizesSet = new CameraSizesSet();
+        mCameraSizesSet = new CameraSizesSet();
 
         // Load preference mJsonCameraSizesSet only once after app's first launch.
         // Next time we'll read it from preference value.
@@ -347,19 +347,29 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         Log.d(mCameraSizesSet, "mJsonCameraSizesSet = " + mJsonCameraSizesSet);
     }
 
+//    public static ArrayList<CharSequence> getCameraEntries(final CameraSizesSet cameraSizesSet) {
+//        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+//
+//        entries.add("Disabled");
+//        for (int i = 0; i < cameraSizesSet.length(); i++) {
+//            final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
+//            final int cameraNum = cameraSizes.getCameraIndex() + 1;
+//            entries.add("Camera " + cameraNum + " [default]");
+//            for (int j = 0; j < cameraSizes.getSizesLength(); j++) {
+//                final CameraSizesSet.Size size = cameraSizes.getSize(j);
+//                entries.add("Camera " + cameraNum + " [" + size.width + "x" + size.height + "]");
+//            }
+//        }
+//
+//        return entries;
+//    }
+//
     public static ArrayList<CharSequence> getCameraEntries(final CameraSizesSet cameraSizesSet) {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
 
-        //todo: Change string constants to resources
-        entries.add("Disabled");
-        for (int i = 0; i < cameraSizesSet.length(); i++) {
-            final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
-            final int cameraNum = cameraSizes.getCameraIndex() + 1;
-            entries.add("Camera " + cameraNum + " [default]");
-            for (int j = 0; j < cameraSizes.getSizesLength(); j++) {
-                final CameraSizesSet.Size size = cameraSizes.getSize(j);
-                entries.add("Camera " + cameraNum + " [" + size.width + "x" + size.height + "]");
-            }
+        ArrayList<CharSequence> values = getCameraValues(cameraSizesSet);
+        for (CharSequence value : values) {
+            entries.add(getCameraTextValue(value.toString(), cameraSizesSet));
         }
 
         return entries;
@@ -368,7 +378,6 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     public static ArrayList<CharSequence> getCameraValues(final CameraSizesSet cameraSizesSet) {
         ArrayList<CharSequence> values = new ArrayList<CharSequence>();
 
-        //todo: Change string constants to resources
         values.add("FFFF");
         for (int i = 0; i < cameraSizesSet.length(); i++) {
             final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
@@ -382,16 +391,38 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         return values;
     }
 
-    private String getCameraTextValue(final int value) {
-        if (value < 0) {
-            return getString(R.string.option_camera_entry_none);
-        } else {
-            return String.format(getString(R.string.option_camera_entry), value + 1);
-        }
-    }
-//    private static String getCameraTextValue(final int value) {
-//        return "";
+//    private String getCameraTextValue(final int value) {
+//        if (value < 0) {
+//            return getString(R.string.option_camera_entry_none);
+//        } else {
+//            return String.format(getString(R.string.option_camera_entry), value + 1);
+//        }
 //    }
+    private static String getCameraTextValue(int value, CameraSizesSet cameraSizesSet) {
+        //todo: Change string constants to resources
+        value &= 0xffff;
+        if (value == 0xffff) {
+            return "Disabled";
+        }
+        // hiByte is the camera index in CameraSizesSet
+        int hiByte = value & 0xff00;
+        hiByte >>= 8;
+        // loByte is the size index in CameraSizesSet for some cameraIndex
+        int loByte = value & 0x00ff;
+        String result = "Camera " + (cameraSizesSet.get(hiByte).getCameraIndex() + 1);
+        if (loByte == 0xff) {
+            result += " [default]";
+        } else {
+            CameraSizesSet.Size size = cameraSizesSet.get(hiByte).getSize(loByte);
+            result += " [" + size.width + "x" + size.height + "]";
+        }
+        return result;
+    }
+
+    private static String getCameraTextValue(String textValue, CameraSizesSet cameraSizesSet) {
+        int value = Integer.parseInt(textValue, 16);
+        return getCameraTextValue(value, cameraSizesSet);
+    }
 
     private static String integerToHex(int hiByte, int loByte) {
         hiByte = hiByte & 0xff;
