@@ -16,6 +16,7 @@ import org.ros.android.RosActivity;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 
 public class MainActivity extends RosActivity {
@@ -68,7 +69,15 @@ public class MainActivity extends RosActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mEyePreviewView.startVideoStreaming(SettingsFragment.getCameraIndex());
+
+        final short selectedCamera = (short)SettingsFragment.getCameraIndex();
+        if (selectedCamera == AppConst.Camera.FIRST) {
+            mEyePreviewView.startVideoStreaming(SettingsFragment.getFirstCameraMode());
+        } else if (selectedCamera == AppConst.Camera.SECOND) {
+            mEyePreviewView.startVideoStreaming(SettingsFragment.getSecondCameraMode());
+        } else {
+            mEyePreviewView.stopVideoStreaming();
+        }
     }
 
     @Override

@@ -32,4 +32,10 @@ public class AppConst {
         public static final String HEAD_JOYSTICK_TOPIC = "robot_mitya/head_joystick";
         public static final String HEAD_STATE_TOPIC = "robot_mitya/head_state";
     }
+
+    public class Camera {
+        public static final int DISABLED = 0;
+        public static final int FIRST = 1;
+        public static final int SECOND = 2;
+    }
 }

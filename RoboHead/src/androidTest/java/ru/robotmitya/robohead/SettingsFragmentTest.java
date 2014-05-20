@@ -20,7 +20,7 @@ public class SettingsFragmentTest extends TestCase {
         CameraSizesSet cameraSizesSet = new CameraSizesSet();
         cameraSizesSet.fromJson(CAMERAS_SIZES);
 
-        ArrayList<CharSequence> entries = SettingsFragment.getCameraEntries(cameraSizesSet);
+        ArrayList<CharSequence> entries = SettingsFragment.getCameraModeEntries(cameraSizesSet);
 
         assertEquals(10, entries.size());
         assertEquals("Disabled", entries.get(0));
@@ -39,7 +39,7 @@ public class SettingsFragmentTest extends TestCase {
         CameraSizesSet cameraSizesSet = new CameraSizesSet();
         cameraSizesSet.fromJson(CAMERAS_SIZES);
 
-        ArrayList<CharSequence> values = SettingsFragment.getCameraValues(cameraSizesSet);
+        ArrayList<CharSequence> values = SettingsFragment.getCameraModeValues(cameraSizesSet);
 
         assertEquals(10, values.size());
         assertEquals("FFFF", values.get(0));

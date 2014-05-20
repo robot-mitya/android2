@@ -20,6 +20,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 
 /**
@@ -32,14 +33,11 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     private static String mMasterUri;
 
-    private static String mJsonCameraSizesSet;
     private static CameraSizesSet mCameraSizesSet;
 
     private static int mCameraIndex;
-    private static int mFrontCameraIndex;
-    private static int mBackCameraIndex;
-
-    private static int mNumberOfCameras;
+    private static String mFirstCameraMode;
+    private static String mSecondCameraMode;
 
     /**
      * Robot's Bluetooth adapter MAC-address.
@@ -49,8 +47,8 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     private EditTextPreference mEditTextPreferenceMasterUri;
 
     private ListPreference mListPreferenceCamera;
-    private ListPreference mListPreferenceFrontCamera;
-    private ListPreference mListPreferenceBackCamera;
+    private ListPreference mListPreferenceFirstCameraMode;
+    private ListPreference mListPreferenceSecondCameraMode;
 
     /**
      * EditText for mRoboBodyMac option.
@@ -65,34 +63,31 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         return mCameraIndex;
     }
 
-    public static int getFrontCameraIndex() {
-        return mFrontCameraIndex;
+    public static String getFirstCameraMode() {
+        return mFirstCameraMode;
     }
 
-    public static int getBackCameraIndex() {
-        return mBackCameraIndex;
+    public static String getSecondCameraMode() {
+        return mSecondCameraMode;
     }
 
     public static void setCameraIndex(final Context context, final int cameraIndex) {
-        if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
-            return;
-        }
-
         mCameraIndex = cameraIndex;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(context.getString(R.string.option_camera_key), String.valueOf(cameraIndex)).commit();
+        settings.edit().putString(context.getString(R.string.option_camera_index_key), String.valueOf(cameraIndex)).commit();
     }
 
+/*
     public static void setFrontCameraIndex(final Context context, final int cameraIndex) {
         if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
             return;
         }
 
-        mFrontCameraIndex = cameraIndex;
+        mFirstCameraMode = cameraIndex;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(context.getString(R.string.option_front_camera_key), String.valueOf(cameraIndex)).commit();
+        settings.edit().putString(context.getString(R.string.option_first_camera_mode_key), String.valueOf(cameraIndex)).commit();
     }
 
     public static void setBackCameraIndex(final Context context, final int cameraIndex) {
@@ -100,11 +95,12 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
             return;
         }
 
-        mBackCameraIndex = cameraIndex;
+        mSecondCameraMode = cameraIndex;
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(context.getString(R.string.option_back_camera_key), String.valueOf(cameraIndex)).commit();
+        settings.edit().putString(context.getString(R.string.option_second_camera_mode_key), String.valueOf(cameraIndex)).commit();
     }
+*/
 
     /**
      * Аксессор поля mRoboBodyMac.
@@ -124,12 +120,14 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         key = getString(R.string.preference_ros_core_key);
         PreferenceCategory preferenceCategoryRosCore = (PreferenceCategory) this.findPreference(key);
-        title = getString(R.string.preference_ros_core);
-        final String currentRosCore = getCurrentRosCore();
-        if (!currentRosCore.equals("")) {
-           title += " (" + getCurrentRosCore() + ")";
+        if (preferenceCategoryRosCore != null) {
+            title = getString(R.string.preference_ros_core);
+            final String currentRosCore = getCurrentRosCore();
+            if (!currentRosCore.equals("")) {
+                title += " (" + getCurrentRosCore() + ")";
+            }
+            preferenceCategoryRosCore.setTitle(title);
         }
-        preferenceCategoryRosCore.setTitle(title);
 
         key = getString(R.string.option_master_uri_key);
         mEditTextPreferenceMasterUri = (EditTextPreference) this.findPreference(key);
@@ -137,47 +135,41 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mEditTextPreferenceMasterUri.setTitle(title);
         mEditTextPreferenceMasterUri.setOnPreferenceChangeListener(this);
 
-        ArrayList<CharSequence> entries = getCameraEntries(mCameraSizesSet);
-        ArrayList<CharSequence> values = getCameraValues(mCameraSizesSet);
+        ArrayList<CharSequence> cameraEntries = getCameraEntries();
+        ArrayList<CharSequence> cameraValues = getCameraValues();
 
-//        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
-//        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
-//        entries.add(getString(R.string.option_camera_entry_none));
-//        values.add(String.valueOf(-1));
-//        for (int i = 0; i < mNumberOfCameras; i++) {
-//            entries.add(String.format(getString(R.string.option_camera_entry), i + 1));
-//            values.add(String.valueOf(i));
-//        }
-
-        key = getString(R.string.option_camera_key);
+        key = getString(R.string.option_camera_index_key);
         mListPreferenceCamera = (ListPreference) this.findPreference(key);
-        mListPreferenceCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
-        mListPreferenceCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
+        mListPreferenceCamera.setEntries(cameraEntries.toArray(new CharSequence[cameraEntries.size()]));
+        mListPreferenceCamera.setEntryValues(cameraValues.toArray(new CharSequence[cameraValues.size()]));
         mListPreferenceCamera.setValue(String.valueOf(mCameraIndex));
-        title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex, mCameraSizesSet);
+        title = getString(R.string.option_camera_index_title) + ": " + getCameraValueDescription(mCameraIndex);
         mListPreferenceCamera.setTitle(title);
-        mListPreferenceCamera.setDialogTitle(R.string.option_camera_dialog_title);
+        mListPreferenceCamera.setDialogTitle(R.string.option_camera_index_dialog_title);
         mListPreferenceCamera.setOnPreferenceChangeListener(this);
 
-        key = getString(R.string.option_front_camera_key);
-        mListPreferenceFrontCamera = (ListPreference) this.findPreference(key);
-        mListPreferenceFrontCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
-        mListPreferenceFrontCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
-        mListPreferenceFrontCamera.setValue(String.valueOf(mFrontCameraIndex));
-        title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex, mCameraSizesSet);
-        mListPreferenceFrontCamera.setTitle(title);
-        mListPreferenceFrontCamera.setDialogTitle(R.string.option_front_camera_dialog_title);
-        mListPreferenceFrontCamera.setOnPreferenceChangeListener(this);
+        ArrayList<CharSequence> cameraModeEntries = getCameraModeEntries(mCameraSizesSet);
+        ArrayList<CharSequence> cameraModeValues = getCameraModeValues(mCameraSizesSet);
 
-        key = getString(R.string.option_back_camera_key);
-        mListPreferenceBackCamera = (ListPreference) this.findPreference(key);
-        mListPreferenceBackCamera.setEntries(entries.toArray(new CharSequence[entries.size()]));
-        mListPreferenceBackCamera.setEntryValues(values.toArray(new CharSequence[values.size()]));
-        mListPreferenceBackCamera.setValue(String.valueOf(mBackCameraIndex));
-        title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex, mCameraSizesSet);
-        mListPreferenceBackCamera.setTitle(title);
-        mListPreferenceBackCamera.setDialogTitle(R.string.option_back_camera_dialog_title);
-        mListPreferenceBackCamera.setOnPreferenceChangeListener(this);
+        key = getString(R.string.option_first_camera_mode_key);
+        mListPreferenceFirstCameraMode = (ListPreference) this.findPreference(key);
+        mListPreferenceFirstCameraMode.setEntries(cameraModeEntries.toArray(new CharSequence[cameraModeEntries.size()]));
+        mListPreferenceFirstCameraMode.setEntryValues(cameraModeValues.toArray(new CharSequence[cameraModeValues.size()]));
+        mListPreferenceFirstCameraMode.setValue(mFirstCameraMode);
+        title = getString(R.string.option_first_camera_mode_title) + ": " + getCameraModeValueDescription(mFirstCameraMode, mCameraSizesSet);
+        mListPreferenceFirstCameraMode.setTitle(title);
+        mListPreferenceFirstCameraMode.setDialogTitle(R.string.option_first_camera_mode_dialog_title);
+        mListPreferenceFirstCameraMode.setOnPreferenceChangeListener(this);
+
+        key = getString(R.string.option_second_camera_mode_key);
+        mListPreferenceSecondCameraMode = (ListPreference) this.findPreference(key);
+        mListPreferenceSecondCameraMode.setEntries(cameraModeEntries.toArray(new CharSequence[cameraModeEntries.size()]));
+        mListPreferenceSecondCameraMode.setEntryValues(cameraModeValues.toArray(new CharSequence[cameraModeValues.size()]));
+        mListPreferenceSecondCameraMode.setValue(String.valueOf(mSecondCameraMode));
+        title = getString(R.string.option_second_camera_mode_title) + ": " + getCameraModeValueDescription(mSecondCameraMode, mCameraSizesSet);
+        mListPreferenceSecondCameraMode.setTitle(title);
+        mListPreferenceSecondCameraMode.setDialogTitle(R.string.option_second_camera_mode_dialog_title);
+        mListPreferenceSecondCameraMode.setOnPreferenceChangeListener(this);
 
         key = getString(R.string.option_robobody_mac_key);
         mEditTextPreferenceRoboBodyMac = (EditTextPreference) this.findPreference(key);
@@ -204,36 +196,38 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         defaultValue = context.getString(R.string.option_master_uri_default_value);
         mMasterUri = settings.getString(key, defaultValue);
 
-        // Get mJsonCameraSizesSet:
+        // Loading static mCameraSizesSet:
         loadCameraSizesSet(context);
 
-        mNumberOfCameras = Camera.getNumberOfCameras();
+        final int numberOfCameras = Camera.getNumberOfCameras();
 
-        key = context.getString(R.string.option_front_camera_key);
-        if (mNumberOfCameras > 1) {
-            defaultValue = String.valueOf(mNumberOfCameras - 1);
-        } else if (mNumberOfCameras > 0) {
-            defaultValue = String.valueOf(0);
+        key = context.getString(R.string.option_first_camera_mode_key);
+        if (numberOfCameras == 0) {
+            defaultValue = integerToHex(0xff, 0xff);
         } else {
-            defaultValue = String.valueOf(-1);
+            defaultValue = integerToHex(
+                    mCameraSizesSet.get(mCameraSizesSet.length() - 1).getCameraIndex(),
+                    0xff);
         }
-        mFrontCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
+        mFirstCameraMode = settings.getString(key, defaultValue);
 
-        key = context.getString(R.string.option_back_camera_key);
-        if (mNumberOfCameras > 0) {
-            defaultValue = String.valueOf(0);
+        key = context.getString(R.string.option_second_camera_mode_key);
+        if (numberOfCameras == 0) {
+            defaultValue = integerToHex(0xff, 0xff);
         } else {
-            defaultValue = String.valueOf(-1);
+            defaultValue = integerToHex(
+                    mCameraSizesSet.get(0).getCameraIndex(),
+                    0xff);
         }
-        mBackCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
+        mSecondCameraMode = settings.getString(key, defaultValue);
 
-        key = context.getString(R.string.option_camera_key);
-        defaultValue = String.valueOf(mNumberOfCameras - 1);
+        key = context.getString(R.string.option_camera_index_key);
+        if (numberOfCameras == 0) {
+            defaultValue = String.valueOf(AppConst.Camera.DISABLED);
+        } else {
+            defaultValue = String.valueOf(AppConst.Camera.FIRST);
+        }
         mCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
-        if (mCameraIndex >= mNumberOfCameras) {
-            mCameraIndex = mNumberOfCameras - 1;
-        }
-
 
         key = context.getString(R.string.option_robobody_mac_key);
         defaultValue = context.getString(R.string.option_robobody_mac_default_value);
@@ -260,24 +254,24 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         if (preference == mListPreferenceCamera) {
             mCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_camera_title) + ": " + getCameraTextValue(mCameraIndex, mCameraSizesSet);
+            String title = getString(R.string.option_camera_index_title) + ": " + getCameraValueDescription(mCameraIndex);
             mListPreferenceCamera.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
         }
 
-        if (preference == mListPreferenceFrontCamera) {
-            mFrontCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_front_camera_title) + ": " + getCameraTextValue(mFrontCameraIndex, mCameraSizesSet);
-            mListPreferenceFrontCamera.setTitle(title);
+        if (preference == mListPreferenceFirstCameraMode) {
+            mFirstCameraMode = (String) newValue;
+            String title = getString(R.string.option_first_camera_mode_title) + ": " + getCameraModeValueDescription(mFirstCameraMode, mCameraSizesSet);
+            mListPreferenceFirstCameraMode.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
         }
 
-        if (preference == mListPreferenceBackCamera) {
-            mBackCameraIndex = Integer.valueOf((String) newValue);
-            String title = getString(R.string.option_back_camera_title) + ": " + getCameraTextValue(mBackCameraIndex, mCameraSizesSet);
-            mListPreferenceBackCamera.setTitle(title);
+        if (preference == mListPreferenceSecondCameraMode) {
+            mSecondCameraMode = (String) newValue;
+            String title = getString(R.string.option_second_camera_mode_title) + ": " + getCameraModeValueDescription(mSecondCameraMode, mCameraSizesSet);
+            mListPreferenceSecondCameraMode.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
             return true;
         }
@@ -294,7 +288,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     private void sendCameraSettingsWereChangedBroadcast() {
         Intent intent = new Intent(EyePreviewView.BROADCAST_CAMERA_SETTINGS_NAME);
-        LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
+        if ((getActivity() != null) && (getActivity().getApplicationContext() != null)) {
+            LocalBroadcastManager.getInstance(getActivity().getApplicationContext()).sendBroadcast(intent);
+        }
     }
 
     private String getCurrentRosCore() {
@@ -309,12 +305,16 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     }
 
     public String getIPAddress() {
-        final WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiManager != null) {
-            final WifiInfo wifiInf = wifiManager.getConnectionInfo();
-            if (wifiInf != null) {
-                final int ipAddress = wifiInf.getIpAddress();
-                return String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+        if ((getActivity() != null) && (getActivity().getApplicationContext() != null)) {
+            final WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            if (wifiManager != null) {
+                final WifiInfo wifiInf = wifiManager.getConnectionInfo();
+                if (wifiInf != null) {
+                    final int ipAddress = wifiInf.getIpAddress();
+                    if (ipAddress != 0) {
+                        return String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff), (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+                    }
+                }
             }
         }
         return "";
@@ -323,59 +323,59 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     private static void loadCameraSizesSet(final Context context) {
         mCameraSizesSet = new CameraSizesSet();
 
-        // Load preference mJsonCameraSizesSet only once after app's first launch.
+        // Load preference jsonCameraSizesSet only once after app's first launch.
         // Next time we'll read it from preference value.
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        mJsonCameraSizesSet = settings.getString(context.getString(R.string.option_json_camera_sizes_set), "");
-        if (mJsonCameraSizesSet.equals("")) {
+        String jsonCameraSizesSet = settings.getString(context.getString(R.string.option_json_camera_sizes_set), "");
+        if (jsonCameraSizesSet.equals("")) {
             Log.d(mCameraSizesSet, "First load");
             mCameraSizesSet.load();
             try {
-                mJsonCameraSizesSet = mCameraSizesSet.toJson();
+                jsonCameraSizesSet = mCameraSizesSet.toJson();
             } catch (JSONException e) {
                 Log.e(mCameraSizesSet, e.getMessage());
             }
-            settings.edit().putString(context.getString(R.string.option_json_camera_sizes_set), mJsonCameraSizesSet).commit();
+            settings.edit().putString(context.getString(R.string.option_json_camera_sizes_set), jsonCameraSizesSet).commit();
         } else {
             try {
-                mCameraSizesSet.fromJson(mJsonCameraSizesSet);
+                mCameraSizesSet.fromJson(jsonCameraSizesSet);
             } catch (JSONException e) {
                 Log.e(mCameraSizesSet, e.getMessage());
             }
         }
 
-        Log.d(mCameraSizesSet, "mJsonCameraSizesSet = " + mJsonCameraSizesSet);
+        Log.d(mCameraSizesSet, "jsonCameraSizesSet = " + jsonCameraSizesSet);
     }
 
-//    public static ArrayList<CharSequence> getCameraEntries(final CameraSizesSet cameraSizesSet) {
-//        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
-//
-//        entries.add("Disabled");
-//        for (int i = 0; i < cameraSizesSet.length(); i++) {
-//            final CameraSizesSet.CameraSizes cameraSizes = cameraSizesSet.get(i);
-//            final int cameraNum = cameraSizes.getCameraIndex() + 1;
-//            entries.add("Camera " + cameraNum + " [default]");
-//            for (int j = 0; j < cameraSizes.getSizesLength(); j++) {
-//                final CameraSizesSet.Size size = cameraSizes.getSize(j);
-//                entries.add("Camera " + cameraNum + " [" + size.width + "x" + size.height + "]");
-//            }
-//        }
-//
-//        return entries;
-//    }
-//
-    public static ArrayList<CharSequence> getCameraEntries(final CameraSizesSet cameraSizesSet) {
+    public static ArrayList<CharSequence> getCameraEntries() {
+        ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
+        ArrayList<CharSequence> values = getCameraValues();
+        for (CharSequence value : values) {
+            entries.add(getCameraValueDescription(Integer.parseInt((String)value)));
+        }
+        return entries;
+    }
+
+    public static ArrayList<CharSequence> getCameraValues() {
+        ArrayList<CharSequence> values = new ArrayList<CharSequence>();
+        values.add(String.valueOf(AppConst.Camera.DISABLED));
+        values.add(String.valueOf(AppConst.Camera.FIRST));
+        values.add(String.valueOf(AppConst.Camera.SECOND));
+        return values;
+    }
+
+    public static ArrayList<CharSequence> getCameraModeEntries(final CameraSizesSet cameraSizesSet) {
         ArrayList<CharSequence> entries = new ArrayList<CharSequence>();
 
-        ArrayList<CharSequence> values = getCameraValues(cameraSizesSet);
+        ArrayList<CharSequence> values = getCameraModeValues(cameraSizesSet);
         for (CharSequence value : values) {
-            entries.add(getCameraTextValue(value.toString(), cameraSizesSet));
+            entries.add(getCameraModeValueDescription(value.toString(), cameraSizesSet));
         }
 
         return entries;
     }
 
-    public static ArrayList<CharSequence> getCameraValues(final CameraSizesSet cameraSizesSet) {
+    public static ArrayList<CharSequence> getCameraModeValues(final CameraSizesSet cameraSizesSet) {
         ArrayList<CharSequence> values = new ArrayList<CharSequence>();
 
         values.add("FFFF");
@@ -391,14 +391,18 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         return values;
     }
 
-//    private String getCameraTextValue(final int value) {
-//        if (value < 0) {
-//            return getString(R.string.option_camera_entry_none);
-//        } else {
-//            return String.format(getString(R.string.option_camera_entry), value + 1);
-//        }
-//    }
-    private static String getCameraTextValue(int value, CameraSizesSet cameraSizesSet) {
+    private static String getCameraValueDescription(final int cameraIndex) {
+        switch (cameraIndex) {
+            case AppConst.Camera.FIRST:
+                return "First camera";
+            case AppConst.Camera.SECOND:
+                return "Second camera";
+            default:
+                return "Disabled";
+        }
+    }
+
+    private static String getCameraModeValueDescription(int value, CameraSizesSet cameraSizesSet) {
         //todo: Change string constants to resources
         value &= 0xffff;
         if (value == 0xffff) {
@@ -419,9 +423,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         return result;
     }
 
-    private static String getCameraTextValue(String textValue, CameraSizesSet cameraSizesSet) {
+    private static String getCameraModeValueDescription(String textValue, CameraSizesSet cameraSizesSet) {
         int value = Integer.parseInt(textValue, 16);
-        return getCameraTextValue(value, cameraSizesSet);
+        return getCameraModeValueDescription(value, cameraSizesSet);
     }
 
     private static String integerToHex(int hiByte, int loByte) {
@@ -431,4 +435,31 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         int value = hiByte + loByte;
         return Integer.toHexString(0x10000 | value).substring(1).toUpperCase();
     }
+
+    public static int cameraModeToCameraIndex(final int cameraMode) {
+        final int hiByte = (cameraMode & 0xff00) >> 8;
+        if (hiByte == 0xff) {
+            return -1;
+        }
+        return mCameraSizesSet.get(hiByte).getCameraIndex();
+    }
+/*
+    public static int cameraModeToWidth(final int cameraMode) {
+        final int hiByte = (cameraMode & 0xff00) >> 8;
+        final int loByte = cameraMode & 0xff;
+        if ((hiByte == 0xff) || (loByte == 0xff)) {
+            return 0;
+        }
+        return mCameraSizesSet.get(hiByte).getSize(loByte).width;
+    }
+
+    public static int cameraModeToHeight(final int cameraMode) {
+        final int hiByte = (cameraMode & 0xff00) >> 8;
+        final int loByte = cameraMode & 0xff;
+        if ((hiByte == 0xff) || (loByte == 0xff)) {
+            return 0;
+        }
+        return mCameraSizesSet.get(hiByte).getSize(loByte).height;
+    }
+*/
 }

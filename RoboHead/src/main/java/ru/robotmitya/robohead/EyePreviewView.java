@@ -42,23 +42,25 @@ public class EyePreviewView extends RosCameraPreviewView {
     private Publisher<std_msgs.String> mBoardPublisher;
     private Publisher<std_msgs.String> mHeadStatePublisher;
 
+    private int mSelectedCameraMode;
+
     private BroadcastReceiver mCameraSettingsBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final short selectedCamera = (short)SettingsFragment.getCameraIndex();
-            final short frontCamera = (short)SettingsFragment.getFrontCameraIndex();
-            final short backCamera = (short)SettingsFragment.getBackCameraIndex();
+//            final String firstCameraMode = SettingsFragment.getFirstCameraMode();
+//            final String secondCameraMode = SettingsFragment.getSecondCameraMode();
             RoboState.setSelectedCamIndex(selectedCamera);
-            RoboState.setFrontCamIndex(frontCamera);
-            RoboState.setBackCamIndex(backCamera);
+//            RoboState.setFrontCamIndex(firstCameraMode);
+//            RoboState.setBackCamIndex(secondCameraMode);
 
             short value;
-            if (selectedCamera == frontCamera) {
+            if (selectedCamera == AppConst.Camera.FIRST) {
                 value = Rs.Instruction.CAMERA_FRONT_ON;
-                startVideoStreaming(selectedCamera);
-            } else if (selectedCamera == backCamera) {
+                startVideoStreaming(SettingsFragment.getFirstCameraMode());
+            } else if (selectedCamera == AppConst.Camera.SECOND) {
                 value = Rs.Instruction.CAMERA_BACK_ON;
-                startVideoStreaming(selectedCamera);
+                startVideoStreaming(SettingsFragment.getSecondCameraMode());
             } else {
                 value = Rs.Instruction.CAMERA_OFF;
                 stopVideoStreaming();
@@ -67,14 +69,17 @@ public class EyePreviewView extends RosCameraPreviewView {
         }
     };
 
+    @SuppressWarnings("UnusedDeclaration")
     public EyePreviewView(Context context) {
         super(context);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public EyePreviewView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public EyePreviewView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -113,17 +118,17 @@ public class EyePreviewView extends RosCameraPreviewView {
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d(EyePreviewView.this, "back camera is turned on");
-                        startVideoStreaming(SettingsFragment.getBackCameraIndex());
+                        startVideoStreaming(SettingsFragment.getSecondCameraMode());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d(EyePreviewView.this, "front camera is turned on");
-                        startVideoStreaming(SettingsFragment.getFrontCameraIndex());
+                        startVideoStreaming(SettingsFragment.getFirstCameraMode());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.STATE_REQUEST) {
                         String messageToBoard;
-                        if (RoboState.getSelectedCamIndex() == SettingsFragment.getFrontCameraIndex()) {
+                        if (RoboState.getSelectedCamIndex() == AppConst.Camera.FIRST) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_FRONT_ON);
-                        } else if (RoboState.getSelectedCamIndex() == SettingsFragment.getBackCameraIndex()) {
+                        } else if (RoboState.getSelectedCamIndex() == AppConst.Camera.SECOND) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_BACK_ON);
                         } else {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_OFF);
@@ -142,21 +147,22 @@ public class EyePreviewView extends RosCameraPreviewView {
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mCameraSettingsBroadcastReceiver);
     }
 
-    public void startVideoStreaming(final int cameraIndex) {
-        final int numberOfCameras = Camera.getNumberOfCameras();
-        if ((numberOfCameras == 0) || (cameraIndex < 0) || (cameraIndex >= numberOfCameras)) {
+    public void startVideoStreaming(final String cameraMode) {
+        mSelectedCameraMode = Integer.parseInt(cameraMode, 16);
+        if (mSelectedCameraMode == 0xffff) {
+            stopVideoStreaming();
             return;
         }
+
+        final int cameraIndex = SettingsFragment.cameraModeToCameraIndex(mSelectedCameraMode);
 
         // Start of video streaming is delayed.
         final Handler h = new Handler(Looper.getMainLooper());
         final Runnable r = new Runnable() {
             @Override
             public void run() {
-                if ((cameraIndex >= 0) && (cameraIndex < numberOfCameras)) {
-                    releaseCamera();
-                    setCamera(Camera.open(cameraIndex));
-                }
+                releaseCamera();
+                setCamera(Camera.open(cameraIndex));
             }
         };
         h.postDelayed(r, 1000);
@@ -193,16 +199,21 @@ public class EyePreviewView extends RosCameraPreviewView {
     }
 
     protected Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
-        for (int i = 0; i < sizes.size(); i++) {
-            Camera.Size size = sizes.get(i);
-            Log.d(this, "++++++ " + i + ": " + size.width + "x" + size.height);
+        final int sizeIndex = mSelectedCameraMode & 0xff;
+        if (sizeIndex == 0xff) {
+            return super.getOptimalPreviewSize(sizes, width, height);
         }
-
-        Camera.Size result;
-        result = super.getOptimalPreviewSize(sizes, width, height);
-        Log.d(this, "++++++ optimal: " + result.width + "x" + result.height);
-//        result = sizes.get(9);
-        result = sizes.get(5);
-        return result;
+        return sizes.get(sizeIndex);
+//        for (int i = 0; i < sizes.size(); i++) {
+//            Camera.Size size = sizes.get(i);
+//            Log.d(this, "++++++ " + i + ": " + size.width + "x" + size.height);
+//        }
+//
+//        Camera.Size result;
+//        result = super.getOptimalPreviewSize(sizes, width, height);
+//        Log.d(this, "++++++ optimal: " + result.width + "x" + result.height);
+////        result = sizes.get(9);
+//        result = sizes.get(5);
+//        return result;
     }
 }

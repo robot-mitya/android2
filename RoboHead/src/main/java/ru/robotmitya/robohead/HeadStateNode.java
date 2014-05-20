@@ -67,8 +67,6 @@ public class HeadStateNode implements NodeMain {
     @Override
     public void onStart(final ConnectedNode connectedNode) {
         RoboState.setSelectedCamIndex((short)SettingsFragment.getCameraIndex());
-        RoboState.setFrontCamIndex((short)SettingsFragment.getFrontCameraIndex());
-        RoboState.setBackCamIndex((short)SettingsFragment.getBackCameraIndex());
 
         mContext.registerReceiver(mBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
@@ -97,12 +95,12 @@ public class HeadStateNode implements NodeMain {
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_BACK_ON:
-                            SettingsFragment.setCameraIndex(mContext, SettingsFragment.getBackCameraIndex());
+                            SettingsFragment.setCameraIndex(mContext, 1 /*SettingsFragment.getSecondCameraMode()*/);
                             RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_FRONT_ON:
-                            SettingsFragment.setCameraIndex(mContext, SettingsFragment.getFrontCameraIndex());
+                            SettingsFragment.setCameraIndex(mContext, 0 /*SettingsFragment.getFirstCameraMode()*/);
                             RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;

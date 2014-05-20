@@ -7,8 +7,8 @@ package ru.robotmitya.robocommonlib;
 public class RoboState {
     private static short mHeadlights;
 
-    private static short mFrontCamIndex;
-    private static short mBackCamIndex;
+//    private static short mFrontCamIndex;
+//    private static short mBackCamIndex;
     private static short mSelectedCamIndex;
 
     private static boolean mIsReverse;
@@ -28,8 +28,8 @@ public class RoboState {
     static {
         mHeadlights = Rs.Instruction.HEADLIGHTS_OFF;
 
-        mFrontCamIndex = -1;
-        mBackCamIndex = -1;
+//        mFrontCamIndex = -1;
+//        mBackCamIndex = -1;
         mSelectedCamIndex = -1;
 
         mIsReverse = false;
@@ -58,6 +58,7 @@ public class RoboState {
     }
 
 
+/*
     // Front camera
 
     public static boolean setFrontCamIndex(final short value) {
@@ -88,6 +89,7 @@ public class RoboState {
     public static short getBackCamIndex() {
         return mBackCamIndex;
     }
+*/
 
 
     // Selected camera index
@@ -95,7 +97,7 @@ public class RoboState {
     public static boolean setSelectedCamIndex(final short value) {
         if (value != mSelectedCamIndex) {
             mSelectedCamIndex = value;
-            mIsReverse = mSelectedCamIndex == mBackCamIndex;
+            mIsReverse = mSelectedCamIndex == AppConst.Camera.SECOND;
             return true;
         }
         return false;

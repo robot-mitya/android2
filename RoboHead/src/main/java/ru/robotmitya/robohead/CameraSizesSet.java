@@ -40,12 +40,13 @@ public class CameraSizesSet {
             try {
                 Camera.Parameters parameters = camera.getParameters();
                 List<Camera.Size> supportedPreviewSizes = parameters.getSupportedPreviewSizes();
-                for (int j = 0; j < supportedPreviewSizes.size(); j++) {
-                    Camera.Size supportedPreviewSize = supportedPreviewSizes.get(j);
-                    CameraSizesSet.Size size = new Size();
-                    size.width = supportedPreviewSize.width;
-                    size.height = supportedPreviewSize.height;
-                    cameraSizes.add(size);
+                if (supportedPreviewSizes != null) {
+                    for (Camera.Size supportedPreviewSize : supportedPreviewSizes) {
+                        Size size = new Size();
+                        size.width = supportedPreviewSize.width;
+                        size.height = supportedPreviewSize.height;
+                        cameraSizes.add(size);
+                    }
                 }
             } finally {
                 camera.release();
