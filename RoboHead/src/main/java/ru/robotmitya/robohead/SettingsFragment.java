@@ -86,30 +86,6 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         settings.edit().putString(context.getString(R.string.option_camera_index_key), String.valueOf(cameraIndex)).commit();
     }
 
-/*
-    public static void setFrontCameraIndex(final Context context, final int cameraIndex) {
-        if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
-            return;
-        }
-
-        mFrontCameraMode = cameraIndex;
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(context.getString(R.string.option_first_camera_mode_key), String.valueOf(cameraIndex)).commit();
-    }
-
-    public static void setBackCameraIndex(final Context context, final int cameraIndex) {
-        if ((cameraIndex < -1) || (cameraIndex >= mNumberOfCameras)) {
-            return;
-        }
-
-        mBackCameraMode = cameraIndex;
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings.edit().putString(context.getString(R.string.option_back_camera_mode_key), String.valueOf(cameraIndex)).commit();
-    }
-*/
-
     /**
      * Аксессор поля mRoboBodyMac.
      * @return MAC-адрес Bluetooth-адаптера контроллера робота.
