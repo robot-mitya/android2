@@ -76,54 +76,58 @@ public class HeadStateNode implements NodeMain {
         subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
             @Override
             public void onNewMessage(std_msgs.String message) {
-                String messageBody = message.getData();
-                String identifier = MessageHelper.getMessageIdentifier(messageBody);
-                short value = (short)MessageHelper.getMessageIntegerValue(messageBody);
+                try {
+                    String messageBody = message.getData();
+                    String identifier = MessageHelper.getMessageIdentifier(messageBody);
+                    short value = (short) MessageHelper.getMessageIntegerValue(messageBody);
 
-                Log.messageReceived(HeadStateNode.this, messageBody);
+                    Log.messageReceived(HeadStateNode.this, messageBody);
 
-                if (identifier.contentEquals(Rs.Instruction.ID)) {
-                    switch (value) {
-                        case Rs.Instruction.HEADLIGHTS_OFF:
-                        case Rs.Instruction.HEADLIGHTS_ON:
-                            RoboState.setHeadlights(value);
-                            publishToBoard(messageBody);
-                            break;
-                        case Rs.Instruction.CAMERA_OFF:
-                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.DISABLED);
-                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
-                            publishToBoard(messageBody);
-                            break;
-                        case Rs.Instruction.CAMERA_BACK_ON:
-                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.BACK);
-                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
-                            publishToBoard(messageBody);
-                            break;
-                        case Rs.Instruction.CAMERA_FRONT_ON:
-                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.FRONT);
-                            RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
-                            publishToBoard(messageBody);
-                            break;
-                        case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP:
-                        case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_START:
-                            RoboState.setMainAccumulatorCharging(value);
-                            publishToBoard(messageBody);
-                            break;
-                        case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_STOP:
-                        case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_START:
-                            RoboState.setRoboHeadAccumulatorCharging(value);
-                            publishToBoard(messageBody);
-                            break;
+                    if (identifier.contentEquals(Rs.Instruction.ID)) {
+                        switch (value) {
+                            case Rs.Instruction.HEADLIGHTS_OFF:
+                            case Rs.Instruction.HEADLIGHTS_ON:
+                                RoboState.setHeadlights(value);
+                                publishToBoard(messageBody);
+                                break;
+                            case Rs.Instruction.CAMERA_OFF:
+                                SettingsFragment.setCameraIndex(mContext, AppConst.Camera.DISABLED);
+                                RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
+                                publishToBoard(messageBody);
+                                break;
+                            case Rs.Instruction.CAMERA_BACK_ON:
+                                SettingsFragment.setCameraIndex(mContext, AppConst.Camera.BACK);
+                                RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
+                                publishToBoard(messageBody);
+                                break;
+                            case Rs.Instruction.CAMERA_FRONT_ON:
+                                SettingsFragment.setCameraIndex(mContext, AppConst.Camera.FRONT);
+                                RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
+                                publishToBoard(messageBody);
+                                break;
+                            case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_STOP:
+                            case Rs.Instruction.ACCUMULATOR_MAIN_CHARGING_START:
+                                RoboState.setMainAccumulatorCharging(value);
+                                publishToBoard(messageBody);
+                                break;
+                            case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_STOP:
+                            case Rs.Instruction.ACCUMULATOR_ROBOHEAD_CHARGING_START:
+                                RoboState.setRoboHeadAccumulatorCharging(value);
+                                publishToBoard(messageBody);
+                                break;
+                        }
+                    } else if (identifier.equals(Rs.Mood.ID)) {
+                        RoboState.setMood(value);
+                        publishToBoard(messageBody);
+                    } else if (identifier.equals(Rs.BatteryRequest.ID)) {
+                        if (value == Rs.BatteryRequest.ROBOHEAD_BATTERY) {
+                            publishToBoard(MessageHelper.makeMessage(Rs.BatteryResponse.ID, RoboState.getRoboHeadBatteryState()));
+                        }
+                    } else if (identifier.equals(Rs.BatteryResponse.ID)) {
+                        publishToBoard(messageBody);
                     }
-                } else if (identifier.equals(Rs.Mood.ID)) {
-                    RoboState.setMood(value);
-                    publishToBoard(messageBody);
-                } else if (identifier.equals(Rs.BatteryRequest.ID)) {
-                    if (value == Rs.BatteryRequest.ROBOHEAD_BATTERY) {
-                        publishToBoard(MessageHelper.makeMessage(Rs.BatteryResponse.ID, RoboState.getRoboHeadBatteryState()));
-                    }
-                } else if (identifier.equals(Rs.BatteryResponse.ID)) {
-                    publishToBoard(messageBody);
+                } catch (Exception e) {
+                    Log.e(this, e.getMessage());
                 }
             }
         });
