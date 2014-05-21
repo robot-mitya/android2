@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
@@ -45,6 +46,11 @@
             android:dialogTitle="@string/option_back_camera_mode_dialog_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <CheckBoxPreference
+            android:key="@string/option_drive_reverse_key"
+            android:title="@string/option_drive_reverse_title"
+            android:summary="@string/option_drive_reverse_summary" />
 
     </PreferenceCategory>
 

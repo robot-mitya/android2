@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -39,6 +40,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     private static int mCameraIndex;
     private static String mFrontCameraMode;
     private static String mBackCameraMode;
+    private static boolean mDriveReverse;
 
     /**
      * Robot's Bluetooth adapter MAC-address.
@@ -50,6 +52,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
     private ListPreference mListPreferenceCamera;
     private ListPreference mListPreferenceFrontCameraMode;
     private ListPreference mListPreferenceBackCameraMode;
+    private CheckBoxPreference mCheckBoxPreferenceDriveReverse;
 
     /**
      * EditText for mRoboBodyMac option.
@@ -70,6 +73,10 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     public static String getBackCameraMode() {
         return mBackCameraMode;
+    }
+
+    public static boolean getDriveReverse() {
+        return mDriveReverse;
     }
 
     public static void setCameraIndex(final Context context, final int cameraIndex) {
@@ -174,6 +181,15 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         mListPreferenceBackCameraMode.setDialogTitle(R.string.option_back_camera_mode_dialog_title);
         mListPreferenceBackCameraMode.setOnPreferenceChangeListener(this);
 
+        key = getString(R.string.option_drive_reverse_key);
+        mCheckBoxPreferenceDriveReverse = (CheckBoxPreference) this.findPreference(key);
+        if (mCheckBoxPreferenceDriveReverse != null) {
+            mCheckBoxPreferenceDriveReverse.setChecked(mDriveReverse);
+            mCheckBoxPreferenceDriveReverse.setTitle(R.string.option_drive_reverse_title);
+            mCheckBoxPreferenceDriveReverse.setSummary(R.string.option_drive_reverse_summary);
+            mCheckBoxPreferenceDriveReverse.setOnPreferenceChangeListener(this);
+        }
+
         key = getString(R.string.option_robobody_mac_key);
         mEditTextPreferenceRoboBodyMac = (EditTextPreference) this.findPreference(key);
         title = getString(R.string.option_robobody_mac_title) + ": " + mRoboBodyMac;
@@ -232,6 +248,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         }
         mCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
 
+        key = context.getString(R.string.option_drive_reverse_key);
+        mDriveReverse = settings.getBoolean(key, true);
+
         key = context.getString(R.string.option_robobody_mac_key);
         defaultValue = context.getString(R.string.option_robobody_mac_default_value);
         mRoboBodyMac = settings.getString(key, defaultValue);
@@ -281,6 +300,11 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
                     ": " + getCameraModeValueDescription(mBackCameraMode, mCameraSizesSet, context);
             mListPreferenceBackCameraMode.setTitle(title);
             sendCameraSettingsWereChangedBroadcast();
+            return true;
+        }
+
+        if (preference == mCheckBoxPreferenceDriveReverse) {
+            mDriveReverse = (Boolean) newValue;
             return true;
         }
 

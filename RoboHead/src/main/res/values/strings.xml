@@ -15,7 +15,7 @@
     <string name="option_master_uri_title">Master URI</string>
     <string name="option_master_uri_summary">URI of ROS core (http://&lt;ip address&gt;:&lt;port&gt;)</string>
 
-    <string name="preference_camera">Video streaming</string>
+    <string name="preference_camera">Video</string>
     <string name="option_camera_index_title">Camera</string>
     <string name="option_camera_index_summary">Select camera for video streaming</string>
     <string name="option_camera_index_dialog_title">Select camera</string>
@@ -34,6 +34,9 @@
 
     <string name="option_camera_mode_default_entry">Camera %1$d [default]</string>
     <string name="option_camera_mode_size_entry">Camera %1$d [%2$dx%3$d]</string>
+
+    <string name="option_drive_reverse_title">Drive reverse</string>
+    <string name="option_drive_reverse_summary">Reverse drive joystick when back camera is selected</string>
 
     <string name="preference_bluetooth">Bluetooth communication with the robot</string>
     <string name="option_robobody_mac_title">MAC-address of the robot</string>

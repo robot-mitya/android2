@@ -76,7 +76,7 @@ public class DriveJoystickAnalyzerNode implements NodeMain {
     public static final short MAX_SPEED = 255;
 
     public static void calculateMotorsSpeed(double x, double y, final MotorsSpeed motorsSpeed) {
-        if (RoboState.getIsReverse()) {
+        if (RoboState.getIsReverse() && SettingsFragment.getDriveReverse()) {
             y = -y;
         }
 
