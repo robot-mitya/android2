@@ -48,19 +48,19 @@ public class EyePreviewView extends RosCameraPreviewView {
         @Override
         public void onReceive(Context context, Intent intent) {
             final short selectedCamera = (short)SettingsFragment.getCameraIndex();
-//            final String firstCameraMode = SettingsFragment.getFirstCameraMode();
-//            final String secondCameraMode = SettingsFragment.getSecondCameraMode();
+//            final String frontCameraMode = SettingsFragment.getFrontCameraMode();
+//            final String backCameraMode = SettingsFragment.getBackCameraMode();
             RoboState.setSelectedCamIndex(selectedCamera);
-//            RoboState.setFrontCamIndex(firstCameraMode);
-//            RoboState.setBackCamIndex(secondCameraMode);
+//            RoboState.setFrontCamIndex(frontCameraMode);
+//            RoboState.setBackCamIndex(backCameraMode);
 
             short value;
-            if (selectedCamera == AppConst.Camera.FIRST) {
+            if (selectedCamera == AppConst.Camera.FRONT) {
                 value = Rs.Instruction.CAMERA_FRONT_ON;
-                startVideoStreaming(SettingsFragment.getFirstCameraMode());
-            } else if (selectedCamera == AppConst.Camera.SECOND) {
+                startVideoStreaming(SettingsFragment.getFrontCameraMode());
+            } else if (selectedCamera == AppConst.Camera.BACK) {
                 value = Rs.Instruction.CAMERA_BACK_ON;
-                startVideoStreaming(SettingsFragment.getSecondCameraMode());
+                startVideoStreaming(SettingsFragment.getBackCameraMode());
             } else {
                 value = Rs.Instruction.CAMERA_OFF;
                 stopVideoStreaming();
@@ -118,17 +118,17 @@ public class EyePreviewView extends RosCameraPreviewView {
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_BACK_ON) {
                         Log.d(EyePreviewView.this, "back camera is turned on");
-                        startVideoStreaming(SettingsFragment.getSecondCameraMode());
+                        startVideoStreaming(SettingsFragment.getBackCameraMode());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.CAMERA_FRONT_ON) {
                         Log.d(EyePreviewView.this, "front camera is turned on");
-                        startVideoStreaming(SettingsFragment.getFirstCameraMode());
+                        startVideoStreaming(SettingsFragment.getFrontCameraMode());
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.STATE_REQUEST) {
                         String messageToBoard;
-                        if (RoboState.getSelectedCamIndex() == AppConst.Camera.FIRST) {
+                        if (RoboState.getSelectedCamIndex() == AppConst.Camera.FRONT) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_FRONT_ON);
-                        } else if (RoboState.getSelectedCamIndex() == AppConst.Camera.SECOND) {
+                        } else if (RoboState.getSelectedCamIndex() == AppConst.Camera.BACK) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_BACK_ON);
                         } else {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_OFF);

@@ -71,10 +71,10 @@ public class MainActivity extends RosActivity {
         super.onStart();
 
         final short selectedCamera = (short)SettingsFragment.getCameraIndex();
-        if (selectedCamera == AppConst.Camera.FIRST) {
-            mEyePreviewView.startVideoStreaming(SettingsFragment.getFirstCameraMode());
-        } else if (selectedCamera == AppConst.Camera.SECOND) {
-            mEyePreviewView.startVideoStreaming(SettingsFragment.getSecondCameraMode());
+        if (selectedCamera == AppConst.Camera.FRONT) {
+            mEyePreviewView.startVideoStreaming(SettingsFragment.getFrontCameraMode());
+        } else if (selectedCamera == AppConst.Camera.BACK) {
+            mEyePreviewView.startVideoStreaming(SettingsFragment.getBackCameraMode());
         } else {
             mEyePreviewView.stopVideoStreaming();
         }

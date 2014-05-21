@@ -35,7 +35,7 @@ public class AppConst {
 
     public class Camera {
         public static final int DISABLED = 0;
-        public static final int FIRST = 1;
-        public static final int SECOND = 2;
+        public static final int FRONT = 1;
+        public static final int BACK = 2;
     }
 }

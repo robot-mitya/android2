@@ -90,17 +90,17 @@ public class HeadStateNode implements NodeMain {
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_OFF:
-                            SettingsFragment.setCameraIndex(mContext, -1);
+                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.DISABLED);
                             RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_BACK_ON:
-                            SettingsFragment.setCameraIndex(mContext, 1 /*SettingsFragment.getSecondCameraMode()*/);
+                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.BACK);
                             RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
                         case Rs.Instruction.CAMERA_FRONT_ON:
-                            SettingsFragment.setCameraIndex(mContext, 0 /*SettingsFragment.getFirstCameraMode()*/);
+                            SettingsFragment.setCameraIndex(mContext, AppConst.Camera.FRONT);
                             RoboState.setSelectedCamIndex((short) SettingsFragment.getCameraIndex());
                             publishToBoard(messageBody);
                             break;
