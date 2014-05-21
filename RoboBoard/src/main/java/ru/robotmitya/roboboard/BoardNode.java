@@ -95,8 +95,6 @@ public class BoardNode implements NodeMain {
         mBodyPublisher = connectedNode.newPublisher(AppConst.RoboHead.BODY_TOPIC, std_msgs.String._TYPE);
         mHeadStatePublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_STATE_TOPIC, std_msgs.String._TYPE);
 
-        RoboState.setFrontCamIndex(FRONT_CAM_INDEX);
-        RoboState.setBackCamIndex(BACK_CAM_INDEX);
         RoboState.setSelectedCamIndex(NO_CAM);
 
         initializeBroadcasts();
