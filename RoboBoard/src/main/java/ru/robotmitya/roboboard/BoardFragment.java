@@ -203,6 +203,16 @@ public class BoardFragment extends Fragment {
         };
     }
 
+    private void setHeadJoystickVisibility() {
+        int visibility;
+        if (SettingsFragment.getRemoteControlMode() == SettingsFragment.REMOTE_CONTROL_MODE.TWO_JOYSTICKS) {
+            visibility = View.VISIBLE;
+        } else {
+            visibility = View.GONE;
+        }
+        mHeadJoystick.setVisibility(visibility);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.board_fragment, container, false);
@@ -310,6 +320,7 @@ public class BoardFragment extends Fragment {
         mDriveJoystick.setTopicName(AppConst.RoboHead.DRIVE_JOYSTICK_TOPIC);
         mHeadJoystick = (BoardJoystickView) result.findViewById(R.id.head_joystick);
         mHeadJoystick.setTopicName(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC);
+        setHeadJoystickVisibility();
 
 
         // Batteries status:
@@ -375,6 +386,8 @@ public class BoardFragment extends Fragment {
             LocalBroadcastManager.getInstance(context).registerReceiver(
                     mButtonStateBroadcastReceiver, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME));
         }
+
+        setHeadJoystickVisibility();
     }
 
     @Override
