@@ -53,6 +53,21 @@ public class MainActivity extends RosActivity {
 
     @Override
     protected void init(NodeMainExecutor nodeMainExecutor) {
+/*
+        if (mBoardNode != null) {
+            nodeMainExecutor.shutdownNodeMain(mBoardNode);
+        }
+        if (mVideoFragment.getImageView() != null) {
+            nodeMainExecutor.shutdownNodeMain(mVideoFragment.getImageView());
+        }
+        if (mBoardFragment.getDriveJoystick() != null) {
+            nodeMainExecutor.shutdownNodeMain(mBoardFragment.getDriveJoystick());
+        }
+        if (mBoardFragment.getHeadJoystick() != null) {
+            nodeMainExecutor.shutdownNodeMain(mBoardFragment.getHeadJoystick());
+        }
+*/
+
         NodeConfiguration nodeConfiguration =
                 NodeConfiguration.newPublic(InetAddressFactory.newNonLoopback().getHostAddress(), getMasterUri());
 

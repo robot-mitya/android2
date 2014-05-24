@@ -55,10 +55,10 @@ public class EyePreviewView extends RosCameraPreviewView {
 //            RoboState.setBackCamIndex(backCameraMode);
 
             short value;
-            if (selectedCamera == AppConst.Camera.FRONT) {
+            if (selectedCamera == AppConst.Common.Camera.FRONT) {
                 value = Rs.Instruction.CAMERA_FRONT_ON;
                 startVideoStreaming(SettingsFragment.getFrontCameraMode());
-            } else if (selectedCamera == AppConst.Camera.BACK) {
+            } else if (selectedCamera == AppConst.Common.Camera.BACK) {
                 value = Rs.Instruction.CAMERA_BACK_ON;
                 startVideoStreaming(SettingsFragment.getBackCameraMode());
             } else {
@@ -126,9 +126,9 @@ public class EyePreviewView extends RosCameraPreviewView {
                         publishToHeadState(messageBody);
                     } else if (value == Rs.Instruction.STATE_REQUEST) {
                         String messageToBoard;
-                        if (RoboState.getSelectedCamIndex() == AppConst.Camera.FRONT) {
+                        if (RoboState.getSelectedCamIndex() == AppConst.Common.Camera.FRONT) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_FRONT_ON);
-                        } else if (RoboState.getSelectedCamIndex() == AppConst.Camera.BACK) {
+                        } else if (RoboState.getSelectedCamIndex() == AppConst.Common.Camera.BACK) {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_BACK_ON);
                         } else {
                             messageToBoard = MessageHelper.makeMessage(Rs.Instruction.ID, Rs.Instruction.CAMERA_OFF);
@@ -204,16 +204,5 @@ public class EyePreviewView extends RosCameraPreviewView {
             return super.getOptimalPreviewSize(sizes, width, height);
         }
         return sizes.get(sizeIndex);
-//        for (int i = 0; i < sizes.size(); i++) {
-//            Camera.Size size = sizes.get(i);
-//            Log.d(this, "++++++ " + i + ": " + size.width + "x" + size.height);
-//        }
-//
-//        Camera.Size result;
-//        result = super.getOptimalPreviewSize(sizes, width, height);
-//        Log.d(this, "++++++ optimal: " + result.width + "x" + result.height);
-////        result = sizes.get(9);
-//        result = sizes.get(5);
-//        return result;
     }
 }

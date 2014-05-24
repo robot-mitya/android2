@@ -91,7 +91,7 @@ public class BoardFragment extends Fragment {
         mButtonStateBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String message = intent.getStringExtra(Broadcasts.BROADCAST_MESSAGE_TO_GUI_EXTRA_NAME);
+                String message = intent.getStringExtra(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_GUI_EXTRA_NAME);
                 Log.d(BoardFragment.this, "message received: " + message);
 
                 String identifier = MessageHelper.getMessageIdentifier(message);
@@ -384,7 +384,7 @@ public class BoardFragment extends Fragment {
         if (context != null) {
             context.registerReceiver(mBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             LocalBroadcastManager.getInstance(context).registerReceiver(
-                    mButtonStateBroadcastReceiver, new IntentFilter(Broadcasts.BROADCAST_MESSAGE_TO_GUI_NAME));
+                    mButtonStateBroadcastReceiver, new IntentFilter(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_GUI_NAME));
         }
 
         setHeadJoystickVisibility();
@@ -409,26 +409,26 @@ public class BoardFragment extends Fragment {
     }
 
     private void sendMessageToBoardNodeForBodyTopic(final Context context, final String command) {
-        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_BODY_NAME);
-        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_BODY_EXTRA_NAME, command);
+        Intent intent = new Intent(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_BODY_NAME);
+        intent.putExtra(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_BODY_EXTRA_NAME, command);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void sendMessageToBoardNodeForEyeTopic(final Context context, final String command) {
-        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_EYE_NAME);
-        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_EYE_EXTRA_NAME, command);
+        Intent intent = new Intent(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_EYE_NAME);
+        intent.putExtra(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_EYE_EXTRA_NAME, command);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void sendMessageToBoardNodeForFaceTopic(final Context context, final String command) {
-        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_FACE_NAME);
-        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_FACE_EXTRA_NAME, command);
+        Intent intent = new Intent(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_FACE_NAME);
+        intent.putExtra(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_FACE_EXTRA_NAME, command);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     private void sendMessageToBoardNodeForReflexTopic(final Context context, final String command) {
-        Intent intent = new Intent(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_NAME);
-        intent.putExtra(Broadcasts.BROADCAST_MESSAGE_TO_REFLEX_EXTRA_NAME, command);
+        Intent intent = new Intent(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_REFLEX_NAME);
+        intent.putExtra(AppConst.RoboBoard.Broadcast.BROADCAST_MESSAGE_TO_REFLEX_EXTRA_NAME, command);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

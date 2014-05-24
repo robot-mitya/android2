@@ -218,9 +218,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
         key = context.getString(R.string.option_camera_index_key);
         if (numberOfCameras == 0) {
-            defaultValue = String.valueOf(AppConst.Camera.DISABLED);
+            defaultValue = String.valueOf(AppConst.Common.Camera.DISABLED);
         } else {
-            defaultValue = String.valueOf(AppConst.Camera.FRONT);
+            defaultValue = String.valueOf(AppConst.Common.Camera.FRONT);
         }
         mCameraIndex = Integer.valueOf(settings.getString(key, defaultValue));
 
@@ -366,9 +366,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     public static ArrayList<CharSequence> getCameraValues() {
         ArrayList<CharSequence> values = new ArrayList<CharSequence>();
-        values.add(String.valueOf(AppConst.Camera.DISABLED));
-        values.add(String.valueOf(AppConst.Camera.FRONT));
-        values.add(String.valueOf(AppConst.Camera.BACK));
+        values.add(String.valueOf(AppConst.Common.Camera.DISABLED));
+        values.add(String.valueOf(AppConst.Common.Camera.FRONT));
+        values.add(String.valueOf(AppConst.Common.Camera.BACK));
         return values;
     }
 
@@ -401,9 +401,9 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
 
     private static String getCameraValueDescription(final int cameraIndex, final Context context) {
         switch (cameraIndex) {
-            case AppConst.Camera.FRONT:
+            case AppConst.Common.Camera.FRONT:
                 return context.getResources().getString(R.string.option_camera_front_entry);
-            case AppConst.Camera.BACK:
+            case AppConst.Common.Camera.BACK:
                 return context.getResources().getString(R.string.option_camera_back_entry);
             default:
                 return context.getResources().getString(R.string.option_camera_disabled_entry);

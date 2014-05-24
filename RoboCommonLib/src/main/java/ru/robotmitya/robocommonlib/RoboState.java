@@ -97,7 +97,7 @@ public class RoboState {
     public static boolean setSelectedCamIndex(final short value) {
         if (value != mSelectedCamIndex) {
             mSelectedCamIndex = value;
-            mIsReverse = mSelectedCamIndex == AppConst.Camera.BACK;
+            mIsReverse = mSelectedCamIndex == AppConst.Common.Camera.BACK;
             return true;
         }
         return false;
