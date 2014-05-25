@@ -41,7 +41,7 @@ public class MainActivity extends RosActivity {
     });
 
     public MainActivity() {
-        super("Robot Mitya\'s ticker", "Robot Mitya");
+        super("Robot Mitya\'s ticker", "RoboHead");
     }
 
     @Override

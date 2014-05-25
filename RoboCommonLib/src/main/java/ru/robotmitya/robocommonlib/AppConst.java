@@ -10,6 +10,7 @@ public final class AppConst {
         public static final String VIDEO_NODE = "robot_mitya/video_node";
         public static final String DRIVE_JOYSTICK_NODE = "robot_mitya/drive_joystick_node";
         public static final String HEAD_JOYSTICK_NODE = "robot_mitya/head_joystick_node";
+        public static final String ORIENTATION_NODE = "robot_mitya/board_orientation_node";
 
         public static final String BOARD_TOPIC = "robot_mitya/board";
         public static final String CAMERA_TOPIC = "/camera/image/compressed";

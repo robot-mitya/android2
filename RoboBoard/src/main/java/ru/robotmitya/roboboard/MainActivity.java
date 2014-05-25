@@ -18,9 +18,10 @@ public class MainActivity extends RosActivity {
     private VideoFragment mVideoFragment;
     private BoardFragment mBoardFragment;
     private BoardNode mBoardNode;
+    private BoardOrientationNode mBoardOrientationNode;
 
     public MainActivity() {
-        super("Robot Mitya\'s ticker", "Robot Mitya");
+        super("Robot Mitya\'s ticker", "RoboBoard");
     }
 
     @Override
@@ -38,6 +39,8 @@ public class MainActivity extends RosActivity {
         mBoardFragment = new BoardFragment();
         fragmentTransaction.add(R.id.board_fragment, mBoardFragment);
         fragmentTransaction.commit();
+
+        mBoardOrientationNode = new BoardOrientationNode(this);
 
         SettingsFragment.initialize(this);
     }
@@ -75,6 +78,6 @@ public class MainActivity extends RosActivity {
         nodeMainExecutor.execute(mVideoFragment.getImageView(), nodeConfiguration.setNodeName(AppConst.RoboBoard.VIDEO_NODE));
         nodeMainExecutor.execute(mBoardFragment.getDriveJoystick(), nodeConfiguration.setNodeName(AppConst.RoboBoard.DRIVE_JOYSTICK_NODE));
         nodeMainExecutor.execute(mBoardFragment.getHeadJoystick(), nodeConfiguration.setNodeName(AppConst.RoboBoard.HEAD_JOYSTICK_NODE));
+        nodeMainExecutor.execute(mBoardOrientationNode, nodeConfiguration.setNodeName(AppConst.RoboBoard.ORIENTATION_NODE));
     }
-
 }

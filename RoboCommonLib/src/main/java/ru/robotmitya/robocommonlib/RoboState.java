@@ -7,8 +7,6 @@ package ru.robotmitya.robocommonlib;
 public class RoboState {
     private static short mHeadlights;
 
-//    private static short mFrontCamIndex;
-//    private static short mBackCamIndex;
     private static short mSelectedCamIndex;
 
     private static boolean mIsReverse;
@@ -25,11 +23,12 @@ public class RoboState {
 
     private static short mMood;
 
+    private static double mHorizontalZeroOrientation;
+    private static double mVerticalZeroOrientation;
+
     static {
         mHeadlights = Rs.Instruction.HEADLIGHTS_OFF;
 
-//        mFrontCamIndex = -1;
-//        mBackCamIndex = -1;
         mSelectedCamIndex = -1;
 
         mIsReverse = false;
@@ -40,6 +39,9 @@ public class RoboState {
         mRoboHeadBatteryState = Rs.BatteryResponse.ROBOHEAD_BATTERY;
 
         mMood = Rs.Mood.FACE_OK;
+
+        mHorizontalZeroOrientation = 0.0;
+        mVerticalZeroOrientation = Math.PI / 2.0;
     }
 
 
@@ -56,40 +58,6 @@ public class RoboState {
     public static short getHeadlights() {
         return mHeadlights;
     }
-
-
-/*
-    // Front camera
-
-    public static boolean setFrontCamIndex(final short value) {
-        if  (value != mFrontCamIndex) {
-            mFrontCamIndex = value;
-            mIsReverse = mSelectedCamIndex == mBackCamIndex;
-            return true;
-        }
-        return false;
-    }
-
-    public static short getFrontCamIndex() {
-        return mFrontCamIndex;
-    }
-
-
-    // Back camera
-
-    public static boolean setBackCamIndex(final short value) {
-        if  (value != mBackCamIndex) {
-            mBackCamIndex = value;
-            mIsReverse = mSelectedCamIndex == mBackCamIndex;
-            return true;
-        }
-        return false;
-    }
-
-    public static short getBackCamIndex() {
-        return mBackCamIndex;
-    }
-*/
 
 
     // Selected camera index
@@ -110,16 +78,6 @@ public class RoboState {
     public static boolean getIsReverse() {
         return mIsReverse;
     }
-
-//    public static void switchCam() {
-//        if (mSelectedCamIndex == mFrontCamIndex) {
-//            mSelectedCamIndex = mBackCamIndex;
-//        } else if (mSelectedCamIndex == mBackCamIndex) {
-//            mSelectedCamIndex = mFrontCamIndex;
-//        } else { // when (mSelectedCamIndex == -1)
-//            mSelectedCamIndex = mFrontCamIndex;
-//        }
-//    }
 
 
     // Main accumulator charge
@@ -195,4 +153,16 @@ public class RoboState {
     public static short getHeadVerticalServoMaxDegree() {
         return mHeadVerticalServoMaxDegree;
     }
+
+
+    // Zero orientation
+
+    public static double getHorizontalZeroOrientation() {
+        return mHorizontalZeroOrientation;
+    }
+
+    public static double getVerticalZeroOrientation() {
+        return mVerticalZeroOrientation;
+    }
+
 }
