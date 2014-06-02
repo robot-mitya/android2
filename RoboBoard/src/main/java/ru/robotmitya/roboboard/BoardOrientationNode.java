@@ -12,32 +12,27 @@ import org.ros.node.Node;
 import org.ros.node.NodeMain;
 import org.ros.node.topic.Publisher;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import geometry_msgs.Twist;
 import ru.robotmitya.robocommonlib.AppConst;
 import ru.robotmitya.robocommonlib.Log;
 import ru.robotmitya.robocommonlib.RoboState;
+import ru.robotmitya.robocommonlib.SensorFusion;
 
 /**
  * Created by dmitrydzz on 5/25/14.
  *
  */
 public class BoardOrientationNode implements NodeMain, SensorEventListener {
-    private Context mContext;
     private Publisher<Twist> mPublisher;
     private SensorManager mSensorManager;
-    private Sensor mAccelerometerSensor;
-    private Sensor mMagneticFieldSensor;
-    private final float[] mAccelerometerData = new float[3];
-    private final float[] mMagneticData = new float[3];
-    private final float[] mRotationMatrix = new float[16];
-    private final float[] mOrientationData = new float[3];
+    private SensorFusion mSensorFusion;
+    private Timer mPublisherTimer;
 
     public BoardOrientationNode(Context context) {
-        mContext = context;
-
-        mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
-        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
     @Override
@@ -49,13 +44,57 @@ public class BoardOrientationNode implements NodeMain, SensorEventListener {
     public void onStart(ConnectedNode connectedNode) {
         mPublisher = connectedNode.newPublisher(AppConst.RoboHead.HEAD_JOYSTICK_TOPIC, Twist._TYPE);
 
-        final int rate = SensorManager.SENSOR_DELAY_GAME;
-        mSensorManager.registerListener(this, mAccelerometerSensor, rate);
-        mSensorManager.registerListener(this, mMagneticFieldSensor, rate);
+        mSensorFusion = new SensorFusion();
+        mSensorFusion.setMode(SensorFusion.Mode.FUSION);
+
+        registerSensorManagerListeners();
+
+        mPublisherTimer = new Timer();
+        mPublisherTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                double azimuthValue = mSensorFusion.getAzimuth(); // [-PI, PI]
+                azimuthValue /= Math.PI; // zoom to interval [-1, 1]
+                azimuthValue += RoboState.getHorizontalZeroOrientation(); // change zero point and break interval [-1, 1]
+                if (azimuthValue > 1) azimuthValue -= 2; // make interval [-1, 1]
+                azimuthValue *= 2; // zoom to interval [-2, 2]
+                if (azimuthValue < -1) azimuthValue = -1; // ignore back positions
+                else if (azimuthValue > 1) azimuthValue = 1; // ignore back positions
+
+                double rollValue =  mSensorFusion.getRoll(); // [-PI, PI]
+                rollValue /= Math.PI; // zoom to interval [-1, 1]
+                rollValue += RoboState.getVerticalZeroOrientation(); // change zero point and break interval [-1, 1]
+                if (rollValue > 1) rollValue -= 2; // make interval [-1, 1]
+                rollValue *= 4; // zoom to interval [-4, 4]
+                if (rollValue < -1) rollValue = -1; // ignore back positions
+                else if (rollValue > 1) rollValue = 1; // ignore back positions
+
+                Log.d(this, "azimuth: " + azimuthValue);
+                Log.d(this, "roll: " + rollValue);
+
+                try {
+                    Twist message = mPublisher.newMessage();
+                    message.getAngular().setX(0);
+                    message.getAngular().setY(0);
+                    message.getAngular().setZ(-azimuthValue);
+                    message.getLinear().setX(-rollValue);
+                    message.getLinear().setY(0);
+                    message.getLinear().setZ(0);
+                    mPublisher.publish(message);
+                    Log.messagePublished(BoardOrientationNode.this, mPublisher.getTopicName().toString(), message.toString());
+                } catch (NullPointerException e) {
+                    Log.e(this, e.getMessage());
+                }
+            }
+        }, 0, 80);
     }
 
     @Override
     public void onShutdown(Node node) {
+        unregisterSensorManagerListeners();
+
+        mPublisherTimer.cancel();
+        mPublisherTimer.purge();
     }
 
     @Override
@@ -68,49 +107,34 @@ public class BoardOrientationNode implements NodeMain, SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int sensorType = event.sensor.getType();
-        if (sensorType == Sensor.TYPE_ACCELEROMETER) {
-            System.arraycopy(event.values, 0, mAccelerometerData, 0, 3);
-        } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
-            System.arraycopy(event.values, 0, mMagneticData, 0, 3);
-        } else {
-            return;
-        }
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                mSensorFusion.setAccel(event.values);
+                mSensorFusion.calculateAccMagOrientation();
+                break;
 
-        SensorManager.getRotationMatrix(mRotationMatrix, null, mAccelerometerData, mMagneticData);
-        SensorManager.getOrientation(mRotationMatrix, mOrientationData);
+            case Sensor.TYPE_GYROSCOPE:
+                mSensorFusion.gyroFunction(event);
+                break;
 
-        double horizontalOrientation = mOrientationData[0]; // value in interval [-pi, +pi]
-        horizontalOrientation += RoboState.getHorizontalZeroOrientation();
-        horizontalOrientation = 2 * Math.sin(horizontalOrientation); // value in interval [-2, +2]
-        if (horizontalOrientation < -1) horizontalOrientation = -1;
-        if (horizontalOrientation > 1) horizontalOrientation = 1;
-
-        double verticalOrientation = mOrientationData[2]; // value in interval [-pi, +pi]
-        verticalOrientation += RoboState.getVerticalZeroOrientation();
-        verticalOrientation = 4 * Math.sin(verticalOrientation); // value in interval [-4, +4]
-        if (verticalOrientation < -1) verticalOrientation = -1;
-        if (verticalOrientation > 1) verticalOrientation = 1;
-
-        Log.d(this, "Horizontal: " + horizontalOrientation);
-        Log.d(this, "Vertical: " + verticalOrientation);
-
-        try {
-            Twist message = mPublisher.newMessage();
-            message.getAngular().setX(0);
-            message.getAngular().setY(0);
-            message.getAngular().setZ(-horizontalOrientation);
-            message.getLinear().setX(verticalOrientation);
-            message.getLinear().setY(0);
-            message.getLinear().setZ(0);
-//            mPublisher.publish(message);
-            Log.messagePublished(this, mPublisher.getTopicName().toString(), message.toString());
-        } catch (NullPointerException e) {
-            Log.e(this, e.getMessage());
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                mSensorFusion.setMagnet(event.values);
+                break;
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    public void registerSensorManagerListeners() {
+        final int rate = SensorManager.SENSOR_DELAY_GAME;
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), rate);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), rate);
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), rate);
+    }
+
+    public void unregisterSensorManagerListeners() {
+        mSensorManager.unregisterListener(this);
     }
 }

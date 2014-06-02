@@ -40,8 +40,10 @@ public class RoboState {
 
         mMood = Rs.Mood.FACE_OK;
 
-        mHorizontalZeroOrientation = 0.0;
-        mVerticalZeroOrientation = Math.PI / 2.0;
+        double horizontalZeroOrientationInRadians = 0.0;
+        mHorizontalZeroOrientation = horizontalZeroOrientationInRadians * 1.0 / Math.PI;
+        double verticalZeroOrientationInRadians = Math.PI / 2.0;
+        mVerticalZeroOrientation = verticalZeroOrientationInRadians * 1.0 / Math.PI;
     }
 
 
